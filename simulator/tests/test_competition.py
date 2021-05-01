@@ -26,6 +26,8 @@ class TestHouseguest():
         data = comp.serialize()
 
         assert data['type'] == "HOH"
+        assert data['winner'] == "None"
+        assert data['players'] == [x.serialize() for x in list(comp.participants.all())]
 
     @pytest.mark.django_db
     def test_pick_winner(self):
@@ -42,5 +44,27 @@ class TestHouseguest():
         winner = comp.pick_winner()
 
         assert winner in list(comp.participants.all())
+
+    @pytest.mark.django_db
+    def test_run_competition(self, monkeypatch):
+
+        hgs = []
+
+        hgs.append(HouseguestFactory(name="John"))
+        hgs.append(HouseguestFactory(name="Bob"))
+        hgs.append(HouseguestFactory(name="Jim"))
+
+        def mock_pick_winner(a):
+            return hgs[1]
+
+        monkeypatch.setattr(Competition, "pick_winner", mock_pick_winner)
+
+        c = CompetitionFactory.create(participants=hgs)
+
+        c.run_competition()
+
+        assert c.winner == hgs[1]
+
+
 
 

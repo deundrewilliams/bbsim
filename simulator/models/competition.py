@@ -16,7 +16,8 @@ class Competition(models.Model):
     )
 
     comp_type = models.IntegerField(choices=COMPETITION_TYPE_CHOICES)
-    participants = models.ManyToManyField('Houseguest')
+    participants = models.ManyToManyField('Houseguest', related_name="comp_participants")
+    winner = models.ForeignKey('Houseguest', blank=True, null=True, on_delete=models.CASCADE, related_name="winner")
 
     def serialize(self):
         """
@@ -27,8 +28,9 @@ class Competition(models.Model):
         """
 
         data = {
-            'type': self.COMPETITION_TYPE_CHOICES[self.comp_type - 1][1],
-            'players': [x.serialize() for x in list(self.participants.all())]
+            "type": self.COMPETITION_TYPE_CHOICES[self.comp_type - 1][1],
+            "players": [x.serialize() for x in list(self.participants.all())],
+            "winner": "None" if not self.winner else self.winner.serialize(),
         }
 
         return data
@@ -41,7 +43,7 @@ class Competition(models.Model):
         :rtype: simulator.models.Houseguest
         """
 
-        return pick_winner()
+        self.winner = self.pick_winner()
 
     def pick_winner(self):
         """

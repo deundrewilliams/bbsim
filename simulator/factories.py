@@ -23,3 +23,17 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
         if extracted:
             for participant in extracted:
                 self.participants.add(participant)
+
+class NominationCeremonyFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = NominationCeremony
+
+    hoh = factory.SubFactory(HouseguestFactory)
+
+    @factory.post_generation
+    def participants(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for participant in extracted:
+                self.participants.add(participant)
