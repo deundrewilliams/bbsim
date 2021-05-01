@@ -11,5 +11,9 @@ class Houseguest(models.Model):
     def serialize(self):
         data = {
             "name": self.name,
+            "immune": "True" if self.immune == True else "False",
+            "evicted": "True" if self.evicted == True else "False",
+            "comp_count": self.competition_count,
+            "nom_count": self.nomination_count
         }
         return data;

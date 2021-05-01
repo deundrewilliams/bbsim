@@ -9,6 +9,8 @@ djangorestframework = "*"
 django-cors-headers = "*"
 pytest = "*"
 pytest-django = "*"
+factory-boy = "*"
+coverage = "*"
 
 [dev-packages]
 
