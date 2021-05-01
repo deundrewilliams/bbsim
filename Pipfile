@@ -11,6 +11,7 @@ pytest = "*"
 pytest-django = "*"
 factory-boy = "*"
 coverage = "*"
+faker = "*"
 
 [dev-packages]
 

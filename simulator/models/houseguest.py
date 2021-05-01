@@ -17,3 +17,9 @@ class Houseguest(models.Model):
             "nom_count": self.nomination_count
         }
         return data;
+
+
+
+
+
+
