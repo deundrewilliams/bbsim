@@ -23,6 +23,16 @@ class Houseguest(models.Model):
         self.nomination_count += 1
         self.save()
 
+    def toggle_evicted(self, status):
+
+        self.evicted = status
+        self.save()
+
+    def win_competition(self):
+
+        self.competition_count += 1
+        self.save()
+
 
 
 

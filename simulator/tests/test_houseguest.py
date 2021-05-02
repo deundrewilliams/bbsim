@@ -31,3 +31,17 @@ class TestHouseguest():
         hg.nominate()
 
         assert hg.nomination_count == 1
+
+    @pytest.mark.django_db
+    def test_toggle_evicted(self):
+        hg = HouseguestFactory()
+        hg.toggle_evicted(True)
+
+        assert hg.evicted == True
+
+    @pytest.mark.django_db
+    def test_win_competition(self):
+        hg = HouseguestFactory()
+        hg.win_competition()
+
+        assert hg.competition_count == 1
