@@ -24,3 +24,10 @@ class TestHouseguest():
         assert data['evicted'] == 'False'
         assert data['comp_count'] == 0
         assert data['nom_count'] == 0
+
+    @pytest.mark.django_db
+    def test_nominate(self):
+        hg = HouseguestFactory(name="Jim")
+        hg.nominate()
+
+        assert hg.nomination_count == 1

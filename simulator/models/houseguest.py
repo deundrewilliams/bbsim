@@ -16,7 +16,12 @@ class Houseguest(models.Model):
             "comp_count": self.competition_count,
             "nom_count": self.nomination_count
         }
-        return data;
+        return data
+
+    def nominate(self):
+
+        self.nomination_count += 1
+
 
 
 

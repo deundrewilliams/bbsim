@@ -25,8 +25,15 @@ class NominationCeremony(models.Model):
         # Get eligible people to be nominated
         nom_eligible = list(filter(lambda x: x != self.hoh and x.immune == False, self.participants.all()))
 
-        # Get nominees
-        self.nominees.set(self.choose_nominees(nom_eligible))
+        # Get new nominees
+        new_nominees = self.choose_nominees(nom_eligible)
+
+        # Iterate through nominees and update their counts
+        for nom in new_nominees:
+            nom.nominate()
+
+        # Set nominees
+        self.nominees.set(new_nominees)
 
 
     def choose_nominees(self, nomination_pool):

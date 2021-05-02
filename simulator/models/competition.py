@@ -28,6 +28,7 @@ class Competition(models.Model):
         """
 
         data = {
+            "id": self.id,
             "type": self.COMPETITION_TYPE_CHOICES[self.comp_type - 1][1],
             "players": [x.serialize() for x in list(self.participants.all())],
             "winner": "None" if not self.winner else self.winner.serialize(),

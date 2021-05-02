@@ -37,3 +37,25 @@ class NominationCeremonyFactory(factory.django.DjangoModelFactory):
         if extracted:
             for participant in extracted:
                 self.participants.add(participant)
+
+class VetoPlayersFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = VetoPlayers
+
+    hoh = factory.SubFactory(HouseguestFactory)
+
+    @factory.post_generation
+    def participants(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for participant in extracted:
+                self.participants.add(participant)
+
+    @factory.post_generation
+    def nominees(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for nominee in extracted:
+                self.nominees.add(nominee)
