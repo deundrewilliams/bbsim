@@ -10,6 +10,7 @@ class Houseguest(models.Model):
 
     def serialize(self):
         data = {
+            "id": self.id,
             "name": self.name,
             "immune": "True" if self.immune == True else "False",
             "evicted": "True" if self.evicted == True else "False",
