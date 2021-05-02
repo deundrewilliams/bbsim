@@ -104,10 +104,11 @@ class TestVetoCeremony:
 
         assert set(vc.nominees.all()) == set([hgs[2], hgs[3]])
 
+
         # Assert serializer marks used as True
         data = vc.serialize()
         assert data['Used'] == True
-        assert data['Final Nominees'] == [x.serialize() for x in [hgs[1], hgs[3]]]
+        assert data['Final Nominees'] == [x.serialize() for x in [hgs[2], hgs[3]]]
 
     @pytest.mark.django_db
     def test_run_ceremony_final_four(self):

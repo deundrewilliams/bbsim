@@ -21,6 +21,7 @@ class Houseguest(models.Model):
     def nominate(self):
 
         self.nomination_count += 1
+        self.save()
 
 
 

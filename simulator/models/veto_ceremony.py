@@ -46,6 +46,8 @@ class VetoCeremony(models.Model):
             # Determine renom
             renom = self.get_renom()
 
+            renom.nominate()
+
             # Remove old nominee from nominees, add new nominee
             self.nominees.remove(decision_info['On'])
             self.nominees.add(renom)
