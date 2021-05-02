@@ -10,6 +10,16 @@ class VetoCeremony(models.Model):
     participants = models.ManyToManyField('Houseguest', related_name="veto_meeting_participants")
     using = models.BooleanField(default=None, null=True, blank=True)
 
+    def serialize(self):
+
+        data = {
+            "HOH": self.hoh.serialize(),
+            "Used": self.using,
+            "Final Nominees": [x.serialize() for x in list(self.nominees.all())]
+        }
+
+        return data
+
     def run_ceremony(self):
 
         decision_info = {}
