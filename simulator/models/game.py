@@ -30,8 +30,8 @@ class Game(models.Model):
         # Validate number of players
         num_players = len(list(self.players.all()))
 
-        if (num_players < self.MIN_PLAYERS or num_players > self.MAX_PLAYERS):
-            raise Exception("Too few/many players")
+        # if (num_players < self.MIN_PLAYERS or num_players > self.MAX_PLAYERS):
+        #     raise Exception("Too few/many players")
 
         # Determine jury size and prejury size -> determine_jury_size(num_players)
         self.jury_size = self.determine_jury_size(num_players)
@@ -59,10 +59,10 @@ class Game(models.Model):
             current_week += 1
 
         # Run finale
+        self.run_finale()
 
         # Set completed to true
-
-        pass
+        self.completed = True
 
     def determine_jury_size(self, num_players):
 
@@ -126,6 +126,8 @@ class Game(models.Model):
         self.run_eviction()
 
         # Move evictee to correct spot
+        self.in_house.remove(self.evicted)
+
         if (self.jury_began):
             self.jury.add(self.evicted)
         else:
@@ -244,4 +246,19 @@ class Game(models.Model):
         self.evicted.toggle_evicted(True)
 
         evc.delete()
+
+    def run_finale(self):
+
+        # Create finale
+        fn = Finale()
+        fn.save()
+        fn.finalists.set(self.in_house)
+        fn.jury.set(list(self.jury.all()))
+
+        # Run finale
+        fn.run_finale()
+
+        # Set winner and final juror
+        self.winner = fn.winner
+        self.final_juror = fn.final_juror
 
