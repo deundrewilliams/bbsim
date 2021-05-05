@@ -21,7 +21,7 @@ class TestWeek:
         hgs[4].name = "Bill"
         hgs[4].save()
 
-        w.inital_nominees.set([hgs[1], hgs[2]])
+        w.initial_nominees.set([hgs[1], hgs[2]])
         w.final_nominees.set([hgs[1], hgs[4]])
 
         data = w.serialize()

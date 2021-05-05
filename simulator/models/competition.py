@@ -38,10 +38,7 @@ class Competition(models.Model):
 
     def run_competition(self):
         """
-        Runs the competition process
-
-        :return: The winner of the competition
-        :rtype: simulator.models.Houseguest
+        Runs the competition process and stores in winner attribute
         """
 
         self.winner = self.pick_winner()
