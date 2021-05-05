@@ -184,7 +184,7 @@ class TestGame:
         def mock_get_veto_players(obj):
             return hgs
 
-        def mock_run_veto_competition(obj):
+        def mock_run_veto_competition(obj, players):
             obj.pov_holder = hgs[4]
             hgs[4].win_competition()
 
@@ -236,7 +236,7 @@ class TestGame:
         def mock_get_veto_players(obj):
             return hgs
 
-        def mock_run_veto_competition(obj):
+        def mock_run_veto_competition(obj, players):
             obj.pov_holder = hgs[4]
             hgs[4].win_competition()
 

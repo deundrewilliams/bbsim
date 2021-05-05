@@ -111,7 +111,7 @@ class Game(models.Model):
         players = self.get_veto_players()
 
         # Run POV Competition
-        self.run_veto_competition()
+        self.run_veto_competition(players)
 
         # Store POV winner in 'pov'
         pov = self.pov_holder

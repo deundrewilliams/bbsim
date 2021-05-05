@@ -130,8 +130,11 @@ class TestFinale:
             elif (list(obj.participants.all()) == [finalists[0], finalists[2]]):
                 return finalists[0]
 
-            else:
+            elif (set(obj.participants.all()) == set([finalists[0], finalists[1]])):
                 return finalists[0]
+
+            else:
+                raise Exception("Invalid participants")
 
         def mock_evc_run_ceremony(obj):
 

@@ -27,7 +27,7 @@ class EvictionCeremony(models.Model):
         voters = list(filter(lambda x: x != self.hoh and x not in list(self.nominees.all()), list(self.participants.all())))
 
         # Run voting process
-        votes = self.run_voting()
+        votes = self.run_voting(voters)
 
         # Get count of votes
         vote_count = self.count_votes(votes)

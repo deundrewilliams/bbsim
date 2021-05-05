@@ -36,6 +36,9 @@ class Finale(models.Model):
         p2_comp.participants.set(list(filter(lambda x: x != p1_hoh, list(self.finalists.all()))))
         p2_hoh = p2_comp.run_competition()
 
+        print(f"p1 hoh is {p1_hoh.name}")
+        print(f"p2 hoh is {p2_hoh.name}")
+
         # Get Part 3 HOH
         p3_comp = Competition(comp_type=Competition.HOH)
         p3_comp.save()

@@ -139,7 +139,7 @@ class TestEvictionCeremony:
 
         evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
 
-        def mock_run_voting(a):
+        def mock_run_voting(a, b):
             votes = {
                 hgs[3]: hgs[2],
                 hgs[4]: hgs[1],
@@ -175,7 +175,7 @@ class TestEvictionCeremony:
 
         evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
 
-        def mock_run_voting(a):
+        def mock_run_voting(a, b):
             votes = {
                 hgs[3]: hgs[2],
                 hgs[4]: hgs[1],
