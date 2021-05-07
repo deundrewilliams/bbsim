@@ -343,7 +343,7 @@ class TestGame:
         # assert False
 
     @pytest.mark.django_db
-    def test_full_run_through(self):
+    def test_full(self):
 
         hgs = HouseguestFactory.create_batch(12)
 

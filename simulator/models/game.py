@@ -19,7 +19,7 @@ class Game(models.Model):
             "id": self.id,
             "Players": [x.serialize() for x in list(self.players.all())],
             "Weeks": [x.serialize() for x in list(self.weeks.all())],
-            "Winner": self.winner.name if self.completed else None,
+            "Winner": self.winner.serialize() if self.completed else None,
             "Jury": [x.serialize() for x in list(self.jury.all())],
             "Prejury": [x.serialize() for x in list(self.prejury.all())]
         }
