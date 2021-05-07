@@ -125,16 +125,16 @@ class TestFinale:
 
             if (len(list(obj.participants.all())) == 3):
                 assert list(obj.participants.all()) == finalists
-                return finalists[1]
+                obj.winner = finalists[1]
 
             elif (list(obj.participants.all()) == [finalists[0], finalists[2]]):
-                return finalists[0]
+                obj.winner = finalists[0]
 
             elif (set(obj.participants.all()) == set([finalists[0], finalists[1]])):
-                return finalists[0]
+                obj.winner = finalists[0]
 
             else:
-                raise Exception("Invalid participants")
+                raise Exception(f"Invalid participants {list(obj.participants.all())}")
 
         def mock_evc_run_ceremony(obj):
 

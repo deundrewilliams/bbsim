@@ -341,3 +341,16 @@ class TestGame:
         # print(sm)
 
         # assert False
+
+    @pytest.mark.django_db
+    def test_full_run_through(self):
+
+        hgs = HouseguestFactory.create_batch(12)
+
+        g = Game()
+        g.save()
+        g.players.set(hgs)
+
+        g.run_game()
+
+        assert isinstance(g.winner, Houseguest)

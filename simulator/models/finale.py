@@ -25,34 +25,20 @@ class Finale(models.Model):
     def run_finale(self):
 
         # Get Part 1 HOH
-        p1_comp = Competition(comp_type=Competition.HOH)
-        p1_comp.save()
-        p1_comp.participants.set(list(self.finalists.all()))
-        p1_hoh = p1_comp.run_competition()
+        p1_hoh = self.run_final_hoh_comp(list(self.finalists.all()))
 
         # Get Part 2 HOH
-        p2_comp = Competition(comp_type=Competition.HOH)
-        p2_comp.save()
-        p2_comp.participants.set(list(filter(lambda x: x != p1_hoh, list(self.finalists.all()))))
-        p2_hoh = p2_comp.run_competition()
+        p2_hoh = self.run_final_hoh_comp(list(filter(lambda x: x != p1_hoh, list(self.finalists.all()))))
 
-        print(f"p1 hoh is {p1_hoh.name}")
-        print(f"p2 hoh is {p2_hoh.name}")
+        self.final_hoh = self.run_final_hoh_comp([p1_hoh, p2_hoh])
 
-        # Get Part 3 HOH
-        p3_comp = Competition(comp_type=Competition.HOH)
-        p3_comp.save()
-        p3_comp.participants.set([p1_hoh, p2_hoh])
-
-        # Set final HOH
-        self.final_hoh = p3_comp.run_competition()
         self.final_hoh.win_competition()
 
         # Run final eviction
         finalevc = EvictionCeremony(hoh=self.final_hoh)
         finalevc.save()
         finalevc.nominees.set(list(filter(lambda x: x != self.final_hoh, list(self.finalists.all()))))
-        # finalevc.participants.set(list(self.finalists.all()))
+        finalevc.participants.set(list(self.finalists.all()))
 
         finalevc.run_ceremony()
 
@@ -70,6 +56,17 @@ class Finale(models.Model):
 
         self.completed = True
 
+    def run_final_hoh_comp(self, players):
+
+        print(players)
+
+        c = Competition(comp_type=Competition.HOH)
+        c.save()
+        c.participants.set(players)
+        c.run_competition()
+        winner = c.winner
+        return winner
+
     def run_voting(self):
 
         votes = {}
@@ -78,7 +75,7 @@ class Finale(models.Model):
         for juror in list(self.jury.all()):
 
             # Get vote
-            votes[juror] = self.get_vote(juror, self.finalists)
+            votes[juror] = self.get_vote(juror, list(self.finalists.all()))
 
         return votes
 

@@ -39,6 +39,9 @@ class EvictionCeremony(models.Model):
         if (len(evicted) > 1):
             evictee = self.tiebreaker(evicted)
             vote_count[evictee] += 1
+        elif (len(evicted) == 0): # Final Eviction
+            evictee = self.tiebreaker(list(self.nominees.all()))
+            vote_count[evictee] = 1
         else:
             evictee = evicted[0]
 
