@@ -359,8 +359,4 @@ class TestGame:
 
         g.run_game()
 
-        print(g.serialize())
-
-        assert False
-
         assert isinstance(g.winner, Houseguest)

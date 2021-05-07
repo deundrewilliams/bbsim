@@ -195,8 +195,12 @@ class Game(models.Model):
         # Run picking
         vp.pick_players()
 
+        picked = list(vp.picked.all()).copy()
+
+        vp.delete()
+
         # Returned picked players
-        return list(vp.picked.all())
+        return picked
 
     def run_veto_competition(self, veto_players):
 
