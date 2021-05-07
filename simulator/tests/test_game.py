@@ -345,12 +345,22 @@ class TestGame:
     @pytest.mark.django_db
     def test_full(self):
 
-        hgs = HouseguestFactory.create_batch(12)
+        hgs = []
+        hgs.append(HouseguestFactory(name="A"))
+        hgs.append(HouseguestFactory(name="B"))
+        hgs.append(HouseguestFactory(name="C"))
+        hgs.append(HouseguestFactory(name="D"))
+        hgs.append(HouseguestFactory(name="E"))
+        hgs.append(HouseguestFactory(name="F"))
 
         g = Game()
         g.save()
         g.players.set(hgs)
 
         g.run_game()
+
+        print(g.serialize())
+
+        assert False
 
         assert isinstance(g.winner, Houseguest)

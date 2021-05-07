@@ -18,7 +18,7 @@ class Finale(models.Model):
             "Winner": self.winner.serialize() if self.completed else None,
             "Final HOH": self.final_hoh.serialize() if self.completed else None,
             "Final Juror": self.final_juror.serialize() if self.completed else None,
-            "Votes": self.votes if self.completed else None,
+            "Votes": {k.name:self.votes[k].name for k in list(self.votes.keys())} if self.completed else None,
         }
         return data
 

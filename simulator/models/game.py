@@ -21,7 +21,8 @@ class Game(models.Model):
             "Weeks": [x.serialize() for x in list(self.weeks.all())],
             "Winner": self.winner.serialize() if self.completed else None,
             "Jury": [x.serialize() for x in list(self.jury.all())],
-            "Prejury": [x.serialize() for x in list(self.prejury.all())]
+            "Prejury": [x.serialize() for x in list(self.prejury.all())],
+            "Finale": self.finale.serialize() if self.completed else None
         }
         return data
 
@@ -250,15 +251,15 @@ class Game(models.Model):
     def run_finale(self):
 
         # Create finale
-        fn = Finale()
-        fn.save()
-        fn.finalists.set(self.in_house)
-        fn.jury.set(list(self.jury.all()))
+        self.finale = Finale()
+        self.finale.save()
+        self.finale.finalists.set(self.in_house)
+        self.finale.jury.set(list(self.jury.all()))
 
         # Run finale
-        fn.run_finale()
+        self.finale.run_finale()
 
         # Set winner and final juror
-        self.winner = fn.winner
-        self.final_juror = fn.final_juror
+        self.winner = self.finale.winner
+        self.final_juror = self.finale.final_juror
 
