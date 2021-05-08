@@ -1,5 +1,9 @@
 import React from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+
+axios.defaults.xsrfCookieName ='csrftoken';
+axios.defaults.xsrfHeaderName ='X-CSRFToken';
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -21,12 +25,42 @@ const options = {
 class HomePage extends React.Component {
 
     constructor() {
-        super();
+        super()
 
+        this.state = {
+            houseguests: []
+        }
+
+        this.fetchHouseguests = this.fetchHouseguests.bind(this);
+    }
+
+    componentDidMount() {
+        this.fetchHouseguests()
+    }
+
+    fetchHouseguests() {
+
+        axios.get('/api/houseguests/', options)
+        .then((res) => this.setState({ houseguests: res.data }))
+        .catch((err) => console.log("Error: " + err))
 
     }
 
+    render() {
+        return(
+            <div className="home-page">
+            <Link to={{
+                pathname: '/create-game',
+                state: {
+                    houseguests: this.state.houseguests
+                }
+            }}>
+                New Game
+            </Link>
+        </div>
+        )
 
+    }
 
 
 }
