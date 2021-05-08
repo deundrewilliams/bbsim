@@ -47,6 +47,9 @@ class Finale(models.Model):
         self.jury.add(self.final_juror)
         self.finalists.remove(self.final_juror)
 
+        # Delete final eviction object
+        finalevc.delete()
+
         # Run voting process
         self.votes = self.run_voting()
         vote_count = self.count_votes(self.votes)
@@ -65,6 +68,7 @@ class Finale(models.Model):
         c.participants.set(players)
         c.run_competition()
         winner = c.winner
+        c.delete()
         return winner
 
     def run_voting(self):

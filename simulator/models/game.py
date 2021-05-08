@@ -8,7 +8,6 @@ class Game(models.Model):
     MAX_PLAYERS = 16
 
     players = models.ManyToManyField('Houseguest', related_name="game_players")
-    weeks = models.ManyToManyField('Week', default=[])
     winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True)
     jury = models.ManyToManyField('Houseguest', related_name="game_jury", default=[])
     prejury = models.ManyToManyField('Houseguest', related_name="game_prejury", default=[])
@@ -18,11 +17,11 @@ class Game(models.Model):
         data = {
             "id": self.id,
             "Players": [x.serialize() for x in list(self.players.all())],
-            "Weeks": [x.serialize() for x in list(self.weeks.all())],
+            "Weeks": self.weeks if self.completed else [],
             "Winner": self.winner.serialize() if self.completed else None,
             "Jury": [x.serialize() for x in list(self.jury.all())],
             "Prejury": [x.serialize() for x in list(self.prejury.all())],
-            "Finale": self.finale.serialize() if self.completed else None
+            "Finale": self.finale if self.completed else None
         }
         return data
 
@@ -48,6 +47,8 @@ class Game(models.Model):
 
         current_week = 1
 
+        self.weeks = []
+
         # While in house array is > 3
         while (len(self.in_house) > 3):
 
@@ -55,7 +56,7 @@ class Game(models.Model):
             week_data = self.run_week(current_week)
 
             # Add week to weeks array
-            self.weeks.add(week_data)
+            self.weeks.append(week_data)
 
             current_week += 1
 
@@ -139,7 +140,11 @@ class Game(models.Model):
         wk.initial_nominees.set(initial_noms)
         wk.final_nominees.set(final_noms)
 
-        return wk
+        week_data = wk.serialize()
+
+        wk.delete()
+
+        return week_data
 
     def run_hoh_competition(self, outgoing_hoh):
         """
@@ -255,15 +260,19 @@ class Game(models.Model):
     def run_finale(self):
 
         # Create finale
-        self.finale = Finale()
-        self.finale.save()
-        self.finale.finalists.set(self.in_house)
-        self.finale.jury.set(list(self.jury.all()))
+        fn = Finale()
+        fn.save()
+        fn.finalists.set(self.in_house)
+        fn.jury.set(list(self.jury.all()))
 
         # Run finale
-        self.finale.run_finale()
+        fn.run_finale()
 
         # Set winner and final juror
-        self.winner = self.finale.winner
-        self.final_juror = self.finale.final_juror
+        self.winner = fn.winner
+        self.final_juror = fn.final_juror
+
+        self.finale = fn.serialize()
+
+        fn.delete()
 
