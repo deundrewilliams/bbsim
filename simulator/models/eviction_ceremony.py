@@ -10,7 +10,7 @@ class EvictionCeremony(models.Model):
     nominees = models.ManyToManyField('Houseguest', related_name="noms_eviction")
     participants = models.ManyToManyField('Houseguest', related_name="parts_eviction")
     completed = models.BooleanField(default=False)
-    evicted = models.ForeignKey('Houseguest', on_delete=models.CASCADE, related_name="evicted_hg", default=1)
+    evicted = models.ForeignKey('Houseguest', on_delete=models.CASCADE, related_name="evicted_hg", blank=True, null=True)
 
     def serialize(self):
         data = {

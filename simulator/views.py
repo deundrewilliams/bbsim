@@ -66,14 +66,13 @@ def sim_game(request, *args, **kwargs):
 
     data = dict(request.data)
 
-    game_id = int(data["id"][0])
-
+    game_id = int(data["id"])
 
     try:
         obj = Game.objects.get(id=game_id)
         obj.run_game()
         obj.save()
-        # print(obj.serialize())
+        print(obj.serialize())
     except:
         return Response({}, status=400)
 

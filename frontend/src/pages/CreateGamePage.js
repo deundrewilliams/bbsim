@@ -31,29 +31,45 @@ class CreateGamePage extends React.Component {
         }
 
         this.postGame = this.postGame.bind(this);
+        this.setGame = this.setGame.bind(this);
     }
 
     componentDidMount() {
         this.postGame()
     }
 
-    postGame() {
+    setGame(data) {
+        console.log(data)
+        this.setState({
+            game_id: data.id,
+            game_info: data,
+            game_received: true
+        })
+    }
+
+    async postGame() {
 
         // console.log(this.props.location.state.houseguests)
         let hgs = this.props.location.state.houseguests.response
 
         let hg_ids = hgs.map(x => x.id)
 
-        axios.post('/api/create-game', {"houseguests": hg_ids}, options)
-        .then((res) => console.log(res))
+        await axios.post('/api/create-game', {"houseguests": hg_ids}, options)
+        .then((res) => this.setGame(res.data))
+        .catch((err) => console.log(err))
+
+        axios.post('/api/sim-game', {"id": this.state.game_id}, options)
+        .then((res) => console.log(res.data))
         .catch((err) => console.log(err))
 
     }
 
     render() {
+
+
         return(
             <div className="create-game-page">
-                Create Game Page
+                <button disabled={!this.state.game_received}>Simulate Game</button>
             </div>
         )
     }
