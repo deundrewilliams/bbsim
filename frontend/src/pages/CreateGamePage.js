@@ -1,5 +1,8 @@
 import React from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+
+import AppButton from '../components/AppButton';
 
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
@@ -42,8 +45,7 @@ class CreateGamePage extends React.Component {
         console.log(data)
         this.setState({
             game_id: data.id,
-            game_info: data,
-            game_received: true
+            game_info: data
         })
     }
 
@@ -58,9 +60,11 @@ class CreateGamePage extends React.Component {
         .then((res) => this.setGame(res.data))
         .catch((err) => console.log(err))
 
-        axios.post('/api/sim-game', {"id": this.state.game_id}, options)
-        .then((res) => console.log(res.data))
+        await axios.post('/api/sim-game', {"id": this.state.game_id}, options)
+        .then((res) => this.setGame(res.data))
         .catch((err) => console.log(err))
+
+        this.setState({ game_received: true })
 
     }
 
@@ -69,7 +73,15 @@ class CreateGamePage extends React.Component {
 
         return(
             <div className="create-game-page">
-                <button disabled={!this.state.game_received}>Simulate Game</button>
+                <Link to={{
+                    pathname: '/game',
+                    state: {
+                        info: this.state.game_info
+                    }
+                }}>
+                    <AppButton disabled={!this.state.game_received} text="Simulate Game"/>
+                </Link>
+
             </div>
         )
     }

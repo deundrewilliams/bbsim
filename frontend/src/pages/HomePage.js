@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+import AppButton from '../components/AppButton'
+
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
 
@@ -55,7 +57,7 @@ class HomePage extends React.Component {
                     houseguests: this.state.houseguests
                 }
             }}>
-                New Game
+                <AppButton text="New Game"/>
             </Link>
         </div>
         )

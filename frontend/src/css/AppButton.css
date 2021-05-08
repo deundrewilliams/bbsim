@@ -1,0 +1,18 @@
+.app-button {
+
+    font-family: 'Roboto', sans-serif;
+    font-size: 32px;
+
+    border: none;
+    padding: 25px;
+
+}
+
+.app-button:hover {
+    filter: brightness(90%);
+    cursor: pointer;;
+}
+
+.app-button:disabled {
+    filter: brightness(70%);
+}
