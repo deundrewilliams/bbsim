@@ -61,3 +61,21 @@ def create_game(request, *args, **kwargs):
 
     return Response(new_g.serialize())
 
+@api_view(['POST'])
+def sim_game(request, *args, **kwargs):
+
+    data = dict(request.data)
+
+    game_id = int(data["id"][0])
+
+
+    try:
+        obj = Game.objects.get(id=game_id)
+        obj.run_game()
+        obj.save()
+        # print(obj.serialize())
+    except:
+        return Response({}, status=400)
+
+    return Response(obj.serialize())
+

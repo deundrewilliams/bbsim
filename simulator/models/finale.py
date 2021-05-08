@@ -58,7 +58,7 @@ class Finale(models.Model):
 
     def run_final_hoh_comp(self, players):
 
-        print(players)
+        # print(players)
 
         c = Competition(comp_type=Competition.HOH)
         c.save()

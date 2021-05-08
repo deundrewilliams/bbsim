@@ -47,3 +47,24 @@ class GameViewTest(TestCase):
         g = Game.objects.get(id=rec_id)
 
         self.assertEqual(list(g.players.all()), hg_objs)
+
+    def test_sim_game(self):
+
+        hg_objs = []
+        hg_objs.append(HouseguestFactory(name="A"))
+        hg_objs.append(HouseguestFactory(name="B"))
+        hg_objs.append(HouseguestFactory(name="C"))
+        hg_objs.append(HouseguestFactory(name="D"))
+        hg_objs.append(HouseguestFactory(name="E"))
+        hg_objs.append(HouseguestFactory(name="F"))
+
+        g = GameFactory(players=hg_objs)
+
+        response = self.client.post(f'/api/sim-game', {"id": g.id})
+
+        updated_g = Game.objects.get(id=g.id)
+
+        # print(updated_g.serialize())
+
+        self.assertTrue(updated_g.completed)
+
