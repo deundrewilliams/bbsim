@@ -96,4 +96,4 @@ class Finale(models.Model):
 
     def determine_winner(self, vote_count):
 
-        return list(vote_count.keys())[0]
+        return list(vote_count.keys())[1]

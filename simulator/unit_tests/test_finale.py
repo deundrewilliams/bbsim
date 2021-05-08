@@ -88,8 +88,8 @@ class TestFinale:
         f = FinaleFactory(finalists=finalists, jury=jurors)
 
         vote_count = {
-            finalists[1]: 3,
-            finalists[0]: 2
+            finalists[0]: 2,
+            finalists[1]: 3
         }
 
         winner = f.determine_winner(vote_count)

@@ -66,7 +66,10 @@ def sim_game(request, *args, **kwargs):
 
     data = dict(request.data)
 
-    game_id = int(data["id"])
+    if (type(data["id"]) == list):
+        game_id = int(data["id"][0])
+    else:
+        game_id = int(data["id"])
 
     try:
         obj = Game.objects.get(id=game_id)
