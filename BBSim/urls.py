@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from simulator.views import get_all_houseguests
+from simulator.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/houseguests/', get_all_houseguests),
+    path('api/game/<int:id>', get_single_game),
+    path('api/create-game', create_game)
 ]
