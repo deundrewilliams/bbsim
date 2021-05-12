@@ -1,12 +1,11 @@
 import React from 'react'
-import CompWinPanel from '../components/CompWinPanel'
-import NomineePanel from '../components/NomineePanel'
+import FinaleView from '../components/FinaleView'
 import WeekView from '../components/WeekView'
 
 const mock_weeks = [
-    {"Week Number": 1, HOH: "Tera", POV: "Jedson", Evicted: "Jedson", "Final Nominees": ["Breydon", "Jedson"], "Initial Nominees": ["Beth", "Jedson"]},
-    {"Week Number": 2, HOH: "Breydon", POV: "Breydon", Evicted: "Beth", "Final Nominees": ["Beth", "Tera"], "Initial Nominees": ["Beth", "Tera"]},
-    {"Week Number": 3, HOH: "Tychon", POV: "Tera", Evicted: "Kiefer", "Final Nominees": ["Kiefer", "Breydon"], "Initial Nominees": ["Tera", "Kiefer"]}
+    {week_num: 1, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
+    {week_num: 2, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
+    {week_num: 3, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
 ]
 
 const mock_prejury = [
@@ -28,14 +27,14 @@ const mock_jury = [
 ]
 
 const mock_finale = {
-    "Final HOH": { id: 1, name: "Tychon" },
-    "Final Juror": { id: 1, name: "Tera" },
-    Finalists: [
+    final_hoh: { id: 1, name: "Tychon" },
+    final_juror: { id: 1, name: "Tera" },
+    finalists: [
         { id: 1, name: "Tychon" },
         { id: 1, name: "Breydon" }
     ],
-    Jury: mock_jury,
-    Votes: [
+    jury: mock_jury,
+    votes:
         {
             Victoria: "Tychon",
             Rohan: "Tychon",
@@ -44,17 +43,16 @@ const mock_finale = {
             Beth: "Tychon",
             Kiefer: "Tychon",
             Tera: "Breydon",
-        }
-    ],
-    Winner: { id: 1, name: "Tychon" }
+        },
+    winner: { id: 1, name: "Tychon" }
 }
 
 const mock_game = {
-    Finale: mock_finale,
-    Jury: mock_jury,
-    Prejury: mock_prejury,
-    Weeks: mock_weeks,
-    Winner: { id: 1, name: "Tychon" }
+    finale: mock_finale,
+    jury: mock_jury,
+    prejury: mock_prejury,
+    weeks: mock_weeks,
+    winner: { id: 1, name: "Tychon" }
 }
 
 class GamePage extends React.Component {
@@ -63,19 +61,50 @@ class GamePage extends React.Component {
         super(props)
 
         this.state = {
-            current_week: 1,
-            game_info:  mock_game // props.location.state.info
+            current_week: 0,
+            in_finale: false,
+            game_info:  mock_game, // props.location.state.info
+            complete: false,
         }
+
+        this.advanceSimulation = this.advanceSimulation.bind(this);
+
+    }
+
+    advanceSimulation() {
+
+        // If already at week limit, set finale on
+        if (this.state.current_week + 1 === this.state.game_info.weeks.length)
+        {
+            this.setState({ in_finale: true })
+        }
+
+        // Else
+        else
+        {
+            this.setState({ current_week: this.state.current_week + 1})
+        }
+
+
+
 
     }
 
     render() {
 
-        let noms = ["Josh", "Julie"]
+        if (this.state.in_finale) {
+
+            return(
+                <div className="game-page">
+                    <FinaleView info={this.state.game_info.finale}/>
+                </div>
+            )
+
+        }
 
         return(
             <div className="game-page">
-                <WeekView week={mock_weeks[0]} />
+                <WeekView week={mock_weeks[this.state.current_week]} handleClick={this.advanceSimulation}/>
             </div>
         )
     }
