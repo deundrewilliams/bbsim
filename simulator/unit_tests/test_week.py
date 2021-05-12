@@ -26,10 +26,10 @@ class TestWeek:
 
         data = w.serialize()
 
-        assert data['Week Number'] == 1
-        assert data['HOH'] == hgs[0].name
-        assert data['Initial Nominees'] == [hgs[1].name, hgs[2].name]
-        assert data['POV'] == hgs[3].name
-        assert data['Final Nominees'] == [hgs[1].name, hgs[4].name]
-        assert data['Evicted'] == hgs[4].name
+        assert data['week_num'] == 1
+        assert data['hoh'] == hgs[0].name
+        assert data['inoms'] == [hgs[1].name, hgs[2].name]
+        assert data['pov'] == hgs[3].name
+        assert data['fnoms'] == [hgs[1].name, hgs[4].name]
+        assert data['evicted'] == hgs[4].name
 

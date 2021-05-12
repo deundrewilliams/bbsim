@@ -13,12 +13,12 @@ class Week(models.Model):
 
     def serialize(self):
         data = {
-            "Week Number": self.number,
-            "HOH": self.hoh.name,
-            "Initial Nominees": [x.name for x in list(self.initial_nominees.all())],
-            "POV": self.pov.name,
-            "Final Nominees": [x.name for x in list(self.final_nominees.all())],
-            "Evicted": self.evicted.name,
+            "week_num": self.number,
+            "hoh": self.hoh.name,
+            "inoms": [x.name for x in list(self.initial_nominees.all())],
+            "pov": self.pov.name,
+            "fnoms": [x.name for x in list(self.final_nominees.all())],
+            "evicted": self.evicted.name,
         }
         return data
 

@@ -13,12 +13,12 @@ class Finale(models.Model):
 
     def serialize(self):
         data = {
-            "Finalists": [x.serialize() for x in list(self.finalists.all())],
-            "Jury": [x.serialize() for x in list(self.jury.all())],
-            "Winner": self.winner.serialize() if self.completed else None,
-            "Final HOH": self.final_hoh.serialize() if self.completed else None,
-            "Final Juror": self.final_juror.serialize() if self.completed else None,
-            "Votes": {k.name:self.votes[k].name for k in list(self.votes.keys())} if self.completed else None,
+            "finalists": [x.serialize() for x in list(self.finalists.all())],
+            "jury": [x.serialize() for x in list(self.jury.all())],
+            "winner": self.winner.serialize() if self.completed else None,
+            "final_hoh": self.final_hoh.serialize() if self.completed else None,
+            "final_juror": self.final_juror.serialize() if self.completed else None,
+            "votes": {k.name:self.votes[k].name for k in list(self.votes.keys())} if self.completed else None,
         }
         return data
 

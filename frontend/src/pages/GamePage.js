@@ -63,7 +63,7 @@ class GamePage extends React.Component {
         this.state = {
             current_week: 0,
             in_finale: false,
-            game_info:  mock_game, // props.location.state.info
+            game_info:  props.location.state.info,
             complete: false,
         }
 
@@ -92,6 +92,8 @@ class GamePage extends React.Component {
 
     render() {
 
+        // console.log(this.state.game_info)
+
         if (this.state.in_finale) {
 
             return(
@@ -104,7 +106,7 @@ class GamePage extends React.Component {
 
         return(
             <div className="game-page">
-                <WeekView week={mock_weeks[this.state.current_week]} handleClick={this.advanceSimulation}/>
+                <WeekView week={this.state.game_info.weeks[this.state.current_week]} handleClick={this.advanceSimulation}/>
             </div>
         )
     }

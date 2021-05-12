@@ -16,12 +16,12 @@ class Game(models.Model):
     def serialize(self):
         data = {
             "id": self.id,
-            "Players": [x.serialize() for x in list(self.players.all())],
-            "Weeks": self.weeks if self.completed else [],
-            "Winner": self.winner.serialize() if self.completed else None,
-            "Jury": [x.serialize() for x in list(self.jury.all())],
-            "Prejury": [x.serialize() for x in list(self.prejury.all())],
-            "Finale": self.finale if self.completed else None
+            "players": [x.serialize() for x in list(self.players.all())],
+            "weeks": self.weeks if self.completed else [],
+            "winner": self.winner.serialize() if self.completed else None,
+            "jury": [x.serialize() for x in list(self.jury.all())],
+            "prejury": [x.serialize() for x in list(self.prejury.all())],
+            "finale": self.finale if self.completed else None
         }
         return data
 

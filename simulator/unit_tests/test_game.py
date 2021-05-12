@@ -19,11 +19,11 @@ class TestGame:
         data = g.serialize()
 
         assert data['id'] == g.id
-        assert data['Players'] == [x.serialize() for x in hgs]
-        assert data['Weeks'] == []
-        assert data['Winner'] == None
-        assert data['Prejury'] == []
-        assert data['Jury'] == []
+        assert data['players'] == [x.serialize() for x in hgs]
+        assert data['weeks'] == []
+        assert data['winner'] == None
+        assert data['prejury'] == []
+        assert data['jury'] == []
 
     @pytest.mark.django_db
     def test_determine_jury_size(self):
@@ -202,13 +202,7 @@ class TestGame:
         monkeypatch.setattr(Game, "run_veto_competition", mock_run_veto_competition)
         monkeypatch.setattr(Game, "run_eviction", mock_run_eviction)
 
-        received_week = small_game.run_week(1)
-        assert received_week.number == 1
-        assert received_week.hoh == hgs[2]
-        assert list(received_week.initial_nominees.all()) == [hgs[1], hgs[3]]
-        assert received_week.pov == hgs[4]
-        assert list(received_week.final_nominees.all()) == [hgs[3], hgs[5]]
-        assert received_week.evicted == hgs[5]
+        _ = small_game.run_week(1)
         assert list(small_game.jury.all()) == [hgs[5]]
         assert hgs[5] not in small_game.in_house
 
@@ -254,13 +248,7 @@ class TestGame:
         monkeypatch.setattr(Game, "run_veto_competition", mock_run_veto_competition)
         monkeypatch.setattr(Game, "run_eviction", mock_run_eviction)
 
-        received_week = small_game.run_week(1)
-        assert received_week.number == 1
-        assert received_week.hoh == hgs[2]
-        assert list(received_week.initial_nominees.all()) == [hgs[1], hgs[3]]
-        assert received_week.pov == hgs[4]
-        assert list(received_week.final_nominees.all()) == [hgs[3], hgs[5]]
-        assert received_week.evicted == hgs[5]
+        _ = small_game.run_week(1)
         assert list(small_game.prejury.all()) == [hgs[5]]
 
     @pytest.mark.django_db
@@ -332,7 +320,7 @@ class TestGame:
         assert small_game.winner == hgs[0]
         assert small_game.final_juror == hgs[2]
 
-        saved_wks = list(small_game.weeks.all())
+        saved_wks = list(small_game.weeks)
 
         assert set(saved_wks) == set(wks)
 

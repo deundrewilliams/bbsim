@@ -20,12 +20,12 @@ class TestFinale:
 
         data = fn.serialize()
 
-        assert data['Finalists'] == [x.serialize() for x in finalists]
-        assert data['Jury'] == [x.serialize() for x in jury]
-        assert data['Winner'] == None
-        assert data['Final HOH'] == None
-        assert data['Final Juror'] == None
-        assert data['Votes'] == None
+        assert data['finalists'] == [x.serialize() for x in finalists]
+        assert data['jury'] == [x.serialize() for x in jury]
+        assert data['winner'] == None
+        assert data['final_hoh'] == None
+        assert data['final_juror'] == None
+        assert data['votes'] == None
 
     @pytest.mark.django_db
     def test_run_voting(self, monkeypatch):
