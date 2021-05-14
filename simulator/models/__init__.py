@@ -7,3 +7,4 @@ from .eviction_ceremony import *
 from .week import Week
 from .finale import Finale
 from .game import Game
+from .contestant import Contestant
