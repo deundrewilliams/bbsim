@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from ..models import Game
-from ..factories import GameFactory, HouseguestFactory
+from ..factories import GameFactory, HouseguestFactory, ContestantFactory
 
 class GameViewTest(TestCase):
 
@@ -28,25 +28,25 @@ class GameViewTest(TestCase):
 
     def test_create_game_valid(self):
 
-        hg_objs = []
-        hg_objs.append(HouseguestFactory(name="A"))
-        hg_objs.append(HouseguestFactory(name="B"))
-        hg_objs.append(HouseguestFactory(name="C"))
-        hg_objs.append(HouseguestFactory(name="D"))
-        hg_objs.append(HouseguestFactory(name="E"))
-        hg_objs.append(HouseguestFactory(name="F"))
+        contestant_objs = []
+        contestant_objs.append(ContestantFactory(name="A"))
+        contestant_objs.append(ContestantFactory(name="B"))
+        contestant_objs.append(ContestantFactory(name="C"))
+        contestant_objs.append(ContestantFactory(name="D"))
+        contestant_objs.append(ContestantFactory(name="E"))
+        contestant_objs.append(ContestantFactory(name="F"))
 
-        ids = [x.id for x in hg_objs]
+        ids = [x.id for x in contestant_objs]
 
-        response = self.client.post(f'/api/create-game', {"houseguests": ids})
-
-        # print(response.data)
+        response = self.client.post(f'/api/create-game', {"contestants": ids})
 
         rec_id = response.data['id']
 
         g = Game.objects.get(id=rec_id)
 
-        self.assertEqual(list(g.players.all()), hg_objs)
+        # Check that created houseguests have the same names as the contestants
+        for i in range(len(list(g.players.all()))):
+            self.assertEqual(list(g.players.all())[i].name, contestant_objs[i].name)
 
     def test_sim_game(self):
 

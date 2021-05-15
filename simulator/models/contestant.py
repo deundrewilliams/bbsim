@@ -9,6 +9,7 @@ class Contestant(models.Model):
 
     def serialize(self):
         return {
+            "id": self.id,
             "name": self.name,
         }
 

@@ -3,6 +3,9 @@ from django.contrib import admin
 from simulator.models import *
 
 # Register your models here.
+class ContestantAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
 class HouseguestAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
@@ -30,6 +33,7 @@ class VetoPlayersAdmin(admin.ModelAdmin):
 class WeekAdmin(admin.ModelAdmin):
     list_display = ('id',)
 
+admin.site.register(Contestant, ContestantAdmin)
 admin.site.register(Houseguest, HouseguestAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(Competition, CompAdmin)

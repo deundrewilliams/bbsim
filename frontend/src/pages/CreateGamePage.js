@@ -52,11 +52,11 @@ class CreateGamePage extends React.Component {
     async postGame() {
 
         // console.log(this.props.location.state.houseguests)
-        let hgs = this.props.location.state.houseguests.response
+        let cs = this.props.location.state.contestants.response
 
-        let hg_ids = hgs.map(x => x.id)
+        let c_ids = cs.map(x => x.id)
 
-        await axios.post('/api/create-game', {"houseguests": hg_ids}, options)
+        await axios.post('/api/create-game', {"contestants": c_ids}, options)
         .then((res) => this.setGame(res.data))
         .catch((err) => console.log(err))
 

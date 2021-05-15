@@ -34,7 +34,7 @@ def get_single_game(request, *args, **kwargs):
         game = obj.serialize()
         return Response(game)
     except:
-        return Response({}, status=400)
+        return Response({f"Unable to retrieve game with id: {requested_id}"}, status=400)
 
 @api_view(['POST'])
 def create_game(request, *args, **kwargs):
@@ -43,26 +43,30 @@ def create_game(request, *args, **kwargs):
 
     hgs = []
 
-    for hg_id in data['houseguests']:
-        hg_obj = Houseguest.objects.get(id=hg_id)
+    new_g = Game()
+    new_g.save()
 
-        if hg_obj:
-            hgs.append(hg_obj)
+    for c_id in data['contestants']:
+        print(f"Getting id of {c_id}")
+        c_obj = Contestant.objects.get(id=c_id)
+
+        if c_obj:
+            _ = c_obj.create_houseguest_clone(game_obj=new_g)
         else:
-            return Response({}, status=400)
+            new_g.delete()
+            return Response({f"Unable to create houseguest from contestant id: {c_id}"}, status=400)
 
-    try:
-        new_g = Game()
-        new_g.save()
-        new_g.players.set(hgs)
-    except:
-        new_g.delete()
-        return Response({}, status=400)
+        # if hg_obj:
+        #     hgs.append(hg_obj)
+        # else:
+        #     return Response({}, status=400)
 
     return Response(new_g.serialize())
 
 @api_view(['POST'])
 def sim_game(request, *args, **kwargs):
+
+    print(request.__dict__)
 
     data = dict(request.data)
 
@@ -71,16 +75,13 @@ def sim_game(request, *args, **kwargs):
     else:
         game_id = int(data["id"])
 
-    # obj = Game.objects.get(id=game_id)
-    # obj.run_game()
-    # obj.save()
 
     try:
         obj = Game.objects.get(id=game_id)
         obj.run_game()
         obj.save()
     except:
-        return Response({}, status=400)
+        return Response({"Unable to run game"}, status=400)
 
     return Response(obj.serialize())
 
