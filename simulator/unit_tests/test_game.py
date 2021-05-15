@@ -10,11 +10,12 @@ class TestGame:
     @pytest.mark.django_db
     def test_initialization(self):
 
-        hgs = HouseguestFactory.create_batch(12)
+        # hgs = HouseguestFactory.create_batch(12)
 
         g = Game()
         g.save()
-        g.players.set(hgs)
+
+        hgs = HouseguestFactory.create_batch(12, game=g)
 
         data = g.serialize()
 
@@ -28,9 +29,11 @@ class TestGame:
     @pytest.mark.django_db
     def test_determine_jury_size(self):
 
-        hgs = HouseguestFactory.create_batch(2)
 
-        g = GameFactory.create(players=hgs)
+
+        g = GameFactory.create()
+
+        hgs = HouseguestFactory.create_batch(2, game=g)
 
         assert g.determine_jury_size(5) == 3
         assert g.determine_jury_size(12) == 5
@@ -40,7 +43,7 @@ class TestGame:
     @pytest.mark.django_db
     def test_run_hoh_competition(self, small_game, monkeypatch):
 
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
 
         small_game.in_house = hgs
         small_game.current_hoh = None
@@ -60,7 +63,7 @@ class TestGame:
     @pytest.mark.django_db
     def test_run_nomination_ceremony(self, small_game, monkeypatch):
 
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
 
         # HOH: 2, Noms: 1, 3
         small_game.in_house = hgs
@@ -83,7 +86,7 @@ class TestGame:
     @pytest.mark.django_db
     def test_get_veto_players(self, small_game, monkeypatch):
 
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
 
         # HOH: 2, Noms: 1, 3
         small_game.in_house = hgs
@@ -99,7 +102,7 @@ class TestGame:
     def test_run_veto_competition(self, small_game, monkeypatch):
 
         # HOH: 2, Noms: 1, 3, POV: 4
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
         small_game.in_house = hgs
         small_game.current_hoh = hgs[2]
         small_game.current_nominees = [hgs[1], hgs[3]]
@@ -120,7 +123,7 @@ class TestGame:
     def test_run_veto_ceremony(self, small_game, monkeypatch):
 
         # HOH: 2, Noms: 1, 3, POV: 4 use on 1, Final: 3 and 5
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
 
         small_game.in_house = hgs
         small_game.current_hoh = hgs[2]
@@ -142,7 +145,7 @@ class TestGame:
     def test_run_eviction(self, small_game, monkeypatch):
 
         # HOH: 2, Noms: 1, 3, POV: 4 use on 1, Final: 3 and 5, 5 evicted
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
 
         small_game.in_house = hgs
         small_game.current_hoh = hgs[2]
@@ -164,7 +167,7 @@ class TestGame:
     def test_run_week_at_jury(self, small_game, monkeypatch):
 
         # HOH: 2, Noms: 1, 3, POV: 4 use on 1, Final: 3 and 5, 5 evicted
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
 
         small_game.in_house = hgs.copy()
         small_game.jury_began = False
@@ -210,7 +213,7 @@ class TestGame:
     def test_run_week_before_jury(self, small_game, monkeypatch):
 
         # HOH: 2, Noms: 1, 3, POV: 4 use on 1, Final: 3 and 5, 5 evicted
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
 
         small_game.in_house = hgs.copy()
         small_game.jury_began = False
@@ -254,7 +257,7 @@ class TestGame:
     @pytest.mark.django_db
     def test_run_finale(self, small_game, monkeypatch):
 
-        hgs = list(small_game.houseguest_set.all()).copy()
+        hgs = list(small_game.players.all()).copy()
 
         jury = hgs[:3]
         finalists = hgs[3:]
@@ -276,7 +279,7 @@ class TestGame:
     @pytest.mark.django_db
     def test_run_game(self, small_game, monkeypatch):
 
-        hgs = list(small_game.houseguest_set.all())
+        hgs = list(small_game.players.all())
         # Wk 1: HOH - 0, Nom - 2 and 3, POV - 4, Final 2 and 3, Evicted: 3
         # Wk 2: HOH - 2, Nom - 0 and 4, POV - 0, Final 4 and 1, Evicted: 4
         # Wk 3: HOH - 0, Nom - 2 and 1, POV - 2, Final 1 and 5, Evicted: 5
@@ -333,17 +336,18 @@ class TestGame:
     @pytest.mark.django_db
     def test_full(self):
 
-        hgs = []
-        hgs.append(HouseguestFactory(name="A"))
-        hgs.append(HouseguestFactory(name="B"))
-        hgs.append(HouseguestFactory(name="C"))
-        hgs.append(HouseguestFactory(name="D"))
-        hgs.append(HouseguestFactory(name="E"))
-        hgs.append(HouseguestFactory(name="F"))
-
         g = Game()
         g.save()
-        g.players.set(hgs)
+
+        hgs = []
+        hgs.append(HouseguestFactory(name="A", game=g))
+        hgs.append(HouseguestFactory(name="B", game=g))
+        hgs.append(HouseguestFactory(name="C", game=g))
+        hgs.append(HouseguestFactory(name="D", game=g))
+        hgs.append(HouseguestFactory(name="E", game=g))
+        hgs.append(HouseguestFactory(name="F", game=g))
+
+
 
         g.run_game()
 

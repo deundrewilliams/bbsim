@@ -12,9 +12,9 @@ class Contestant(models.Model):
             "name": self.name,
         }
 
-    def create_houseguest_clone(self):
+    def create_houseguest_clone(self, game_obj):
 
-        h = Houseguest(name=self.name)
+        h = Houseguest(name=self.name, game=game_obj)
         h.save()
 
         return h

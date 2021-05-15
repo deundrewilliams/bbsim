@@ -1,6 +1,6 @@
 import pytest
 from ..models import Contestant
-from ..factories import ContestantFactory, HouseguestFactory
+from ..factories import ContestantFactory, HouseguestFactory, GameFactory
 
 
 class TestContestant:
@@ -20,7 +20,9 @@ class TestContestant:
 
         c = ContestantFactory(name="Jimmy")
 
-        new_hg = c.create_houseguest_clone()
+        g = GameFactory()
+
+        new_hg = c.create_houseguest_clone(g)
 
         assert new_hg.name == c.name
 

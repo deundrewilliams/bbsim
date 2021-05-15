@@ -6,9 +6,11 @@ from simulator.factories import *
 @pytest.fixture
 def small_game():
 
-    hgs = HouseguestFactory.create_batch(6)
 
-    g = GameFactory.create(players=hgs)
+
+    g = GameFactory.create()
+
+    hgs = HouseguestFactory.create_batch(6, game=g)
 
 
     return g

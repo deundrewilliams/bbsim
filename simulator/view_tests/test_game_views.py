@@ -50,15 +50,17 @@ class GameViewTest(TestCase):
 
     def test_sim_game(self):
 
-        hg_objs = []
-        hg_objs.append(HouseguestFactory(name="A"))
-        hg_objs.append(HouseguestFactory(name="B"))
-        hg_objs.append(HouseguestFactory(name="C"))
-        hg_objs.append(HouseguestFactory(name="D"))
-        hg_objs.append(HouseguestFactory(name="E"))
-        hg_objs.append(HouseguestFactory(name="F"))
+        g = GameFactory()
 
-        g = GameFactory(players=hg_objs)
+        hg_objs = []
+        hg_objs.append(HouseguestFactory(name="A", game=g))
+        hg_objs.append(HouseguestFactory(name="B", game=g))
+        hg_objs.append(HouseguestFactory(name="C", game=g))
+        hg_objs.append(HouseguestFactory(name="D", game=g))
+        hg_objs.append(HouseguestFactory(name="E", game=g))
+        hg_objs.append(HouseguestFactory(name="F", game=g))
+
+
 
         response = self.client.post(f'/api/sim-game', {"id": g.id})
 

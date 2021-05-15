@@ -15,7 +15,7 @@ class Game(models.Model):
     def serialize(self):
         data = {
             "id": self.id,
-            "players": [x.serialize() for x in list(self.houseguest_set.all())],
+            "players": [x.serialize() for x in list(self.players.all())],
             "weeks": self.weeks if self.completed else [],
             "winner": self.winner.serialize() if self.completed else None,
             "jury": [x.serialize() for x in list(self.jury.all())],
@@ -27,7 +27,7 @@ class Game(models.Model):
     def run_game(self):
 
         # Validate number of players
-        num_players = len(list(self.houseguest_set.all()))
+        num_players = len(list(self.players.all()))
 
         # if (num_players < self.MIN_PLAYERS or num_players > self.MAX_PLAYERS):
         #     raise Exception("Too few/many players")
@@ -36,7 +36,7 @@ class Game(models.Model):
         self.jury_size = self.determine_jury_size(num_players)
 
         # Create in house array of players not evicted
-        self.in_house = [x for x in list(self.houseguest_set.all())]
+        self.in_house = [x for x in list(self.players.all())]
 
         # Initialize an 'in jury' var and set it to false
         self.jury_began = False

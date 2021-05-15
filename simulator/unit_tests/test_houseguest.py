@@ -1,13 +1,15 @@
 import pytest
 from ..models import Houseguest
-from ..factories import HouseguestFactory, ContestantFactory
+from ..factories import HouseguestFactory, ContestantFactory, GameFactory
 
 class TestHouseguest():
 
     @pytest.mark.django_db
     def test_initialization(self):
 
-        h = Houseguest(name="Jim")
+        g = GameFactory()
+
+        h = Houseguest(name="Jim", game=g)
         h.save()
 
         assert h.name == "Jim"
@@ -15,7 +17,9 @@ class TestHouseguest():
     @pytest.mark.django_db
     def test_serialization(self):
 
-        hg = HouseguestFactory(name="Mike", immune=True)
+        g = GameFactory()
+
+        hg = HouseguestFactory(name="Mike", immune=True, game=g)
 
         data = hg.serialize()
 
@@ -27,21 +31,25 @@ class TestHouseguest():
 
     @pytest.mark.django_db
     def test_nominate(self):
-        hg = HouseguestFactory(name="Jim")
+
+        g = GameFactory()
+        hg = HouseguestFactory(name="Jim", game=g)
         hg.nominate()
 
         assert hg.nomination_count == 1
 
     @pytest.mark.django_db
     def test_toggle_evicted(self):
-        hg = HouseguestFactory()
+        g = GameFactory()
+        hg = HouseguestFactory(game=g)
         hg.toggle_evicted(True)
 
         assert hg.evicted == True
 
     @pytest.mark.django_db
     def test_win_competition(self):
-        hg = HouseguestFactory()
+        g = GameFactory()
+        hg = HouseguestFactory(game=g)
         hg.win_competition()
 
         assert hg.competition_count == 1
