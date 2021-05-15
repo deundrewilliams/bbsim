@@ -1,6 +1,6 @@
 import pytest
 from ..models import Houseguest
-from ..factories import HouseguestFactory
+from ..factories import HouseguestFactory, ContestantFactory
 
 class TestHouseguest():
 
@@ -45,3 +45,11 @@ class TestHouseguest():
         hg.win_competition()
 
         assert hg.competition_count == 1
+
+    @pytest.mark.django_db
+    def test_unaffected(self):
+
+        c = ContestantFactory()
+
+
+        pass

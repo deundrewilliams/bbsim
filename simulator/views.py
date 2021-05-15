@@ -5,18 +5,18 @@ from rest_framework.response import Response
 
 # from .serializers import GameSerializer
 
-from .models import Houseguest, Game
+from .models import Houseguest, Game, Contestant
 
 
-# HOUSEGUESTS
+# CONTESTANTS
 
 @api_view(['GET'])
-def get_all_houseguests(request, *args, **kwargs):
-    hlist = Houseguest.objects.all()
-    houseguests = [x.serialize() for x in hlist]
+def get_all_contestants(request, *args, **kwargs):
+    clist = Contestant.objects.all()
+    contestants = [x.serialize() for x in clist]
 
     data = {
-        "response": houseguests
+        "response": contestants
     }
 
     return Response(data)

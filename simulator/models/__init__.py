@@ -1,5 +1,5 @@
-from .contestant import Contestant
 from .houseguest import *
+from .contestant import Contestant
 from .competition import *
 from .nom_ceremony import *
 from .veto_players import *

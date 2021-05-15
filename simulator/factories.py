@@ -8,12 +8,12 @@ fake = Faker()
 class ContestantFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Contestant
-    name = "Jim"
+    name = fake.name()
 
 class HouseguestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Houseguest
-    name = "Jim"
+    name = fake.name()
 
 class CompetitionFactory(factory.django.DjangoModelFactory):
     class Meta:
