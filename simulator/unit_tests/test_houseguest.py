@@ -54,10 +54,3 @@ class TestHouseguest():
 
         assert hg.competition_count == 1
 
-    @pytest.mark.django_db
-    def test_unaffected(self):
-
-        c = ContestantFactory()
-
-
-        pass
