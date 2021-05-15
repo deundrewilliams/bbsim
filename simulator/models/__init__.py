@@ -1,3 +1,4 @@
+from .contestant import Contestant
 from .houseguest import *
 from .competition import *
 from .nom_ceremony import *
@@ -7,4 +8,4 @@ from .eviction_ceremony import *
 from .week import Week
 from .finale import Finale
 from .game import Game
-from .contestant import Contestant
+

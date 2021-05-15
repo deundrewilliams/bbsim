@@ -3,7 +3,12 @@ from faker import Faker
 
 import factory
 
-# fake = Faker()
+fake = Faker()
+
+class ContestantFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Contestant
+    name = "Jim"
 
 class HouseguestFactory(factory.django.DjangoModelFactory):
     class Meta:
