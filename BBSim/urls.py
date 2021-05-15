@@ -19,7 +19,7 @@ from simulator.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/houseguests/', get_all_houseguests),
+    path('api/contestants/', get_all_contestants),
     path('api/game/<int:id>', get_single_game),
     path('api/create-game', create_game),
     path('api/sim-game', sim_game)

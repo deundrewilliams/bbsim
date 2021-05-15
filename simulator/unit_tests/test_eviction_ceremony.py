@@ -1,6 +1,6 @@
 import pytest
 
-from ..factories import HouseguestFactory, EvictionCeremonyFactory
+from ..factories import HouseguestFactory, EvictionCeremonyFactory, GameFactory
 from ..models import EvictionCeremony
 
 class TestEvictionCeremony:

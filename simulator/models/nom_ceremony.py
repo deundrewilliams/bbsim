@@ -1,5 +1,5 @@
 from django.db import models
-from . import Houseguest
+# from . import Houseguest
 import random
 
 NUM_NOMINEES = 2

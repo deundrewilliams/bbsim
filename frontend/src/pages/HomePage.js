@@ -30,20 +30,20 @@ class HomePage extends React.Component {
         super()
 
         this.state = {
-            houseguests: []
+            contestants: []
         }
 
-        this.fetchHouseguests = this.fetchHouseguests.bind(this);
+        this.fetchContestants = this.fetchContestants.bind(this);
     }
 
     componentDidMount() {
-        this.fetchHouseguests()
+        this.fetchContestants()
     }
 
-    fetchHouseguests() {
+    fetchContestants() {
 
-        axios.get('/api/houseguests/', options)
-        .then((res) => this.setState({ houseguests: res.data }))
+        axios.get('/api/contestants/', options)
+        .then((res) => this.setState({ contestants: res.data }))
         .catch((err) => console.log("Error: " + err))
 
     }
@@ -54,7 +54,7 @@ class HomePage extends React.Component {
             <Link to={{
                 pathname: '/create-game',
                 state: {
-                    houseguests: this.state.houseguests
+                    contestants: this.state.contestants
                 }
             }}>
                 <AppButton text="New Game"/>

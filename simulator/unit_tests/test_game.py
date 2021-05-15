@@ -10,11 +10,12 @@ class TestGame:
     @pytest.mark.django_db
     def test_initialization(self):
 
-        hgs = HouseguestFactory.create_batch(12)
+        # hgs = HouseguestFactory.create_batch(12)
 
         g = Game()
         g.save()
-        g.players.set(hgs)
+
+        hgs = HouseguestFactory.create_batch(12, game=g)
 
         data = g.serialize()
 
@@ -28,9 +29,11 @@ class TestGame:
     @pytest.mark.django_db
     def test_determine_jury_size(self):
 
-        hgs = HouseguestFactory.create_batch(2)
 
-        g = GameFactory.create(players=hgs)
+
+        g = GameFactory.create()
+
+        hgs = HouseguestFactory.create_batch(2, game=g)
 
         assert g.determine_jury_size(5) == 3
         assert g.determine_jury_size(12) == 5
@@ -333,17 +336,18 @@ class TestGame:
     @pytest.mark.django_db
     def test_full(self):
 
-        hgs = []
-        hgs.append(HouseguestFactory(name="A"))
-        hgs.append(HouseguestFactory(name="B"))
-        hgs.append(HouseguestFactory(name="C"))
-        hgs.append(HouseguestFactory(name="D"))
-        hgs.append(HouseguestFactory(name="E"))
-        hgs.append(HouseguestFactory(name="F"))
-
         g = Game()
         g.save()
-        g.players.set(hgs)
+
+        hgs = []
+        hgs.append(HouseguestFactory(name="A", game=g))
+        hgs.append(HouseguestFactory(name="B", game=g))
+        hgs.append(HouseguestFactory(name="C", game=g))
+        hgs.append(HouseguestFactory(name="D", game=g))
+        hgs.append(HouseguestFactory(name="E", game=g))
+        hgs.append(HouseguestFactory(name="F", game=g))
+
+
 
         g.run_game()
 

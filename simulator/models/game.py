@@ -1,14 +1,13 @@
 from django.db import models
 
-from ..models import *
+from ..models import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony, Week, Finale
 
 class Game(models.Model):
 
     MIN_PLAYERS = 5
     MAX_PLAYERS = 16
 
-    players = models.ManyToManyField('Houseguest', related_name="game_players")
-    winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True)
+    winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True, related_name="game_winner")
     jury = models.ManyToManyField('Houseguest', related_name="game_jury", default=[])
     prejury = models.ManyToManyField('Houseguest', related_name="game_prejury", default=[])
     completed = models.BooleanField(default=False)

@@ -3,12 +3,22 @@ from faker import Faker
 
 import factory
 
-# fake = Faker()
+fake = Faker()
+
+class ContestantFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Contestant
+    name = fake.name()
+
+class GameFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Game
 
 class HouseguestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Houseguest
-    name = "Jim"
+    name = fake.name()
+    game = factory.SubFactory(GameFactory)
 
 class CompetitionFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -154,14 +164,4 @@ class FinaleFactory(factory.django.DjangoModelFactory):
             for juror in extracted:
                 self.jury.add(juror)
 
-class GameFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Game
 
-    @factory.post_generation
-    def players(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for player in extracted:
-                self.players.add(player)

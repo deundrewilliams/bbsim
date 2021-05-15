@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..models import Houseguest, Competition, EvictionCeremony
+from ..models import Competition, EvictionCeremony
 
 import random
 
