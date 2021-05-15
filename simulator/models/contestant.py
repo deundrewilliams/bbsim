@@ -1,6 +1,6 @@
 from django.db import models
 
-from . import Houseguest
+from .houseguest import Houseguest
 
 
 class Contestant(models.Model):

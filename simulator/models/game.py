@@ -1,14 +1,13 @@
 from django.db import models
 
-from ..models import *
+from ..models import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony, Week, Finale
 
 class Game(models.Model):
 
     MIN_PLAYERS = 5
     MAX_PLAYERS = 16
 
-    players = models.ManyToManyField('Houseguest', related_name="game_players")
-    winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True)
+    winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True, related_name="game_winner")
     jury = models.ManyToManyField('Houseguest', related_name="game_jury", default=[])
     prejury = models.ManyToManyField('Houseguest', related_name="game_prejury", default=[])
     completed = models.BooleanField(default=False)
@@ -16,7 +15,7 @@ class Game(models.Model):
     def serialize(self):
         data = {
             "id": self.id,
-            "players": [x.serialize() for x in list(self.players.all())],
+            "players": [x.serialize() for x in list(self.houseguest_set.all())],
             "weeks": self.weeks if self.completed else [],
             "winner": self.winner.serialize() if self.completed else None,
             "jury": [x.serialize() for x in list(self.jury.all())],
@@ -28,7 +27,7 @@ class Game(models.Model):
     def run_game(self):
 
         # Validate number of players
-        num_players = len(list(self.players.all()))
+        num_players = len(list(self.houseguest_set.all()))
 
         # if (num_players < self.MIN_PLAYERS or num_players > self.MAX_PLAYERS):
         #     raise Exception("Too few/many players")
@@ -37,7 +36,7 @@ class Game(models.Model):
         self.jury_size = self.determine_jury_size(num_players)
 
         # Create in house array of players not evicted
-        self.in_house = [x for x in list(self.players.all())]
+        self.in_house = [x for x in list(self.houseguest_set.all())]
 
         # Initialize an 'in jury' var and set it to false
         self.jury_began = False
