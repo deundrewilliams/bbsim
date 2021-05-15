@@ -50,7 +50,8 @@ class CreateGamePage extends React.Component {
             game_id: undefined,
             game_created: false,
             game_received: false,
-            picked_contestants: new Set()
+            picked_contestants: new Set(),
+            num_picked: 0
         }
 
         this.simGame = this.simGame.bind(this);
@@ -74,6 +75,7 @@ class CreateGamePage extends React.Component {
         if (this.state.picked_contestants.has(contestant_id))
         {
             this.state.picked_contestants.delete(contestant_id);
+
             clicked.style.backgroundColor = "#f5f5f5";
         }
         else
@@ -83,6 +85,8 @@ class CreateGamePage extends React.Component {
         }
 
         console.log(this.state.picked_contestants)
+        this.setState({ num_picked: this.state.picked_contestants.size})
+        // console.log(this.state.picked_contestants.size)
 
     }
 
@@ -112,6 +116,8 @@ class CreateGamePage extends React.Component {
 
         // this.props.location.state.contestants.response
 
+
+
         if (!this.state.game_created)
         {
             return(
@@ -120,7 +126,11 @@ class CreateGamePage extends React.Component {
                         contestants={this.props.location.state.contestants.response}
                         clickAction={this.handleContestantClick}
                     />
-                    <AppButton text="Create Game" clickAction={this.createGame}/>
+                    <AppButton
+                        text="Create Game"
+                        clickAction={this.createGame}
+                        disabled={this.state.num_picked < 5 || this.state.num_picked > 16}
+                    />
                 </div>
             )
 
