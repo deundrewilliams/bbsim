@@ -47,7 +47,7 @@ def create_game(request, *args, **kwargs):
     new_g.save()
 
     for c_id in data['contestants']:
-        print(f"Getting id of {c_id}")
+        # print(f"Getting id of {c_id}")
         c_obj = Contestant.objects.get(id=c_id)
 
         if c_obj:
@@ -66,7 +66,7 @@ def create_game(request, *args, **kwargs):
 @api_view(['POST'])
 def sim_game(request, *args, **kwargs):
 
-    print(request.__dict__)
+    # print(request.__dict__)
 
     data = dict(request.data)
 

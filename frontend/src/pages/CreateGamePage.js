@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 import AppButton from '../components/AppButton';
+import ContestantView from '../components/ContestantView'
 
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
@@ -23,6 +24,23 @@ const options = {
     headers: {"X-CSRFToken": getCookie('csrftoken')}
 }
 
+// const mock_contestants = [
+//     { id: 14, name: "Julie" },
+//     { id: 13, name: "Josh" },
+//     { id: 12, name: "Latoya" },
+//     { id: 11, name: "Kyle" },
+//     { id: 10, name: "Austin" },
+//     { id: 9, name: "Victoria"},
+//     { id: 8, name: "Rohan"},
+//     { id: 7, name: "Tina"},
+//     { id: 6, name: "Jedson"},
+//     { id: 5, name: "Beth"},
+//     { id: 4, name: "Kiefer"},
+//     { id: 3, name: "Tera"},
+//     { id: 2, name: "Breydon"},
+//     { id: 1, name: "Tychon"},
+// ]
+
 class CreateGamePage extends React.Component {
 
     constructor(props) {
@@ -30,15 +48,15 @@ class CreateGamePage extends React.Component {
 
         this.state = {
             game_id: undefined,
+            game_created: false,
             game_received: false,
+            picked_contestants: new Set()
         }
 
-        this.postGame = this.postGame.bind(this);
+        this.simGame = this.simGame.bind(this);
         this.setGame = this.setGame.bind(this);
-    }
-
-    componentDidMount() {
-        this.postGame()
+        this.createGame = this.createGame.bind(this);
+        this.handleContestantClick = this.handleContestantClick.bind(this);
     }
 
     setGame(data) {
@@ -49,16 +67,38 @@ class CreateGamePage extends React.Component {
         })
     }
 
-    async postGame() {
+    handleContestantClick(contestant_id) {
 
-        // console.log(this.props.location.state.houseguests)
-        let cs = this.props.location.state.contestants.response
+        const clicked = document.getElementById(contestant_id + "-contestant-panel")
 
-        let c_ids = cs.map(x => x.id)
+        if (this.state.picked_contestants.has(contestant_id))
+        {
+            this.state.picked_contestants.delete(contestant_id);
+            clicked.style.backgroundColor = "#f5f5f5";
+        }
+        else
+        {
+            this.state.picked_contestants.add(contestant_id);
+            clicked.style.backgroundColor = "green";
+        }
 
-        await axios.post('/api/create-game', {"contestants": c_ids}, options)
+        console.log(this.state.picked_contestants)
+
+    }
+
+    async createGame() {
+
+        await axios.post('/api/create-game', {"contestants": Array.from(this.state.picked_contestants)}, options)
         .then((res) => this.setGame(res.data))
         .catch((err) => console.log(err))
+
+        this.setState({ game_created: true })
+
+        this.simGame()
+
+    }
+
+    async simGame() {
 
         await axios.post('/api/sim-game', {"id": this.state.game_id}, options)
         .then((res) => this.setGame(res.data))
@@ -70,20 +110,40 @@ class CreateGamePage extends React.Component {
 
     render() {
 
+        // this.props.location.state.contestants.response
 
-        return(
-            <div className="create-game-page">
-                <Link to={{
-                    pathname: '/game',
-                    state: {
-                        info: this.state.game_info
-                    }
-                }}>
-                    <AppButton disabled={!this.state.game_received} text="Simulate Game"/>
-                </Link>
+        if (!this.state.game_created)
+        {
+            return(
+                <div className="create-game-page">
+                    <ContestantView
+                        contestants={this.props.location.state.contestants.response}
+                        clickAction={this.handleContestantClick}
+                    />
+                    <AppButton text="Create Game" clickAction={this.createGame}/>
+                </div>
+            )
 
-            </div>
-        )
+        }
+
+        else
+        {
+            return(
+                <div className="create-game-page">
+                    <Link to={{
+                        pathname: '/game',
+                        state: {
+                            info: this.state.game_info
+                        }
+                    }}>
+                        <AppButton disabled={!this.state.game_received} text="Simulate Game"/>
+                    </Link>
+
+                </div>
+            )
+        }
+
+
     }
 
 }

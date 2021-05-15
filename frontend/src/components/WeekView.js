@@ -8,7 +8,7 @@ export default function WeekView(props) {
 
     const { week, handleClick } = props;
 
-    console.log(week)
+    // console.log(week)
 
     return(
         <div className="week-view">
