@@ -1,0 +1,4 @@
+.contestant-view {
+    display: flexbox;
+    flex-wrap: wrap;
+}

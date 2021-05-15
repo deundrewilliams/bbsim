@@ -1,0 +1,13 @@
+.contestant-panel {
+    background-color: cornflowerblue;
+    font-family: 'Roboto', sans-serif;
+    display: inline-block;
+    font-size: 32px;
+    font-weight: 600;
+    padding: 15px 20px;
+}
+
+.contestant-panel:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+}

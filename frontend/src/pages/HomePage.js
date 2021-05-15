@@ -2,7 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-import AppButton from '../components/AppButton'
+import AppButton from '../components/AppButton';
+import ContestantView from '../components/ContestantView'
 
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
@@ -22,6 +23,8 @@ function getCookie(cname) {
 const options = {
     headers: {"X-CSRFToken": getCookie('csrftoken')}
 }
+
+const contestants = ["Ty", "Brey", "Tera", "Kiefer", "Jed", "Beth"]
 
 
 class HomePage extends React.Component {
@@ -51,14 +54,15 @@ class HomePage extends React.Component {
     render() {
         return(
             <div className="home-page">
-            <Link to={{
-                pathname: '/create-game',
-                state: {
-                    contestants: this.state.contestants
-                }
-            }}>
-                <AppButton text="New Game"/>
-            </Link>
+                <ContestantView contestants={contestants} />
+                <Link to={{
+                    pathname: '/create-game',
+                    state: {
+                        contestants: this.state.contestants
+                    }
+                }}>
+                    <AppButton text="New Game"/>
+                </Link>
         </div>
         )
 
