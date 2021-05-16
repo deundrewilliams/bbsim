@@ -1,2 +1,6 @@
 .env
 _testing.py
+db.sqlite3
+__pychache__
+.pytest_cacher
+.vscode
