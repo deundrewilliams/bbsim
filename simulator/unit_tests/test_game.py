@@ -200,6 +200,7 @@ class TestGame:
         def mock_run_eviction(obj):
             obj.evicted = hgs[5]
             obj.eviction_votes = [2, 1]
+            obj.tied = False
 
 
         monkeypatch.setattr(Game, "run_hoh_competition", mock_run_hoh_competition)
@@ -247,6 +248,7 @@ class TestGame:
         def mock_run_eviction(obj):
             obj.evicted = hgs[5]
             obj.eviction_votes = [2, 1]
+            obj.tied = True
 
 
         monkeypatch.setattr(Game, "run_hoh_competition", mock_run_hoh_competition)
@@ -260,6 +262,7 @@ class TestGame:
 
         assert w_data["hoh"] == hgs[2].name
         assert w_data["vote_count"] == [2, 1]
+        assert w_data["tied"]
 
     @pytest.mark.django_db
     def test_run_finale(self, small_game, monkeypatch):

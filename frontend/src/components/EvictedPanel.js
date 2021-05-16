@@ -2,7 +2,7 @@ import '../css/EvictedPanel.css';
 
 export default function EvictedPanel(props) {
 
-    const { name, votecount } = props;
+    const { name, votecount, tied } = props;
 
     let votestring = ""
 
@@ -11,6 +11,10 @@ export default function EvictedPanel(props) {
         if (votecount.length > 1)
         {
             votestring = "(" + votecount[0] + " - " + votecount[1] + ")"
+
+            if (tied) {
+                votestring += "*"
+            }
         }
 
         else
