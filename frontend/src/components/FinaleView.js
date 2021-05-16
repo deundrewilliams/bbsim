@@ -3,6 +3,7 @@ import EvictedPanel from "./EvictedPanel";
 import FinaleVote from "./FinaleVote";
 import AppButton from './AppButton';
 import { useState } from 'react';
+import { Link } from 'react-router-dom'
 
 export default function FinaleView(props) {
 
@@ -41,6 +42,9 @@ export default function FinaleView(props) {
             <div className="finale-view">
                 <div className="winner-panel">
                     The winner is {info.winner.name}
+                    <Link to="/">
+                        <AppButton text="Finish" />
+                    </Link>
                 </div>
             </div>
         )
