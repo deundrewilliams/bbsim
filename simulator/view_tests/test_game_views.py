@@ -60,13 +60,10 @@ class GameViewTest(TestCase):
         hg_objs.append(HouseguestFactory(name="E", game=g))
         hg_objs.append(HouseguestFactory(name="F", game=g))
 
-
-
         response = self.client.post(f'/api/sim-game', {"id": g.id})
 
         updated_g = Game.objects.get(id=g.id)
 
-        # print(updated_g.serialize())
 
         self.assertTrue(updated_g.completed)
 

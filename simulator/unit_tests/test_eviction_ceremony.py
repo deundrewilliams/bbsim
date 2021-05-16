@@ -165,8 +165,10 @@ class TestEvictionCeremony:
 
         evc.run_ceremony()
 
-        assert evc.votes == count
+        assert evc.vote_count_objs == count
         assert evc.evicted == hgs[2]
+        assert evc.tied == False
+        assert evc.vote_count == [2, 1]
 
     @pytest.mark.django_db
     def test_run_ceremony_tie(self, monkeypatch):
@@ -204,5 +206,7 @@ class TestEvictionCeremony:
 
         evc.run_ceremony()
 
-        assert evc.votes == count
+        assert evc.vote_count_objs == count
+        assert evc.tied
         assert evc.evicted == hgs[1]
+        assert evc.vote_count == [2, 1]
