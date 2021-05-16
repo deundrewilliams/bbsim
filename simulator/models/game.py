@@ -134,7 +134,7 @@ class Game(models.Model):
         else:
             self.prejury.add(self.evicted)
 
-        wk = Week(number=week_number, hoh=self.current_hoh, pov=self.pov_holder, evicted=self.evicted)
+        wk = Week(number=week_number, hoh=self.current_hoh, pov=self.pov_holder, evicted=self.evicted, vote_count=self.eviction_votes)
         wk.save()
         wk.initial_nominees.set(initial_noms)
         wk.final_nominees.set(final_noms)
@@ -253,6 +253,10 @@ class Game(models.Model):
         # Set evicted and update their evicted status
         self.evicted = evc.evicted
         self.evicted.toggle_evicted(True)
+
+        print(evc.serialize())
+
+        self.eviction_votes = evc.vote_count
 
         evc.delete()
 

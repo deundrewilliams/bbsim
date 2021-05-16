@@ -17,7 +17,7 @@ class EvictionCeremony(models.Model):
             "HOH": self.hoh.serialize(),
             "Nominees": [x.serialize() for x in list(self.nominees.all())],
             "Evicted": self.evicted.serialize() if self.completed else None,
-            "Votes": self.votes if self.completed else None
+            "Votes": self.vote_count if self.completed else None
         }
         return data
 
@@ -30,26 +30,31 @@ class EvictionCeremony(models.Model):
         votes = self.run_voting(voters)
 
         # Get count of votes
-        vote_count = self.count_votes(votes)
+        self.vote_count_objs = self.count_votes(votes)
 
         # Get evicted player
-        evicted = self.get_evicted(vote_count)
+        evicted = self.get_evicted(self.vote_count_objs)
 
         # If tied, go to tiebreaker
         if (len(evicted) > 1):
             evictee = self.tiebreaker(evicted)
-            vote_count[evictee] += 1
+            self.vote_count_objs[evictee] += 1
         elif (len(evicted) == 0): # Final Eviction
             evictee = self.tiebreaker(list(self.nominees.all()))
-            vote_count[evictee] = 1
+            self.vote_count_objs[evictee] = 1
         else:
             evictee = evicted[0]
 
-        # Set votes
-        self.votes = vote_count
+        vote_count_int = list(self.vote_count_objs.values())
+        vote_count_int.sort(reverse=True)
+
+        # Set vote count
+        self.vote_count = vote_count_int
 
         # Set evicted player
         self.evicted = evictee
+
+        self.completed = True
 
     def run_voting(self, voters):
 

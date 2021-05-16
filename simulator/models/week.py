@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import int_list_validator
 
 # from ..models import Houseguest
 
@@ -10,6 +11,7 @@ class Week(models.Model):
     pov = models.ForeignKey('Houseguest', on_delete=models.CASCADE, related_name="week_pov")
     final_nominees = models.ManyToManyField('Houseguest', related_name="week_final_noms")
     evicted = models.ForeignKey('Houseguest', on_delete=models.CASCADE, related_name="week_evicted")
+    vote_count = models.CharField(validators=[int_list_validator], max_length=5)
 
     def serialize(self):
         data = {
@@ -19,6 +21,7 @@ class Week(models.Model):
             "pov": self.pov.name,
             "fnoms": [x.name for x in list(self.final_nominees.all())],
             "evicted": self.evicted.name,
+            "vote_count": self.vote_count,
         }
         return data
 
