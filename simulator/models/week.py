@@ -12,6 +12,7 @@ class Week(models.Model):
     final_nominees = models.ManyToManyField('Houseguest', related_name="week_final_noms")
     evicted = models.ForeignKey('Houseguest', on_delete=models.CASCADE, related_name="week_evicted")
     vote_count = models.CharField(validators=[int_list_validator], max_length=5)
+    tied = models.BooleanField(default=False)
 
     def serialize(self):
         data = {
@@ -22,6 +23,7 @@ class Week(models.Model):
             "fnoms": [x.name for x in list(self.final_nominees.all())],
             "evicted": self.evicted.name,
             "vote_count": self.vote_count,
+            "tied": self.tied,
         }
         return data
 

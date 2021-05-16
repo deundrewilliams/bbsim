@@ -12,7 +12,7 @@ class TestWeek:
         # HOH: 0, Init Noms: 1, 2, POV: 3, Final Noms: 1, 4, Evicted: 4
         hgs = HouseguestFactory.create_batch(6)
 
-        w = Week(number=1, hoh=hgs[0], pov=hgs[3], evicted=hgs[4], vote_count=[3, 2])
+        w = Week(number=1, hoh=hgs[0], pov=hgs[3], evicted=hgs[4], vote_count=[3, 2], tied=True)
         w.save()
 
         hgs[2].name = "Mike"
@@ -33,4 +33,5 @@ class TestWeek:
         assert data['fnoms'] == [hgs[1].name, hgs[4].name]
         assert data['evicted'] == hgs[4].name
         assert data['vote_count'] == [3, 2]
+        assert data['tied']
 

@@ -35,10 +35,14 @@ class EvictionCeremony(models.Model):
         # Get evicted player
         evicted = self.get_evicted(self.vote_count_objs)
 
+        # Initialize tied to false
+        self.tied = False
+
         # If tied, go to tiebreaker
         if (len(evicted) > 1):
             evictee = self.tiebreaker(evicted)
             self.vote_count_objs[evictee] += 1
+            self.tied = True
         elif (len(evicted) == 0): # Final Eviction
             evictee = self.tiebreaker(list(self.nominees.all()))
             self.vote_count_objs[evictee] = 1

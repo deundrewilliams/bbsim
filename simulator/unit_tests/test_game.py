@@ -157,6 +157,7 @@ class TestGame:
             assert obj.hoh == hgs[2]
             obj.evicted = hgs[5]
             obj.vote_count = [2, 1]
+            obj.tied = False
 
         monkeypatch.setattr(EvictionCeremony, "run_ceremony", mock_run_ceremony)
 

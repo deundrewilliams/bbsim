@@ -254,9 +254,10 @@ class Game(models.Model):
         self.evicted = evc.evicted
         self.evicted.toggle_evicted(True)
 
-        print(evc.serialize())
+        # print(evc.serialize())
 
         self.eviction_votes = evc.vote_count
+        self.tied = evc.tied
 
         evc.delete()
 
