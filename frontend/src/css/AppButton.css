@@ -10,9 +10,10 @@
 
 .app-button:hover {
     filter: brightness(90%);
-    cursor: pointer;;
+    cursor: pointer;
 }
 
 .app-button:disabled {
     filter: brightness(70%);
+    cursor: default;
 }
