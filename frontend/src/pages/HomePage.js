@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-import AppButton from '../components/AppButton'
+import AppButton from '../components/AppButton';
 
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
@@ -51,14 +51,14 @@ class HomePage extends React.Component {
     render() {
         return(
             <div className="home-page">
-            <Link to={{
-                pathname: '/create-game',
-                state: {
-                    contestants: this.state.contestants
-                }
-            }}>
-                <AppButton text="New Game"/>
-            </Link>
+                <Link to={{
+                    pathname: '/create-game',
+                    state: {
+                        contestants: this.state.contestants
+                    }
+                }}>
+                    <AppButton text="New Game"/>
+                </Link>
         </div>
         )
 
