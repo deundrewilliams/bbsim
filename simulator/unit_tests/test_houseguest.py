@@ -78,7 +78,7 @@ class TestHouseguest():
 
         def mock_randint(lower, upper):
 
-            assert lower == -5
+            assert lower == -10
             assert upper == 0
 
             return -2
@@ -104,7 +104,7 @@ class TestHouseguest():
         def mock_randint(lower, upper):
 
             assert lower == 0
-            assert upper == 5
+            assert upper == 10
 
             return 3
 
@@ -125,8 +125,8 @@ class TestHouseguest():
 
         def mock_randint(lower, upper):
 
-            assert lower == -2
-            assert upper == 2
+            assert lower == -5
+            assert upper == 5
 
             return 1
 
