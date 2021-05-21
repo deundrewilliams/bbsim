@@ -1,6 +1,6 @@
 from django.db import models
 
-from .houseguest import Houseguest
+# from .houseguest import Houseguest
 
 import random
 

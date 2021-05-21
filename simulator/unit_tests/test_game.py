@@ -155,7 +155,7 @@ class TestGame:
         small_game.current_nominees = [hgs[3], hgs[5]]
         small_game.save()
 
-        def mock_run_ceremony(obj, a):
+        def mock_run_ceremony(obj):
             assert list(obj.nominees.all()) == [hgs[3], hgs[5]]
             assert obj.hoh == hgs[2]
             obj.evicted = hgs[5]

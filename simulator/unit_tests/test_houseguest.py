@@ -1,6 +1,6 @@
 import pytest
 import random
-from ..models import Houseguest
+from ..models import Houseguest, Relationship
 from ..factories import HouseguestFactory, ContestantFactory, GameFactory
 
 class TestHouseguest():
@@ -64,14 +64,14 @@ class TestHouseguest():
         for hg in hgs:
             hg.initialize_relationships(hgs)
 
-        expected_rels = {k:Houseguest.NEUTRAL_RELATIONSHIP for k in hgs if k != hgs[0]}
-
-        assert expected_rels == hgs[0].relationships
+        assert len(list(hgs[0].relationships.all())) == 5
 
     @pytest.mark.django_db
     def test_impact_relationship_negative(self, monkeypatch):
 
-        hgs = HouseguestFactory.create_batch(2)
+        hgs = []
+        hgs.append(HouseguestFactory(name="Mike"))
+        hgs.append(HouseguestFactory(name="John"))
 
         for hg in hgs:
             hg.initialize_relationships(hgs)
@@ -87,8 +87,11 @@ class TestHouseguest():
 
         hgs[0].impact_relationship(hgs[1], Houseguest.NEGATIVE)
 
-        assert hgs[0].relationships[hgs[1]] == Houseguest.NEUTRAL_RELATIONSHIP - 2
-        assert hgs[1].relationships[hgs[0]] == Houseguest.NEUTRAL_RELATIONSHIP - 2
+        one_rel = hgs[0].relationships.get(player=hgs[1]).value
+        two_rel = hgs[1].relationships.get(player=hgs[0]).value
+
+        assert one_rel == Houseguest.NEUTRAL_RELATIONSHIP - 2
+        assert two_rel == Houseguest.NEUTRAL_RELATIONSHIP - 2
 
     @pytest.mark.django_db
     def test_impact_relationship_positive(self, monkeypatch):
@@ -109,8 +112,8 @@ class TestHouseguest():
 
         hgs[0].impact_relationship(hgs[1], Houseguest.POSITIVE)
 
-        assert hgs[0].relationships[hgs[1]] == Houseguest.NEUTRAL_RELATIONSHIP + 3
-        assert hgs[1].relationships[hgs[0]] == Houseguest.NEUTRAL_RELATIONSHIP + 3
+        assert hgs[0].relationships.get(player=hgs[1]).value == Houseguest.NEUTRAL_RELATIONSHIP + 3
+        assert hgs[1].relationships.get(player=hgs[0]).value == Houseguest.NEUTRAL_RELATIONSHIP + 3
 
     @pytest.mark.django_db
     def test_impact_relationship_neutral(self, monkeypatch):
@@ -131,8 +134,8 @@ class TestHouseguest():
 
         hgs[0].impact_relationship(hgs[1], Houseguest.NEUTRAL)
 
-        assert hgs[0].relationships[hgs[1]] == Houseguest.NEUTRAL_RELATIONSHIP + 1
-        assert hgs[1].relationships[hgs[0]] == Houseguest.NEUTRAL_RELATIONSHIP + 1
+        assert hgs[0].relationships.get(player=hgs[1]).value == Houseguest.NEUTRAL_RELATIONSHIP + 1
+        assert hgs[1].relationships.get(player=hgs[0]).value == Houseguest.NEUTRAL_RELATIONSHIP + 1
 
 
     @pytest.mark.django_db
@@ -144,7 +147,9 @@ class TestHouseguest():
             hg.initialize_relationships(hgs)
 
         # Set to 0 to ensure that it will get selected
-        hgs[0].relationships[hgs[1]] = 0
+        rel = hgs[0].relationships.get(player=hgs[1])
+        rel.value = 0
+        rel.save()
 
         def mock_random_sample(population, sample_size):
 
@@ -166,8 +171,13 @@ class TestHouseguest():
         for hg in hgs:
             hg.initialize_relationships(hgs)
 
-        hgs[0].relationships[hgs[1]] = 0
-        hgs[0].relationships[hgs[4]] = -12
+        rel = hgs[0].relationships.get(player=hgs[1])
+        rel.value = 0
+        rel.save()
+
+        rel = hgs[0].relationships.get(player=hgs[4])
+        rel.value = -12
+        rel.save()
 
         # HOH: 0, Noms: 2 and 4, POV: 4, Eligible: 1 and 3
 

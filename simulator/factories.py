@@ -17,7 +17,7 @@ class GameFactory(factory.django.DjangoModelFactory):
 class HouseguestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Houseguest
-    name = fake.name()
+    name = fake.first_name()
     game = factory.SubFactory(GameFactory)
 
 class CompetitionFactory(factory.django.DjangoModelFactory):

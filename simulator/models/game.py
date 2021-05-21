@@ -170,7 +170,7 @@ class Game(models.Model):
 
         # Run competition and get winner
         hoh_comp.run_competition()
-        self.current_hoh = [x for x in self.in_house if x == hoh_comp.winner][0]
+        self.current_hoh = hoh_comp.winner
 
         # Set new hoh and update winner's comp count
         self.current_hoh.win_competition()
@@ -256,7 +256,7 @@ class Game(models.Model):
         evc.participants.set(self.in_house)
 
         # Run eviction
-        evc.run_ceremony(self.in_house)
+        evc.run_ceremony()
 
         # Set evicted and update their evicted status
         self.evicted = evc.evicted

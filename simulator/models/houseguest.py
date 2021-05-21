@@ -1,6 +1,7 @@
 import random
 from django.db import models
 
+from ..models import Relationship
 
 class Houseguest(models.Model):
 
@@ -16,6 +17,10 @@ class Houseguest(models.Model):
     evicted = models.BooleanField(blank=False, null=False, default=False)
     competition_count = models.IntegerField(blank=False, null=False, default=0)
     nomination_count = models.IntegerField(blank=False, null=False, default=0)
+    relationships = models.ManyToManyField(to='Relationship', blank=False, default=[])
+
+    def __str__(self):
+        return f'{self.name} ({self.id})'
 
     def serialize(self):
         data = {
@@ -45,9 +50,14 @@ class Houseguest(models.Model):
 
     def initialize_relationships(self, houseguests):
 
-        self.relationships = {k:self.NEUTRAL_RELATIONSHIP for k in houseguests if k != self}
 
-        # print(f'{self}: {self.relationships}')
+        for hg in houseguests:
+            if hg == self:
+                continue
+
+            new_rel = Relationship(player=hg)
+            new_rel.save()
+            self.relationships.add(new_rel)
 
     def impact_relationship(self, affected_houseguest, impact_level):
 
@@ -70,10 +80,17 @@ class Houseguest(models.Model):
         impact_amount = random.randint(lower, upper)
 
         # Edit self's relationship with affected houseguest
-        self.relationships[affected_houseguest] += impact_amount
+        # self.relationships[affected_houseguest] += impact_amount
+
+        rel = self.relationships.get(player=affected_houseguest)
+
+        rel.value += impact_amount
+        rel.save()
 
         # Edit affected houseguest's relationship with self
-        affected_houseguest.relationships[self] += impact_amount
+        inverse_rel = affected_houseguest.relationships.get(player=self)
+        inverse_rel.value += impact_amount
+        inverse_rel.save()
 
     def choose_negative_relationships(self, eligible_houseguests, count=1):
 
@@ -82,7 +99,7 @@ class Houseguest(models.Model):
 
         # print(self)
 
-        eligible_keys = [x for x in list(self.relationships.keys()) if x in eligible_houseguests]
+        eligible_keys = eligible_houseguests.copy()
 
         # print(eligible_keys)
 
@@ -91,16 +108,13 @@ class Houseguest(models.Model):
         # While length of picked is less than requested
         while (len(picked) < count):
 
-            # Get three random keys
+            # Get three random houseguests
             picked_keys = random.sample(eligible_keys, min(3, len(eligible_keys)))
 
-            # print(picked_keys)
-
-            # for key in picked_keys:
-            #     print(f'Key: {key} Rel: {self.relationships[key]}')
+            print(picked_keys)
 
             # Get the key with the minimum relationship
-            picked_key = min(picked_keys, key=self.relationships.get)
+            picked_key = min(picked_keys, key= lambda obj: self.relationships.get(player=obj).value)
 
             # print(picked)
 
