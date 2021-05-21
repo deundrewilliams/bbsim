@@ -111,7 +111,7 @@ class Houseguest(models.Model):
             # Get three random houseguests
             picked_keys = random.sample(eligible_keys, min(3, len(eligible_keys)))
 
-            print(picked_keys)
+            # print(picked_keys)
 
             # Get the key with the minimum relationship
             picked_key = min(picked_keys, key= lambda obj: self.relationships.get(player=obj).value)

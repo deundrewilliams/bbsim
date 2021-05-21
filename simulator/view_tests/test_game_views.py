@@ -66,25 +66,3 @@ class GameViewTest(TestCase):
 
 
         self.assertTrue(updated_g.completed)
-
-    def test_get_relationships(self):
-
-        g = GameFactory()
-
-        hg_objs = []
-        hg_objs.append(HouseguestFactory(name="A", game=g))
-        hg_objs.append(HouseguestFactory(name="B", game=g))
-        hg_objs.append(HouseguestFactory(name="C", game=g))
-        hg_objs.append(HouseguestFactory(name="D", game=g))
-        hg_objs.append(HouseguestFactory(name="E", game=g))
-        hg_objs.append(HouseguestFactory(name="F", game=g))
-
-        for hg in hg_objs:
-            hg.initialize_relationships(hg_objs)
-
-        response = self.client.get(f'/api/relationships/{g.id}')
-
-        print(response)
-
-        self.assertTrue(False)
-
