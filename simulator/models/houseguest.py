@@ -73,3 +73,35 @@ class Houseguest(models.Model):
         # Edit affected houseguest's relationship with self
         affected_houseguest.relationships[self] += impact_amount
 
+    def choose_negative_relationships(self, eligible_houseguests, count=1):
+
+        if (len(eligible_houseguests) == 1):
+            return [eligible_houseguests[0]]
+
+        eligible_keys = [x for x in list(self.relationships.keys()) if x in eligible_houseguests]
+
+        print(eligible_keys)
+
+        picked = []
+
+        # While length of picked is less than requested
+        while (len(picked) < count):
+
+            # Get three random keys
+            picked_keys = random.sample(eligible_keys, min(3, len(eligible_keys)))
+
+            # print(picked_keys)
+
+            # for key in picked_keys:
+            #     print(f'Key: {key} Rel: {self.relationships[key]}')
+
+            # Get the key with the minimum relationship
+            picked_key = min(picked_keys, key=self.relationships.get)
+
+            # print(picked)
+
+            picked.append(picked_key)
+            eligible_keys.remove(picked_key)
+
+        return picked
+
