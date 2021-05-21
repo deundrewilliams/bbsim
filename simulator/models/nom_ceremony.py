@@ -45,5 +45,4 @@ class NominationCeremony(models.Model):
         :return: List of chosen nominees
         :rtype: List of simulator.models.Houseguest
         """
-
-        return random.sample(nomination_pool, NUM_NOMINEES)
+        return self.hoh.choose_negative_relationships(nomination_pool, NUM_NOMINEES)

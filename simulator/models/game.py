@@ -32,11 +32,17 @@ class Game(models.Model):
         # if (num_players < self.MIN_PLAYERS or num_players > self.MAX_PLAYERS):
         #     raise Exception("Too few/many players")
 
+
+
         # Determine jury size and prejury size -> determine_jury_size(num_players)
         self.jury_size = self.determine_jury_size(num_players)
 
         # Create in house array of players not evicted
         self.in_house = [x for x in list(self.players.all())]
+
+        # Initialize all relationships
+        for hg in self.in_house:
+            hg.initialize_relationships(self.in_house)
 
         # Initialize an 'in jury' var and set it to false
         self.jury_began = False
@@ -102,6 +108,8 @@ class Game(models.Model):
         # Store current hoh in 'hoh'
         hoh = self.current_hoh
 
+
+
         # Run Nomination ceremony
         self.run_nomination_ceremony()
 
@@ -162,7 +170,7 @@ class Game(models.Model):
 
         # Run competition and get winner
         hoh_comp.run_competition()
-        self.current_hoh = hoh_comp.winner
+        self.current_hoh = [x for x in self.in_house if x == hoh_comp.winner][0]
 
         # Set new hoh and update winner's comp count
         self.current_hoh.win_competition()

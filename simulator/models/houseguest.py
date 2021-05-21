@@ -47,6 +47,8 @@ class Houseguest(models.Model):
 
         self.relationships = {k:self.NEUTRAL_RELATIONSHIP for k in houseguests if k != self}
 
+        print(f'{self}: {self.relationships}')
+
     def impact_relationship(self, affected_houseguest, impact_level):
 
         # POS: 0 to 4
@@ -77,6 +79,8 @@ class Houseguest(models.Model):
 
         if (len(eligible_houseguests) == 1):
             return [eligible_houseguests[0]]
+
+        print(self)
 
         eligible_keys = [x for x in list(self.relationships.keys()) if x in eligible_houseguests]
 

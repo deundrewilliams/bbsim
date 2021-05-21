@@ -43,6 +43,8 @@ class Competition(models.Model):
 
         self.winner = self.pick_winner()
 
+
+
     def pick_winner(self):
         """
         Picks a winner of the competition
