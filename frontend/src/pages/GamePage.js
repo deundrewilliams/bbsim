@@ -3,9 +3,9 @@ import FinaleView from '../components/FinaleView'
 import WeekView from '../components/WeekView'
 
 // const mock_weeks = [
-//     {week_num: 1, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
-//     {week_num: 2, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
-//     {week_num: 3, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
+//     {week_num: 1, votecount: [2,1], tied: false, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
+//     {week_num: 2, votecount: [2,1], tied: true, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
+//     {week_num: 3, votecount: [1,0], tied: false, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
 // ]
 
 // const mock_prejury = [
@@ -98,7 +98,7 @@ class GamePage extends React.Component {
 
             return(
                 <div className="game-page">
-                    <FinaleView info={this.state.game_info.finale}/>
+                    <FinaleView info={this.state.game_info.finale} weeks={this.state.game_info.weeks}/>
                 </div>
             )
 
