@@ -34,6 +34,9 @@ class TestEvictionCeremony:
 
         hgs = HouseguestFactory.create_batch(6)
 
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
+
         evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
 
         ret = evc.get_vote(hgs[3], [hgs[1], hgs[2]])

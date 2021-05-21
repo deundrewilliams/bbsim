@@ -147,12 +147,15 @@ class TestGame:
         # HOH: 2, Noms: 1, 3, POV: 4 use on 1, Final: 3 and 5, 5 evicted
         hgs = list(small_game.players.all())
 
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
+
         small_game.in_house = hgs
         small_game.current_hoh = hgs[2]
         small_game.current_nominees = [hgs[3], hgs[5]]
         small_game.save()
 
-        def mock_run_ceremony(obj):
+        def mock_run_ceremony(obj, a):
             assert list(obj.nominees.all()) == [hgs[3], hgs[5]]
             assert obj.hoh == hgs[2]
             obj.evicted = hgs[5]

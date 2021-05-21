@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/contestants/', get_all_contestants),
     path('api/game/<int:id>', get_single_game),
     path('api/create-game', create_game),
-    path('api/sim-game', sim_game)
+    path('api/sim-game', sim_game),
+    path('api/relationships/<int:id>', get_relationshops),
 ]

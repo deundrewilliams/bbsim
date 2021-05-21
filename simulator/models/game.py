@@ -256,7 +256,7 @@ class Game(models.Model):
         evc.participants.set(self.in_house)
 
         # Run eviction
-        evc.run_ceremony()
+        evc.run_ceremony(self.in_house)
 
         # Set evicted and update their evicted status
         self.evicted = evc.evicted

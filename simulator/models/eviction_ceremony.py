@@ -21,10 +21,11 @@ class EvictionCeremony(models.Model):
         }
         return data
 
-    def run_ceremony(self):
+    def run_ceremony(self, participants=None):
 
         # Get voters (parts. excl. hoh and nominees)
-        voters = list(filter(lambda x: x != self.hoh and x not in list(self.nominees.all()), list(self.participants.all())))
+        # voters = list(filter(lambda x: x != self.hoh and x not in list(self.nominees.all()), list(self.participants.all())))
+        voters = list(filter(lambda x: x != self.hoh and x not in list(self.nominees.all()), participants or list(self.participants.all())))
 
         # Run voting process
         votes = self.run_voting(voters)
@@ -84,7 +85,7 @@ class EvictionCeremony(models.Model):
 
     def get_vote(self, voter, voting_pool):
 
-        return random.choice(voting_pool)
+        return voter.choose_negative_relationships(voting_pool)[0]
 
     def get_evicted(self, vote_count):
 
