@@ -75,7 +75,8 @@ class VetoCeremony(models.Model):
         nom_pool = list(filter(lambda x: x != self.hoh and x not in list(self.nominees.all()) and x != self.veto_holder, list(self.participants.all())))
 
         # Randomly pick from the nomination pool
-        renom = random.choice(nom_pool)
+        # renom = random.choice(nom_pool)
+        renom = self.hoh.choose_negative_relationships(nom_pool)[0]
 
         # Return picked player
         return renom
