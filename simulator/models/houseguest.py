@@ -152,3 +152,14 @@ class Houseguest(models.Model):
             eligible_keys.remove(picked_key)
 
         return picked
+
+    def get_relationship_average(self):
+
+        total = 0
+        num_rels = 0
+
+        for rel in list(self.relationships.all()):
+            total += rel.value
+            num_rels += 1
+
+        return int(total / num_rels)

@@ -192,3 +192,13 @@ class TestHouseguest():
         noms = hgs[0].choose_negative_relationships([hgs[1], hgs[3]])
 
         assert noms == [hgs[1]]
+
+    @pytest.mark.django_db
+    def test_get_relationship_average(self):
+
+        hgs = HouseguestFactory.create_batch(5)
+
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
+
+        assert hg.get_relationship_average() == 50

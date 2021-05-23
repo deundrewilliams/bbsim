@@ -71,9 +71,19 @@ class Finale(models.Model):
         c.delete()
         return winner
 
+    def calculate_finalist_value(self, finalist):
+
+        social_val = finalist.get_relationship_average()
+
+        comp_val = (finalist.competition_count) * 5
+
+        return social_val + comp_val
+
+
     def run_voting(self):
 
         votes = {}
+
 
         # Iterate through each juror
         for juror in list(self.jury.all()):

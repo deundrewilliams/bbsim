@@ -97,6 +97,26 @@ class TestFinale:
         assert winner == finalists[1]
 
     @pytest.mark.django_db
+    def test_calculate_finalist_value(self, monkeypatch):
+
+        hgs = HouseguestFactory.create_batch(7)
+
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
+
+        finalists = hgs[:3]
+        jurors = hgs[3:]
+
+        f0 = finalists[0]
+
+        f0.competition_count = 3
+        f0.save()
+
+        f = FinaleFactory(finalists=finalists, jury=jurors)
+
+        assert f.calculate_finalist_value(f0) == 65
+
+    @pytest.mark.django_db
     def test_get_vote(self):
         voter = HouseguestFactory.create()
         pool = HouseguestFactory.create_batch(5)
