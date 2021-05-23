@@ -84,18 +84,38 @@ class Finale(models.Model):
 
         votes = {}
 
+        finalists = list(self.finalists.all())
+
+        finalist_values = (self.calculate_finalist_value(finalists[0]), self.calculate_finalist_value(finalists[1]))
+
 
         # Iterate through each juror
         for juror in list(self.jury.all()):
 
             # Get vote
-            votes[juror] = self.get_vote(juror, list(self.finalists.all()))
+            votes[juror] = self.get_vote(juror, finalists, finalist_values)
 
         return votes
 
-    def get_vote(self, voter, voter_pool):
+    def get_vote(self, voter, finalists, finalist_values):
 
-        return random.choice(voter_pool)
+        # Get relationship + finalist value for finalist 1
+        finalist_one_chance = voter.relationships.get(player=finalists[0]).value + finalist_values[0]
+
+        # Get relationship + finalist value for finalist 2
+        finalist_two_chance = voter.relationships.get(player=finalists[1]).value + finalist_values[1]
+
+        # Generate a random number between 1 and the sum
+        vote_roll = random.randint(1, finalist_one_chance + finalist_two_chance)
+
+
+        # If num is <= finalist 1, finalist 1 gets the vote
+        if (vote_roll <= finalist_one_chance):
+            return finalists[0]
+
+        else:
+            return finalists[1]
+
 
     def count_votes(self, votes):
 

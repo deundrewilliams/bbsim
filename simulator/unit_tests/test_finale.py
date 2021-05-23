@@ -2,6 +2,7 @@ import pytest
 
 from ..factories import HouseguestFactory, FinaleFactory
 from ..models import Finale, Competition, EvictionCeremony
+import random
 
 class TestFinale:
 
@@ -34,13 +35,20 @@ class TestFinale:
 
         f = FinaleFactory(finalists=finalists, jury=jurors)
 
-        def mock_get_vote(obj, voter, votee):
+        def mock_get_vote(obj, voter, votee, vals):
             if (voter == jurors[0] or voter == jurors[1]):
                 return finalists[0]
             else:
                 return finalists[1]
 
         monkeypatch.setattr(Finale, "get_vote", mock_get_vote)
+
+        def mock_calculate_finalist_value(obj, finalist):
+
+            assert finalist in finalists
+            return 50
+
+        monkeypatch.setattr(Finale, "calculate_finalist_value", mock_calculate_finalist_value)
 
         expected_votes = {
             jurors[0]: finalists[0],
@@ -117,15 +125,28 @@ class TestFinale:
         assert f.calculate_finalist_value(f0) == 65
 
     @pytest.mark.django_db
-    def test_get_vote(self):
+    def test_get_vote(self, monkeypatch):
         voter = HouseguestFactory.create()
         pool = HouseguestFactory.create_batch(5)
 
         f = FinaleFactory(finalists=pool, jury=[voter])
 
-        votee = f.get_vote(voter, pool)
+        def mock_randint(low, high):
 
-        assert votee in pool
+            assert high == 45 + 65 + 100
+
+            return 45
+
+        voter.initialize_relationships(pool)
+
+        for hg in pool:
+            hg.initialize_relationships(pool + [voter])
+
+        monkeypatch.setattr(random, "randint", mock_randint)
+
+        votee = f.get_vote(voter, pool, (45, 65))
+
+        assert votee == list(f.finalists.all())[0]
 
     @pytest.mark.django_db
     def test_run_finale(self, monkeypatch):
