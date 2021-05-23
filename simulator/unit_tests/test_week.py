@@ -35,4 +35,4 @@ class TestWeek:
         assert data['vote_count'] == [3, 2]
         assert data['tied']
 
-        print(data)
+        # print(data)

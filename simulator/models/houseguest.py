@@ -67,14 +67,14 @@ class Houseguest(models.Model):
 
         # Set upper bound and lower bound
         if impact_level == self.POSITIVE:
-            upper = 10
+            upper = 20
             lower = 0
         elif impact_level == self.NEUTRAL:
-            upper = 5
-            lower = -5
+            upper = 10
+            lower = -10
         else:
             upper = 0
-            lower = -10
+            lower = -20
 
         # Generate a random number between upper and lower bound
         impact_amount = random.randint(lower, upper)
@@ -91,6 +91,7 @@ class Houseguest(models.Model):
         inverse_rel = affected_houseguest.relationships.get(player=self)
         inverse_rel.value += impact_amount
         inverse_rel.save()
+
 
     def choose_negative_relationships(self, eligible_houseguests, count=1):
 
