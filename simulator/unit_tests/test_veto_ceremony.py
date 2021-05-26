@@ -96,6 +96,9 @@ class TestVetoCeremony:
 
         hgs = HouseguestFactory.create_batch(5)
 
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
+
         hoh = hgs[0]
         noms = [hgs[1], hgs[2]]
         pov = hgs[1]
@@ -141,6 +144,9 @@ class TestVetoCeremony:
         # HOH: 0, Noms: 1 and 2, POV: 3 used on 1, Renom: 4
 
         hgs = HouseguestFactory.create_batch(5)
+
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
 
         hoh = hgs[0]
         noms = [hgs[1], hgs[2]]
