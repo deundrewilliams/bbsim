@@ -39,6 +39,7 @@ class VetoCeremony(models.Model):
         # Else generate veto decision
         else:
             decision_info = self.get_decision()
+            self.using = decision_info['Using']
 
         # If using
         if (self.using):
@@ -47,6 +48,7 @@ class VetoCeremony(models.Model):
             renom = self.get_renom()
 
             renom.nominate()
+            renom.impact_relationship(self.hoh, 3)
 
             # Remove old nominee from nominees, add new nominee
             self.nominees.remove(decision_info['On'])
@@ -56,18 +58,24 @@ class VetoCeremony(models.Model):
 
     def get_decision(self):
 
-        if (self.using == None):
-            self.using = random.choice([True, False])
-        else:
-            using = self.using
+        # Get the relationship with nominees, keep the max val and player
+        max_hg = self.veto_holder.choose_positive_relationships(list(self.nominees.all()))[0]
+        max_val = self.veto_holder.relationships.get(player=max_hg).value
 
+        # print(f'{max_hg} ({max_val})')
 
-        # If True, pick one of the nominees to use it on
-        if self.using:
-            saved = random.choice(list(self.nominees.all()))
-            return {'Using': True, 'On': saved}
+        # Generate a number 1 through 100, if <= max val, using, else not
+        pick_value = random.randint(1, 100)
+
+        if pick_value <= max_val:
+
+            # Positively impact relationship
+            max_hg.impact_relationship(self.hoh, 1)
+
+            return {'Using': True, 'On': max_hg}
         else:
             return {'Using': False, 'On': None}
+
 
     def get_renom(self):
 

@@ -67,14 +67,14 @@ class Houseguest(models.Model):
 
         # Set upper bound and lower bound
         if impact_level == self.POSITIVE:
-            upper = 5
+            upper = 20
             lower = 0
         elif impact_level == self.NEUTRAL:
-            upper = 2
-            lower = -2
+            upper = 10
+            lower = -10
         else:
             upper = 0
-            lower = -5
+            lower = -20
 
         # Generate a random number between upper and lower bound
         impact_amount = random.randint(lower, upper)
@@ -91,6 +91,7 @@ class Houseguest(models.Model):
         inverse_rel = affected_houseguest.relationships.get(player=self)
         inverse_rel.value += impact_amount
         inverse_rel.save()
+
 
     def choose_negative_relationships(self, eligible_houseguests, count=1):
 
@@ -123,3 +124,43 @@ class Houseguest(models.Model):
 
         return picked
 
+    def choose_positive_relationships(self, eligible_houseguests, count=1):
+        if (len(eligible_houseguests) == 1):
+            return [eligible_houseguests[0]]
+
+        # print(self)
+
+        eligible_keys = eligible_houseguests.copy()
+
+        # print(eligible_keys)
+
+        picked = []
+
+        # While length of picked is less than requested
+        while (len(picked) < count):
+
+            # Get three random houseguests
+            picked_keys = random.sample(eligible_keys, min(3, len(eligible_keys)))
+
+            # print(picked_keys)
+
+            # Get the key with the maximum relationship
+            picked_key = max(picked_keys, key= lambda obj: self.relationships.get(player=obj).value)
+
+            # print(picked)
+
+            picked.append(picked_key)
+            eligible_keys.remove(picked_key)
+
+        return picked
+
+    def get_relationship_average(self):
+
+        total = 0
+        num_rels = 0
+
+        for rel in list(self.relationships.all()):
+            total += rel.value
+            num_rels += 1
+
+        return int(total / num_rels)

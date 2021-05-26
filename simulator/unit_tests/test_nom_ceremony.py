@@ -65,12 +65,15 @@ class TestNominationCeremony:
         hgs.append(HouseguestFactory.create(name="B"))
         hgs.append(HouseguestFactory.create(name="C"))
 
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
+
         hoh = hgs[0]
 
         def mock_choose_nominees(obj, pool):
             assert pool == hgs[1:]
 
-            return [hgs[0], hgs[2]]
+            return [hgs[1], hgs[2]]
 
         monkeypatch.setattr(NominationCeremony, "choose_nominees", mock_choose_nominees)
 
@@ -80,4 +83,4 @@ class TestNominationCeremony:
 
         nominees = list(nc.nominees.all())
 
-        assert nominees == [hgs[0], hgs[2]]
+        assert nominees == [hgs[1], hgs[2]]

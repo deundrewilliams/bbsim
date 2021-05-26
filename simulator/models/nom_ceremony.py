@@ -28,9 +28,10 @@ class NominationCeremony(models.Model):
         # Get new nominees
         new_nominees = self.choose_nominees(nom_eligible)
 
-        # Iterate through nominees and update their counts
+        # Iterate through nominees and update their counts and impact rel with HOH
         for nom in new_nominees:
             nom.nominate()
+            nom.impact_relationship(self.hoh, 3)
 
         # Set nominees
         self.nominees.set(new_nominees)

@@ -78,7 +78,7 @@ class TestHouseguest():
 
         def mock_randint(lower, upper):
 
-            assert lower == -5
+            assert lower == -20
             assert upper == 0
 
             return -2
@@ -104,7 +104,7 @@ class TestHouseguest():
         def mock_randint(lower, upper):
 
             assert lower == 0
-            assert upper == 5
+            assert upper == 20
 
             return 3
 
@@ -125,8 +125,8 @@ class TestHouseguest():
 
         def mock_randint(lower, upper):
 
-            assert lower == -2
-            assert upper == 2
+            assert lower == -10
+            assert upper == 10
 
             return 1
 
@@ -192,3 +192,13 @@ class TestHouseguest():
         noms = hgs[0].choose_negative_relationships([hgs[1], hgs[3]])
 
         assert noms == [hgs[1]]
+
+    @pytest.mark.django_db
+    def test_get_relationship_average(self):
+
+        hgs = HouseguestFactory.create_batch(5)
+
+        for hg in hgs:
+            hg.initialize_relationships(hgs)
+
+        assert hg.get_relationship_average() == 50
