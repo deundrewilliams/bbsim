@@ -108,9 +108,6 @@ class Finale(models.Model):
         # Generate a random number between 1 and the sum
         vote_roll = random.randint(1, finalist_one_chance + finalist_two_chance)
 
-        print(f'{voter.name}\'s vote: {finalists[0].name}: {finalist_one_chance} {finalists[1].name}: {finalist_two_chance} Roll: {vote_roll}')
-
-
         # If num is <= finalist 1, finalist 1 gets the vote
         if (vote_roll <= finalist_one_chance):
             return finalists[0]
