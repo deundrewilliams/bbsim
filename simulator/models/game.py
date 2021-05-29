@@ -10,6 +10,7 @@ class Game(models.Model):
     winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True, related_name="game_winner")
     jury = models.ManyToManyField('Houseguest', related_name="game_jury", default=[])
     prejury = models.ManyToManyField('Houseguest', related_name="game_prejury", default=[])
+    user_player = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True, related_name="game_user_player")
     completed = models.BooleanField(default=False)
 
     def serialize(self):
