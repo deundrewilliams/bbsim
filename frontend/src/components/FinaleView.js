@@ -6,6 +6,8 @@ import GameSummary from './GameSummary';
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
 
+import '../css/FinaleView.css';
+
 export default function FinaleView(props) {
 
     const { info } = props;
@@ -25,13 +27,15 @@ export default function FinaleView(props) {
             <div className="finale-view">
                 <CompWinPanel name={info.final_hoh.name} type="HOH" />
                 <EvictedPanel name={info.final_juror.name} />
-                {
-                    Object.keys(info.votes).map((voter, index) => {
-                        return(
-                            <FinaleVote key={index} juror={voter} votee={info.votes[voter]} />
-                        )
-                    })
-                }
+                <div className="jury-votes">
+                    {
+                        Object.keys(info.votes).map((voter, index) => {
+                            return(
+                                <FinaleVote key={index} juror={voter} votee={info.votes[voter]} />
+                            )
+                        })
+                    }
+                </div>
                 <AppButton text="Continue" clickAction={handleContinue}/>
             </div>
         )

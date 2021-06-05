@@ -3,8 +3,6 @@ import NomineePanel from "./NomineePanel";
 import EvictedPanel from './EvictedPanel';
 import AppButton from './AppButton';
 
-import { useEffect } from 'react';
-
 import '../css/WeekView.css';
 
 export default function WeekView(props) {

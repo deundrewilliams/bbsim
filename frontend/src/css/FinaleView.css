@@ -1,0 +1,8 @@
+.jury-votes {
+    width: 50%;
+    margin: auto;
+}
+
+.jury-votes > div {
+    margin: 10px auto;
+}
