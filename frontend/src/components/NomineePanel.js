@@ -1,3 +1,5 @@
+import HouseguestTile from './HouseguestTile';
+
 import '../css/NomineePanel.css';
 
 export default function NomineePanel(props) {
@@ -6,13 +8,14 @@ export default function NomineePanel(props) {
 
     return(
         <div className="nominee-panel">
-            {nominees.map((item, index) => {
-                return(
-                    <div key={index}>
-                        {item}
-                    </div>
-                )
-            })}
+            <h3 className="nom-label">Nominees</h3>
+            <div className="nom-tiles">
+                {nominees.map((item, index) => {
+                    return(
+                        <HouseguestTile key={index} name={item} />
+                    )
+                })}
+            </div>
         </div>
     )
 

@@ -23,6 +23,23 @@ const options = {
     headers: {"X-CSRFToken": getCookie('csrftoken')}
 }
 
+const mock_contestants = [
+    { id: 14, name: "Julie" },
+    { id: 13, name: "Josh" },
+    { id: 12, name: "Latoya" },
+    { id: 11, name: "Kyle" },
+    { id: 10, name: "Austin" },
+    { id: 9, name: "Victoria"},
+    { id: 8, name: "Rohan"},
+    { id: 7, name: "Tina"},
+    { id: 6, name: "Jedson"},
+    { id: 5, name: "Beth"},
+    { id: 4, name: "Kiefer"},
+    { id: 3, name: "Tera"},
+    { id: 2, name: "Breydon"},
+    { id: 1, name: "Tychon"},
+]
+
 
 class HomePage extends React.Component {
 
@@ -30,20 +47,20 @@ class HomePage extends React.Component {
         super()
 
         this.state = {
-            contestants: []
+            contestants: mock_contestants
         }
 
         this.fetchContestants = this.fetchContestants.bind(this);
     }
 
-    componentDidMount() {
-        this.fetchContestants()
-    }
+    // componentDidMount() {
+    //     this.fetchContestants()
+    // }
 
     fetchContestants() {
 
         axios.get('/api/contestants/', options)
-        .then((res) => this.setState({ contestants: res.data }))
+        .then((res) => this.setState({ contestants: res.data.response }))
         .catch((err) => console.log("Error: " + err))
 
     }

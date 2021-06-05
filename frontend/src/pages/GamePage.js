@@ -73,6 +73,10 @@ class GamePage extends React.Component {
 
     }
 
+    componentDidUpdate() {
+        window.scrollTo(0, 0);
+    }
+
     advanceSimulation() {
 
         // If already at week limit, set finale on

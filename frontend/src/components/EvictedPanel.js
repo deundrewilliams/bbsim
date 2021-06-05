@@ -1,6 +1,10 @@
+import HouseguestTile from './HouseguestTile';
+
 import '../css/EvictedPanel.css';
 
 export default function EvictedPanel(props) {
+
+    console.log(props);
 
     const { name, votecount, tied } = props;
 
@@ -24,12 +28,27 @@ export default function EvictedPanel(props) {
 
     }
 
+    if (votestring.length > 0)
+    {
+        return(
+            <div className="evicted-panel">
+                <h3 id="evicted-header">Evicted</h3>
+                <p id="voteline">By a vote of {votestring}...</p>
+                <HouseguestTile name={name} />
+            </div>
+        )
+    }
+    else
+    {
+        return(
+            <div className="evicted-panel">
+                <h3 id="evicted-header">Evicted</h3>
+                <HouseguestTile name={name} />
+            </div>
+        )
+    }
 
 
-    return(
-        <div className="evicted-panel">
-            {name} {votestring}
-        </div>
-    )
+
 
 }

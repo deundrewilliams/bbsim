@@ -1,17 +1,13 @@
 .hoh-panel {
-    background-color: lightgreen;
+    background-color: #2DC215;
     display: inline-block;
-    padding: 10px 20px;
-    margin: 15px;
-    width: 50%;
+    padding: 10px 50px;
     margin: auto;
 }
 
 .pov-panel {
     background-color: gold;
     display: inline-block;
-    padding: 10px 20px;
-    margin: 15px;
-    width: 50%;
+    padding: 10px 50px;
     margin: auto;
 }
