@@ -53,9 +53,9 @@ class HomePage extends React.Component {
         this.fetchContestants = this.fetchContestants.bind(this);
     }
 
-    // componentDidMount() {
-    //     this.fetchContestants()
-    // }
+    componentDidMount() {
+        this.fetchContestants()
+    }
 
     fetchContestants() {
 

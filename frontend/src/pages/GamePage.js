@@ -4,58 +4,58 @@ import WeekView from '../components/WeekView'
 
 import '../css/GamePage.css';
 
-const mock_weeks = [
-    {week_num: 1, votecount: [2,1], tied: false, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
-    {week_num: 2, votecount: [2,1], tied: true, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
-    {week_num: 3, votecount: [1,0], tied: false, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
-]
+// const mock_weeks = [
+//     {week_num: 1, vote_count: [2,1], tied: false, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
+//     {week_num: 2, vote_count: [2,1], tied: true, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
+//     {week_num: 3, vote_count: [1,0], tied: false, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
+// ]
 
-const mock_prejury = [
-    { id: 1, name: "Julie" },
-    { id: 1, name: "Josh" },
-    { id: 1, name: "Latoya" },
-    { id: 1, name: "Kyle" },
-    { id: 1, name: "Austin" },
-]
+// const mock_prejury = [
+//     { id: 1, name: "Julie" },
+//     { id: 1, name: "Josh" },
+//     { id: 1, name: "Latoya" },
+//     { id: 1, name: "Kyle" },
+//     { id: 1, name: "Austin" },
+// ]
 
-const mock_jury = [
-    { id: 1, name: "Victoria"},
-    { id: 1, name: "Rohan"},
-    { id: 1, name: "Tina"},
-    { id: 1, name: "Jedson"},
-    { id: 1, name: "Beth"},
-    { id: 1, name: "Kiefer"},
-    { id: 1, name: "Tera"},
-]
+// const mock_jury = [
+//     { id: 1, name: "Victoria"},
+//     { id: 1, name: "Rohan"},
+//     { id: 1, name: "Tina"},
+//     { id: 1, name: "Jedson"},
+//     { id: 1, name: "Beth"},
+//     { id: 1, name: "Kiefer"},
+//     { id: 1, name: "Tera"},
+// ]
 
-const mock_finale = {
-    final_hoh: { id: 1, name: "Tychon" },
-    final_juror: { id: 1, name: "Tera" },
-    finalists: [
-        { id: 1, name: "Tychon" },
-        { id: 1, name: "Breydon" }
-    ],
-    jury: mock_jury,
-    votes:
-        {
-            Victoria: "Tychon",
-            Rohan: "Tychon",
-            Tina: "Tychon",
-            Jedson: "Tychon",
-            Beth: "Tychon",
-            Kiefer: "Tychon",
-            Tera: "Breydon",
-        },
-    winner: { id: 1, name: "Tychon" }
-}
+// const mock_finale = {
+//     final_hoh: { id: 1, name: "Tychon" },
+//     final_juror: { id: 1, name: "Tera" },
+//     finalists: [
+//         { id: 1, name: "Tychon" },
+//         { id: 1, name: "Breydon" }
+//     ],
+//     jury: mock_jury,
+//     votes:
+//         {
+//             Victoria: "Tychon",
+//             Rohan: "Tychon",
+//             Tina: "Tychon",
+//             Jedson: "Tychon",
+//             Beth: "Tychon",
+//             Kiefer: "Tychon",
+//             Tera: "Breydon",
+//         },
+//     winner: { id: 1, name: "Tychon" }
+// }
 
-const mock_game = {
-    finale: mock_finale,
-    jury: mock_jury,
-    prejury: mock_prejury,
-    weeks: mock_weeks,
-    winner: { id: 1, name: "Tychon" }
-}
+// const mock_game = {
+//     finale: mock_finale,
+//     jury: mock_jury,
+//     prejury: mock_prejury,
+//     weeks: mock_weeks,
+//     winner: { id: 1, name: "Tychon" }
+// }
 
 class GamePage extends React.Component {
 
@@ -65,7 +65,7 @@ class GamePage extends React.Component {
         this.state = {
             current_week: 0,
             in_finale: false,
-            game_info:  mock_game, //props.location.state.info,
+            game_info:  props.location.state.info,
             complete: false,
         }
 

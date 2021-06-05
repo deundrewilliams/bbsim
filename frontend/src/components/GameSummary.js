@@ -6,9 +6,9 @@ function WeekSummary(props) {
 
     let votestring = '';
 
-    if (week.votecount.length > 1)
+    if (week.vote_count.length > 1)
         {
-            votestring = "(" + week.votecount[0] + " - " + week.votecount[1] + ")"
+            votestring = "(" + week.vote_count[0] + " - " + week.vote_count[1] + ")"
 
             if (week.tied) {
                 votestring += "*";
@@ -17,7 +17,7 @@ function WeekSummary(props) {
 
         else
         {
-            votestring = "(" + week.votecount[0] + " - 0)";
+            votestring = "(" + week.vote_count[0] + " - 0)";
         }
 
     return(
