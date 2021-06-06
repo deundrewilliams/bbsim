@@ -19,7 +19,7 @@ export default function WeekView(props) {
             <NomineePanel nominees={week.inoms} />
             <CompWinPanel name={week.pov} type="POV" />
             <NomineePanel nominees={week.fnoms} />
-            <EvictedPanel name={week.evicted} votecount={week.vote_count} tied={week.tied}/>
+            <EvictedPanel name={week.evicted} vote_count={week.vote_count} tied={week.tied}/>
             <AppButton text="Continue" clickAction={handleClick}/>
         </div>
     )

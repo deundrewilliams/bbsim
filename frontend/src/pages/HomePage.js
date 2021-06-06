@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 import AppButton from '../components/AppButton';
+import SiteBanner from '../components/SiteBanner';
 
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
@@ -68,6 +69,7 @@ class HomePage extends React.Component {
     render() {
         return(
             <div className="home-page">
+                <SiteBanner />
                 <Link to={{
                     pathname: '/create-game',
                     state: {
