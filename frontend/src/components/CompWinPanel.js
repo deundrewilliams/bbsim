@@ -1,3 +1,5 @@
+import HouseguestTile from './HouseguestTile';
+
 import '../css/CompWinPanel.css';
 
 export default function CompWinPanel(props) {
@@ -8,7 +10,8 @@ export default function CompWinPanel(props) {
     {
         return(
             <div className="hoh-panel">
-                {name}
+                <h3 className="comp-type">Head of Household</h3>
+                <HouseguestTile name={name} />
             </div>
         )
     }
@@ -16,7 +19,8 @@ export default function CompWinPanel(props) {
     {
         return(
             <div className="pov-panel">
-                {name}
+                <h3 className="comp-type">POV Holder</h3>
+                <HouseguestTile name={name} />
             </div>
         )
     }

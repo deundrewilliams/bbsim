@@ -2,10 +2,12 @@ import React from 'react'
 import FinaleView from '../components/FinaleView'
 import WeekView from '../components/WeekView'
 
+import '../css/GamePage.css';
+
 // const mock_weeks = [
-//     {week_num: 1, votecount: [2,1], tied: false, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
-//     {week_num: 2, votecount: [2,1], tied: true, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
-//     {week_num: 3, votecount: [1,0], tied: false, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
+//     {week_num: 1, vote_count: [2,1], tied: false, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
+//     {week_num: 2, vote_count: [2,1], tied: true, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
+//     {week_num: 3, vote_count: [1,0], tied: false, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
 // ]
 
 // const mock_prejury = [
@@ -69,6 +71,10 @@ class GamePage extends React.Component {
 
         this.advanceSimulation = this.advanceSimulation.bind(this);
 
+    }
+
+    componentDidUpdate() {
+        window.scrollTo(0, 0);
     }
 
     advanceSimulation() {

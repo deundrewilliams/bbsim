@@ -1,5 +1,15 @@
 .nominee-panel {
-    background-color: rgb(194, 101, 101);
+    background-color: #F95252;
     display: inline-block;
     padding: 10px 20px;
+}
+
+.nom-tiles {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.nom-tiles > div {
+    margin: 15px;
 }

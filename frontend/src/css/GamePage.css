@@ -1,0 +1,4 @@
+.game-page {
+    display: flexbox;
+    flex-direction: column;
+}

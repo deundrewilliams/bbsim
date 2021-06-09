@@ -1,0 +1,12 @@
+.finale-vote {
+    background-color: #7F98F0;
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.voted-for {
+    margin: auto 0px;
+}

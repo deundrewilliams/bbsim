@@ -1,0 +1,17 @@
+.hg-tile {
+    background-color: #c4c4c4;
+    height: 100px;
+    width: 100px;
+    margin: 15px auto;
+    padding: 5px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.hg-name {
+    margin: auto;
+    display: inline-block;
+}
