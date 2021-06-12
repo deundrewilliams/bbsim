@@ -56,7 +56,6 @@ class Game(models.Model):
 
         # While in house array is > 3
         while (len(self.in_house) > 3):
-
             # Run each week
             week_data = self.run_week(current_week)
 

@@ -11,7 +11,7 @@ class Week(models.Model):
     pov = models.ForeignKey('Houseguest', on_delete=models.CASCADE, related_name="week_pov")
     final_nominees = models.ManyToManyField('Houseguest', related_name="week_final_noms")
     evicted = models.ForeignKey('Houseguest', on_delete=models.CASCADE, related_name="week_evicted")
-    vote_count = models.CharField(validators=[int_list_validator], max_length=5)
+    vote_count = models.CharField(validators=[int_list_validator], max_length=20)
     tied = models.BooleanField(default=False)
 
     def serialize(self):
