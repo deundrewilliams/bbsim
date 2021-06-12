@@ -9,7 +9,7 @@ BBSim is a simulator of the TV show Big Brother. In this show, there are 14-16 c
 
 # How to Use
 ---
-Currently, BBSim can only be run locally. The following section has rules for getting it set up.
+BBSim is hosted on Heroku at https://bigbrothersim.herokuapp.com/, but can also be run locally by following the steps below
  
 1. [Clone this repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository)
 2. Setup the frontend
