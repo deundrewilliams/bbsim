@@ -13,6 +13,8 @@ factory-boy = "*"
 coverage = "*"
 faker = "*"
 psycopg2 = "*"
+django-heroku = "*"
+whitenoise = "*"
 
 [dev-packages]
 

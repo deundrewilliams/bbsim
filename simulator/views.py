@@ -19,7 +19,7 @@ def get_all_contestants(request, *args, **kwargs):
         "response": contestants
     }
 
-    return Response(data)
+    return Response(data, content_type='application/javascript')
 
 # GAMES
 @api_view(['GET'])
@@ -32,7 +32,7 @@ def get_single_game(request, *args, **kwargs):
         obj = Game.objects.get(id=requested_id)
 
         game = obj.serialize()
-        return Response(game)
+        return Response(game, content_type='application/javascript')
     except:
         return Response({f"Unable to retrieve game with id: {requested_id}"}, status=400)
 
@@ -61,7 +61,7 @@ def create_game(request, *args, **kwargs):
         # else:
         #     return Response({}, status=400)
 
-    return Response(new_g.serialize())
+    return Response(new_g.serialize(), content_type='application/javascript')
 
 @api_view(['POST'])
 def sim_game(request, *args, **kwargs):
@@ -85,7 +85,7 @@ def sim_game(request, *args, **kwargs):
 
     # print(obj.serialize())
 
-    return Response(obj.serialize())
+    return Response(obj.serialize(), content_type='application/javascript')
 
 @api_view(['GET'])
 def get_relationshops(request, *args, **kwargs):
