@@ -15,6 +15,7 @@ faker = "*"
 psycopg2 = "*"
 django-heroku = "*"
 whitenoise = "*"
+gunicorn = "*"
 
 [dev-packages]
 
