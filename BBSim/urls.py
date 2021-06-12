@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from simulator.views import *
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +25,5 @@ urlpatterns = [
     path('api/create-game', create_game),
     path('api/sim-game', sim_game),
     path('api/relationships/<int:id>', get_relationshops),
+    path('', TemplateView.as_view(template_name="index.html"))
 ]

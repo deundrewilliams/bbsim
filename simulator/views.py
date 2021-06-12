@@ -7,7 +7,6 @@ from rest_framework.response import Response
 
 from .models import Houseguest, Game, Contestant
 
-
 # CONTESTANTS
 
 @api_view(['GET'])
