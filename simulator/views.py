@@ -82,9 +82,11 @@ def sim_game(request, *args, **kwargs):
     except:
         return Response({"Unable to run game"}, status=400)
 
-    # print(obj.serialize())
+    game_data = obj.serialize()
 
-    return Response(obj.serialize(), content_type='application/javascript')
+    obj.delete()
+
+    return Response(game_data, content_type='application/javascript')
 
 @api_view(['GET'])
 def get_relationshops(request, *args, **kwargs):

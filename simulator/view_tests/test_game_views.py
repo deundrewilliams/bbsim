@@ -62,7 +62,4 @@ class GameViewTest(TestCase):
 
         response = self.client.post(f'/api/sim-game', {"id": g.id})
 
-        updated_g = Game.objects.get(id=g.id)
-
-
-        self.assertTrue(updated_g.completed)
+        self.assertTrue('winner' in response.data)
