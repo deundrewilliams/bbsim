@@ -4,11 +4,14 @@ from ..models import Competition, EvictionCeremony
 
 import random
 
+
 class Finale(models.Model):
 
-    finalists = models.ManyToManyField('Houseguest', related_name="finalists")
-    jury = models.ManyToManyField('Houseguest', related_name="jury")
-    winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True)
+    finalists = models.ManyToManyField("Houseguest", related_name="finalists")
+    jury = models.ManyToManyField("Houseguest", related_name="jury")
+    winner = models.ForeignKey(
+        "Houseguest", on_delete=models.CASCADE, blank=True, null=True
+    )
     completed = models.BooleanField(default=False)
 
     def serialize(self):
@@ -18,7 +21,9 @@ class Finale(models.Model):
             "winner": self.winner.serialize() if self.completed else None,
             "final_hoh": self.final_hoh.serialize() if self.completed else None,
             "final_juror": self.final_juror.serialize() if self.completed else None,
-            "votes": {k.name:self.votes[k].name for k in list(self.votes.keys())} if self.completed else None,
+            "votes": {k.name: self.votes[k].name for k in list(self.votes.keys())}
+            if self.completed
+            else None,
         }
         return data
 
@@ -28,7 +33,9 @@ class Finale(models.Model):
         p1_hoh = self.run_final_hoh_comp(list(self.finalists.all()))
 
         # Get Part 2 HOH
-        p2_hoh = self.run_final_hoh_comp(list(filter(lambda x: x != p1_hoh, list(self.finalists.all()))))
+        p2_hoh = self.run_final_hoh_comp(
+            list(filter(lambda x: x != p1_hoh, list(self.finalists.all())))
+        )
 
         self.final_hoh = self.run_final_hoh_comp([p1_hoh, p2_hoh])
 
@@ -37,7 +44,9 @@ class Finale(models.Model):
         # Run final eviction
         finalevc = EvictionCeremony(hoh=self.final_hoh)
         finalevc.save()
-        finalevc.nominees.set(list(filter(lambda x: x != self.final_hoh, list(self.finalists.all()))))
+        finalevc.nominees.set(
+            list(filter(lambda x: x != self.final_hoh, list(self.finalists.all())))
+        )
         finalevc.participants.set(list(self.finalists.all()))
 
         finalevc.run_ceremony()
@@ -79,15 +88,16 @@ class Finale(models.Model):
 
         return social_val + comp_val
 
-
     def run_voting(self):
 
         votes = {}
 
         finalists = list(self.finalists.all())
 
-        finalist_values = (self.calculate_finalist_value(finalists[0]), self.calculate_finalist_value(finalists[1]))
-
+        finalist_values = (
+            self.calculate_finalist_value(finalists[0]),
+            self.calculate_finalist_value(finalists[1]),
+        )
 
         # Iterate through each juror
         for juror in list(self.jury.all()):
@@ -100,30 +110,35 @@ class Finale(models.Model):
     def get_vote(self, voter, finalists, finalist_values):
 
         # Get relationship + finalist value for finalist 1
-        finalist_one_chance = voter.relationships.get(player=finalists[0]).value + finalist_values[0]
+        finalist_one_chance = (
+            voter.relationships.get(player=finalists[0]).value + finalist_values[0]
+        )
 
         # Get relationship + finalist value for finalist 2
-        finalist_two_chance = voter.relationships.get(player=finalists[1]).value + finalist_values[1]
+        finalist_two_chance = (
+            voter.relationships.get(player=finalists[1]).value + finalist_values[1]
+        )
 
         # Generate a random number between 1 and the sum
         vote_roll = random.randint(1, finalist_one_chance + finalist_two_chance)
 
         # If num is <= finalist 1, finalist 1 gets the vote
-        if (vote_roll <= finalist_one_chance):
+        if vote_roll <= finalist_one_chance:
             return finalists[0]
 
         else:
             return finalists[1]
 
-
     def count_votes(self, votes):
 
-        vote_count = {x:0 for x in list(self.finalists.all())}
+        vote_count = {x: 0 for x in list(self.finalists.all())}
 
         for voter in votes:
             vote_count[votes[voter]] += 1
 
-        vote_count = {k: v for k, v in sorted(vote_count.items(), key=lambda item: item[1])}
+        vote_count = {
+            k: v for k, v in sorted(vote_count.items(), key=lambda item: item[1])
+        }
 
         return vote_count
 

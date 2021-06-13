@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('simulator', '0001_initial'),
+        ("simulator", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='week',
-            name='vote_count',
-            field=models.CharField(max_length=20, validators=[django.core.validators.int_list_validator]),
+            model_name="week",
+            name="vote_count",
+            field=models.CharField(
+                max_length=20, validators=[django.core.validators.int_list_validator]
+            ),
         ),
     ]

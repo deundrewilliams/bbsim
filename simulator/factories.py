@@ -1,24 +1,41 @@
-from .models import *
+from simulator.models import (
+    Contestant,
+    Houseguest,
+    Game,
+    Competition,
+    EvictionCeremony,
+    Finale,
+    NominationCeremony,
+    VetoCeremony,
+    VetoPlayers,
+    Week,
+)
 from faker import Faker
 
 import factory
 
 fake = Faker()
 
+
 class ContestantFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Contestant
+
     name = fake.name()
+
 
 class GameFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Game
 
+
 class HouseguestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Houseguest
+
     name = fake.first_name()
     game = factory.SubFactory(GameFactory)
+
 
 class CompetitionFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -34,6 +51,7 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
             for participant in extracted:
                 self.participants.add(participant)
 
+
 class NominationCeremonyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = NominationCeremony
@@ -47,6 +65,7 @@ class NominationCeremonyFactory(factory.django.DjangoModelFactory):
         if extracted:
             for participant in extracted:
                 self.participants.add(participant)
+
 
 class VetoPlayersFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -70,8 +89,8 @@ class VetoPlayersFactory(factory.django.DjangoModelFactory):
             for nominee in extracted:
                 self.nominees.add(nominee)
 
-class VetoCeremonyFactory(factory.django.DjangoModelFactory):
 
+class VetoCeremonyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = VetoCeremony
 
@@ -94,8 +113,8 @@ class VetoCeremonyFactory(factory.django.DjangoModelFactory):
             for nominee in extracted:
                 self.nominees.add(nominee)
 
-class EvictionCeremonyFactory(factory.django.DjangoModelFactory):
 
+class EvictionCeremonyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = EvictionCeremony
 
@@ -118,8 +137,8 @@ class EvictionCeremonyFactory(factory.django.DjangoModelFactory):
             for nominee in extracted:
                 self.nominees.add(nominee)
 
-class WeekFactory(factory.django.DjangoModelFactory):
 
+class WeekFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Week
 
@@ -144,6 +163,7 @@ class WeekFactory(factory.django.DjangoModelFactory):
             for nominee in extracted:
                 self.final_nominees.add(nominee)
 
+
 class FinaleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Finale
@@ -163,5 +183,3 @@ class FinaleFactory(factory.django.DjangoModelFactory):
         if extracted:
             for juror in extracted:
                 self.jury.add(juror)
-
-

@@ -1,10 +1,10 @@
 import pytest
 import random
-from ..models import VetoCeremony, Houseguest
+from ..models import VetoCeremony
 from ..factories import HouseguestFactory, VetoCeremonyFactory
 
-class TestVetoCeremony:
 
+class TestVetoCeremony:
     @pytest.mark.django_db
     def test_initialization(self):
 
@@ -22,9 +22,9 @@ class TestVetoCeremony:
         assert list(vc.participants.all()) == hgs
 
         data = vc.serialize()
-        assert data['HOH'] == hoh.serialize()
-        assert data['Used'] == vc.using
-        assert data['Final Nominees'] == [x.serialize() for x in noms]
+        assert data["HOH"] == hoh.serialize()
+        assert data["Used"] == vc.using
+        assert data["Final Nominees"] == [x.serialize() for x in noms]
 
     @pytest.mark.django_db
     def test_get_decision_using(self, monkeypatch):
@@ -35,7 +35,9 @@ class TestVetoCeremony:
 
         noms = [hgs[0], hgs[1]]
 
-        vc = VetoCeremonyFactory.create(hoh=hgs[2], nominees=noms, participants=hgs, veto_holder=hgs[3])
+        vc = VetoCeremonyFactory.create(
+            hoh=hgs[2], nominees=noms, participants=hgs, veto_holder=hgs[3]
+        )
 
         def mock_randint(lower, upper):
             return 22
@@ -48,8 +50,8 @@ class TestVetoCeremony:
 
         info = vc.get_decision()
 
-        assert info['Using'] == True
-        assert info['On'] == hgs[1]
+        assert info["Using"]
+        assert info["On"] == hgs[1]
 
     @pytest.mark.django_db
     def test_get_decision_not_using(self, monkeypatch):
@@ -60,7 +62,9 @@ class TestVetoCeremony:
 
         noms = [hgs[0], hgs[1]]
 
-        vc = VetoCeremonyFactory.create(hoh=hgs[2], nominees=noms, participants=hgs, veto_holder=hgs[3])
+        vc = VetoCeremonyFactory.create(
+            hoh=hgs[2], nominees=noms, participants=hgs, veto_holder=hgs[3]
+        )
 
         def mock_randint(lower, upper):
             return 51
@@ -69,8 +73,8 @@ class TestVetoCeremony:
 
         info = vc.get_decision()
 
-        assert info['Using'] == False
-        assert info['On'] == None
+        assert info["Using"] is False
+        assert info["On"] is None
 
     @pytest.mark.django_db
     def test_get_renom(self):
@@ -83,7 +87,9 @@ class TestVetoCeremony:
 
         holder = hgs[2]
 
-        vc = VetoCeremonyFactory.create(hoh=hgs[3], nominees=noms, participants=hgs, veto_holder=holder)
+        vc = VetoCeremonyFactory.create(
+            hoh=hgs[3], nominees=noms, participants=hgs, veto_holder=holder
+        )
 
         renom = vc.get_renom()
 
@@ -108,17 +114,18 @@ class TestVetoCeremony:
 
         monkeypatch.setattr(VetoCeremony, "get_renom", mock_get_renom)
 
-        vc = VetoCeremonyFactory.create(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
+        vc = VetoCeremonyFactory.create(
+            hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
+        )
 
         vc.run_ceremony()
 
         assert set(vc.nominees.all()) == set([hgs[2], hgs[3]])
 
-
         # Assert serializer marks used as True
         data = vc.serialize()
-        assert data['Used'] == True
-        assert data['Final Nominees'] == [x.serialize() for x in [hgs[2], hgs[3]]]
+        assert data["Used"] is True
+        assert data["Final Nominees"] == [x.serialize() for x in [hgs[2], hgs[3]]]
 
     @pytest.mark.django_db
     def test_run_ceremony_final_four(self):
@@ -131,11 +138,13 @@ class TestVetoCeremony:
         noms = [hgs[1], hgs[2]]
         pov = hgs[3]
 
-        vc = VetoCeremonyFactory.create(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
+        vc = VetoCeremonyFactory.create(
+            hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
+        )
 
         vc.run_ceremony()
 
-        assert vc.using == False
+        assert vc.using is False
         assert list(vc.nominees.all()) == noms
 
     @pytest.mark.django_db
@@ -154,7 +163,7 @@ class TestVetoCeremony:
 
         def mock_get_decision(a):
             a.using = True
-            return {'Using': True, 'On': hgs[1]}
+            return {"Using": True, "On": hgs[1]}
 
         def mock_get_renom(a):
             return hgs[4]
@@ -162,7 +171,9 @@ class TestVetoCeremony:
         monkeypatch.setattr(VetoCeremony, "get_decision", mock_get_decision)
         monkeypatch.setattr(VetoCeremony, "get_renom", mock_get_renom)
 
-        vc = VetoCeremonyFactory.create(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
+        vc = VetoCeremonyFactory.create(
+            hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
+        )
 
         vc.run_ceremony()
 

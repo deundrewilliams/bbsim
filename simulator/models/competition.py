@@ -11,13 +11,21 @@ class Competition(models.Model):
     POV = 2
 
     COMPETITION_TYPE_CHOICES = (
-        (HOH, 'HOH'),
-        (POV, 'POV'),
+        (HOH, "HOH"),
+        (POV, "POV"),
     )
 
     comp_type = models.IntegerField(choices=COMPETITION_TYPE_CHOICES)
-    participants = models.ManyToManyField('Houseguest', related_name="comp_participants")
-    winner = models.ForeignKey('Houseguest', blank=True, null=True, on_delete=models.CASCADE, related_name="winner")
+    participants = models.ManyToManyField(
+        "Houseguest", related_name="comp_participants"
+    )
+    winner = models.ForeignKey(
+        "Houseguest",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="winner",
+    )
 
     def serialize(self):
         """
@@ -42,8 +50,6 @@ class Competition(models.Model):
         """
 
         self.winner = self.pick_winner()
-
-
 
     def pick_winner(self):
         """

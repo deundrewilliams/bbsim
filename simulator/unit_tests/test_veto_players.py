@@ -1,9 +1,9 @@
 import pytest
-from ..models import Competition, VetoPlayers
+from ..models import VetoPlayers
 from ..factories import HouseguestFactory, VetoPlayersFactory
 
-class TestVetoPlayers:
 
+class TestVetoPlayers:
     @pytest.mark.django_db
     def test_initialization(self):
 
@@ -47,9 +47,9 @@ class TestVetoPlayers:
 
         data = vps.serialize()
 
-        assert data['HOH'] == hoh.serialize()
-        assert data['Nominees'] == [x.serialize() for x in noms]
-        assert data['Picked'] == []
+        assert data["HOH"] == hoh.serialize()
+        assert data["Nominees"] == [x.serialize() for x in noms]
+        assert data["Picked"] == []
 
     @pytest.mark.django_db
     def test_serialization_after_run(self):
@@ -71,9 +71,9 @@ class TestVetoPlayers:
 
         data = vps.serialize()
 
-        assert data['HOH'] == hoh.serialize()
-        assert data['Nominees'] == [x.serialize() for x in noms]
-        assert len(data['Picked']) == len(hgs)
+        assert data["HOH"] == hoh.serialize()
+        assert data["Nominees"] == [x.serialize() for x in noms]
+        assert len(data["Picked"]) == len(hgs)
 
     @pytest.mark.django_db
     def test_pick_players_less_six(self):
@@ -117,4 +117,3 @@ class TestVetoPlayers:
         vps.pick_players()
 
         assert len(set(vps.picked.all())) == 6
-
