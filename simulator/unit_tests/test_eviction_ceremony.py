@@ -1,10 +1,10 @@
 import pytest
 
-from ..factories import HouseguestFactory, EvictionCeremonyFactory, GameFactory
+from ..factories import HouseguestFactory, EvictionCeremonyFactory
 from ..models import EvictionCeremony
 
-class TestEvictionCeremony:
 
+class TestEvictionCeremony:
     @pytest.mark.django_db
     def test_initialization(self):
         """
@@ -24,10 +24,10 @@ class TestEvictionCeremony:
 
         data = ev.serialize()
 
-        assert data['HOH'] == hoh.serialize()
-        assert data['Nominees'] == [x.serialize() for x in noms]
-        assert data['Evicted'] == None
-        assert data['Votes'] == None
+        assert data["HOH"] == hoh.serialize()
+        assert data["Nominees"] == [x.serialize() for x in noms]
+        assert data["Evicted"] is None
+        assert data["Votes"] is None
 
     @pytest.mark.django_db
     def test_get_vote(self):
@@ -37,7 +37,9 @@ class TestEvictionCeremony:
         for hg in hgs:
             hg.initialize_relationships(hgs)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
         ret = evc.get_vote(hgs[3], [hgs[1], hgs[2]])
 
@@ -51,14 +53,16 @@ class TestEvictionCeremony:
         hgs = HouseguestFactory.create_batch(6)
 
         def mock_get_vote(obj, voter, voting_pool):
-            if (voter == hgs[3] or voter == hgs[5]):
+            if voter == hgs[3] or voter == hgs[5]:
                 return hgs[1]
             else:
                 return hgs[2]
 
         monkeypatch.setattr(EvictionCeremony, "get_vote", mock_get_vote)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
         expected_votes = {
             hgs[3]: hgs[1],
@@ -75,7 +79,9 @@ class TestEvictionCeremony:
 
         hgs = HouseguestFactory.create_batch(6)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
         votes = {
             hgs[3]: hgs[2],
@@ -83,10 +89,7 @@ class TestEvictionCeremony:
             hgs[5]: hgs[1],
         }
 
-        expected_count = {
-            hgs[2]: 1,
-            hgs[1]: 2
-        }
+        expected_count = {hgs[2]: 1, hgs[1]: 2}
 
         vote_count = evc.count_votes(votes)
 
@@ -97,12 +100,11 @@ class TestEvictionCeremony:
 
         hgs = HouseguestFactory.create_batch(6)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
-        count = {
-            hgs[2]: 1,
-            hgs[1]: 2
-        }
+        count = {hgs[2]: 1, hgs[1]: 2}
 
         evictee = evc.get_evicted(count)
 
@@ -113,12 +115,11 @@ class TestEvictionCeremony:
 
         hgs = HouseguestFactory.create_batch(7)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
-        count = {
-            hgs[2]: 2,
-            hgs[1]: 2
-        }
+        count = {hgs[2]: 2, hgs[1]: 2}
 
         evicted = evc.get_evicted(count)
 
@@ -129,7 +130,9 @@ class TestEvictionCeremony:
 
         hgs = HouseguestFactory.create_batch(6)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
         evictee = evc.tiebreaker([hgs[1], hgs[2]])
 
@@ -140,7 +143,9 @@ class TestEvictionCeremony:
 
         hgs = HouseguestFactory.create_batch(6)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
         def mock_run_voting(a, b):
             votes = {
@@ -150,10 +155,7 @@ class TestEvictionCeremony:
             }
             return votes
 
-        count = {
-            hgs[2]: 1,
-            hgs[1]: 2
-        }
+        count = {hgs[2]: 1, hgs[1]: 2}
 
         def mock_count_votes(a, b):
 
@@ -170,7 +172,7 @@ class TestEvictionCeremony:
 
         assert evc.vote_count_objs == count
         assert evc.evicted == hgs[2]
-        assert evc.tied == False
+        assert evc.tied is False
         assert evc.vote_count == [2, 1]
 
     @pytest.mark.django_db
@@ -178,7 +180,9 @@ class TestEvictionCeremony:
 
         hgs = HouseguestFactory.create_batch(5)
 
-        evc = EvictionCeremonyFactory.create(hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs)
+        evc = EvictionCeremonyFactory.create(
+            hoh=hgs[0], nominees=[hgs[1], hgs[2]], participants=hgs
+        )
 
         def mock_run_voting(a, b):
             votes = {
@@ -187,10 +191,7 @@ class TestEvictionCeremony:
             }
             return votes
 
-        count = {
-            hgs[2]: 1,
-            hgs[1]: 1
-        }
+        count = {hgs[2]: 1, hgs[1]: 1}
 
         def mock_count_votes(a, b):
 

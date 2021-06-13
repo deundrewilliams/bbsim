@@ -4,8 +4,8 @@ from ..factories import HouseguestFactory, FinaleFactory
 from ..models import Finale, Competition, EvictionCeremony
 import random
 
-class TestFinale:
 
+class TestFinale:
     @pytest.mark.django_db
     def test_initialization(self):
 
@@ -21,12 +21,12 @@ class TestFinale:
 
         data = fn.serialize()
 
-        assert data['finalists'] == [x.serialize() for x in finalists]
-        assert data['jury'] == [x.serialize() for x in jury]
-        assert data['winner'] == None
-        assert data['final_hoh'] == None
-        assert data['final_juror'] == None
-        assert data['votes'] == None
+        assert data["finalists"] == [x.serialize() for x in finalists]
+        assert data["jury"] == [x.serialize() for x in jury]
+        assert data["winner"] is None
+        assert data["final_hoh"] is None
+        assert data["final_juror"] is None
+        assert data["votes"] is None
 
     @pytest.mark.django_db
     def test_run_voting(self, monkeypatch):
@@ -36,7 +36,7 @@ class TestFinale:
         f = FinaleFactory(finalists=finalists, jury=jurors)
 
         def mock_get_vote(obj, voter, votee, vals):
-            if (voter == jurors[0] or voter == jurors[1]):
+            if voter == jurors[0] or voter == jurors[1]:
                 return finalists[0]
             else:
                 return finalists[1]
@@ -48,14 +48,16 @@ class TestFinale:
             assert finalist in finalists
             return 50
 
-        monkeypatch.setattr(Finale, "calculate_finalist_value", mock_calculate_finalist_value)
+        monkeypatch.setattr(
+            Finale, "calculate_finalist_value", mock_calculate_finalist_value
+        )
 
         expected_votes = {
             jurors[0]: finalists[0],
             jurors[1]: finalists[0],
             jurors[2]: finalists[1],
             jurors[3]: finalists[1],
-            jurors[4]: finalists[1]
+            jurors[4]: finalists[1],
         }
 
         votes = f.run_voting()
@@ -75,13 +77,10 @@ class TestFinale:
             jurors[1]: finalists[1],
             jurors[2]: finalists[0],
             jurors[3]: finalists[1],
-            jurors[4]: finalists[1]
+            jurors[4]: finalists[1],
         }
 
-        expected_count = {
-            finalists[1]: 3,
-            finalists[0]: 2
-        }
+        expected_count = {finalists[1]: 3, finalists[0]: 2}
 
         vote_count = f.count_votes(vote_dict)
 
@@ -95,10 +94,7 @@ class TestFinale:
 
         f = FinaleFactory(finalists=finalists, jury=jurors)
 
-        vote_count = {
-            finalists[0]: 2,
-            finalists[1]: 3
-        }
+        vote_count = {finalists[0]: 2, finalists[1]: 3}
 
         winner = f.determine_winner(vote_count)
 
@@ -164,14 +160,14 @@ class TestFinale:
 
         def mock_run_competition(obj):
 
-            if (len(list(obj.participants.all())) == 3):
+            if len(list(obj.participants.all())) == 3:
                 assert list(obj.participants.all()) == finalists
                 obj.winner = finalists[1]
 
-            elif (list(obj.participants.all()) == [finalists[0], finalists[2]]):
+            elif list(obj.participants.all()) == [finalists[0], finalists[2]]:
                 obj.winner = finalists[0]
 
-            elif (set(obj.participants.all()) == set([finalists[0], finalists[1]])):
+            elif set(obj.participants.all()) == set([finalists[0], finalists[1]]):
                 obj.winner = finalists[0]
 
             else:
@@ -202,10 +198,7 @@ class TestFinale:
 
             return votes
 
-        vote_count = {
-                f2: 4,
-                f0: 1
-        }
+        vote_count = {f2: 4, f0: 1}
 
         def mock_count_votes(obj, votes):
 
@@ -228,5 +221,3 @@ class TestFinale:
         assert f.final_juror == f1
         assert f.winner == f0
         assert f.completed
-
-

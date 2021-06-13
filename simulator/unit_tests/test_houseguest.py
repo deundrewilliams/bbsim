@@ -1,10 +1,10 @@
 import pytest
 import random
-from ..models import Houseguest, Relationship
-from ..factories import HouseguestFactory, ContestantFactory, GameFactory
+from ..models import Houseguest
+from ..factories import HouseguestFactory, GameFactory
 
-class TestHouseguest():
 
+class TestHouseguest:
     @pytest.mark.django_db
     def test_initialization(self):
 
@@ -24,11 +24,11 @@ class TestHouseguest():
 
         data = hg.serialize()
 
-        assert data['name'] == 'Mike'
-        assert data['immune'] == 'True'
-        assert data['evicted'] == 'False'
-        assert data['comp_count'] == 0
-        assert data['nom_count'] == 0
+        assert data["name"] == "Mike"
+        assert data["immune"] == "True"
+        assert data["evicted"] == "False"
+        assert data["comp_count"] == 0
+        assert data["nom_count"] == 0
 
     @pytest.mark.django_db
     def test_nominate(self):
@@ -45,7 +45,7 @@ class TestHouseguest():
         hg = HouseguestFactory(game=g)
         hg.toggle_evicted(True)
 
-        assert hg.evicted == True
+        assert hg.evicted
 
     @pytest.mark.django_db
     def test_win_competition(self):
@@ -112,8 +112,14 @@ class TestHouseguest():
 
         hgs[0].impact_relationship(hgs[1], Houseguest.POSITIVE)
 
-        assert hgs[0].relationships.get(player=hgs[1]).value == Houseguest.NEUTRAL_RELATIONSHIP + 3
-        assert hgs[1].relationships.get(player=hgs[0]).value == Houseguest.NEUTRAL_RELATIONSHIP + 3
+        assert (
+            hgs[0].relationships.get(player=hgs[1]).value
+            == Houseguest.NEUTRAL_RELATIONSHIP + 3
+        )
+        assert (
+            hgs[1].relationships.get(player=hgs[0]).value
+            == Houseguest.NEUTRAL_RELATIONSHIP + 3
+        )
 
     @pytest.mark.django_db
     def test_impact_relationship_neutral(self, monkeypatch):
@@ -134,9 +140,14 @@ class TestHouseguest():
 
         hgs[0].impact_relationship(hgs[1], Houseguest.NEUTRAL)
 
-        assert hgs[0].relationships.get(player=hgs[1]).value == Houseguest.NEUTRAL_RELATIONSHIP + 1
-        assert hgs[1].relationships.get(player=hgs[0]).value == Houseguest.NEUTRAL_RELATIONSHIP + 1
-
+        assert (
+            hgs[0].relationships.get(player=hgs[1]).value
+            == Houseguest.NEUTRAL_RELATIONSHIP + 1
+        )
+        assert (
+            hgs[1].relationships.get(player=hgs[0]).value
+            == Houseguest.NEUTRAL_RELATIONSHIP + 1
+        )
 
     @pytest.mark.django_db
     def test_choose_negative_relationships_more_than_three_eligible(self, monkeypatch):
