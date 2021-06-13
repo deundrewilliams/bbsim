@@ -1,21 +1,20 @@
 from django.db import models
-# from . import Houseguest
-import random
 
 NUM_NOMINEES = 2
 
+
 class NominationCeremony(models.Model):
 
-    hoh = models.ForeignKey('Houseguest', on_delete=models.CASCADE)
-    participants = models.ManyToManyField('Houseguest', related_name="nom_participants")
-    nominees = models.ManyToManyField('Houseguest', related_name="nominees", default=[])
+    hoh = models.ForeignKey("Houseguest", on_delete=models.CASCADE)
+    participants = models.ManyToManyField("Houseguest", related_name="nom_participants")
+    nominees = models.ManyToManyField("Houseguest", related_name="nominees", default=[])
 
     def serialize(self):
 
         data = {
             "HOH": self.hoh.serialize(),
             "participants": [x.serialize() for x in list(self.participants.all())],
-            "nominees": [x.serialize() for x in list(self.nominees.all())]
+            "nominees": [x.serialize() for x in list(self.nominees.all())],
         }
 
         return data
@@ -23,7 +22,11 @@ class NominationCeremony(models.Model):
     def run_ceremony(self):
 
         # Get eligible people to be nominated
-        nom_eligible = list(filter(lambda x: x != self.hoh and x.immune == False, self.participants.all()))
+        nom_eligible = list(
+            filter(
+                lambda x: x != self.hoh and x.immune is False, self.participants.all()
+            )
+        )
 
         # Get new nominees
         new_nominees = self.choose_nominees(nom_eligible)
@@ -35,7 +38,6 @@ class NominationCeremony(models.Model):
 
         # Set nominees
         self.nominees.set(new_nominees)
-
 
     def choose_nominees(self, nomination_pool):
         """

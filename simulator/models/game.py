@@ -1,15 +1,32 @@
 from django.db import models
 
-from ..models import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony, Week, Finale
+from ..models import (
+    Competition,
+    NominationCeremony,
+    VetoPlayers,
+    VetoCeremony,
+    EvictionCeremony,
+    Week,
+    Finale,
+)
+
 
 class Game(models.Model):
 
     MIN_PLAYERS = 5
     MAX_PLAYERS = 16
 
-    winner = models.ForeignKey('Houseguest', on_delete=models.CASCADE, blank=True, null=True, related_name="game_winner")
-    jury = models.ManyToManyField('Houseguest', related_name="game_jury", default=[])
-    prejury = models.ManyToManyField('Houseguest', related_name="game_prejury", default=[])
+    winner = models.ForeignKey(
+        "Houseguest",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="game_winner",
+    )
+    jury = models.ManyToManyField("Houseguest", related_name="game_jury", default=[])
+    prejury = models.ManyToManyField(
+        "Houseguest", related_name="game_prejury", default=[]
+    )
     completed = models.BooleanField(default=False)
 
     def serialize(self):
@@ -20,7 +37,7 @@ class Game(models.Model):
             "winner": self.winner.serialize() if self.completed else None,
             "jury": [x.serialize() for x in list(self.jury.all())],
             "prejury": [x.serialize() for x in list(self.prejury.all())],
-            "finale": self.finale if self.completed else None
+            "finale": self.finale if self.completed else None,
         }
         return data
 
@@ -31,8 +48,6 @@ class Game(models.Model):
 
         # if (num_players < self.MIN_PLAYERS or num_players > self.MAX_PLAYERS):
         #     raise Exception("Too few/many players")
-
-
 
         # Determine jury size and prejury size -> determine_jury_size(num_players)
         self.jury_size = self.determine_jury_size(num_players)
@@ -55,7 +70,7 @@ class Game(models.Model):
         self.weeks = []
 
         # While in house array is > 3
-        while (len(self.in_house) > 3):
+        while len(self.in_house) > 3:
             # Run each week
             week_data = self.run_week(current_week)
 
@@ -84,11 +99,11 @@ class Game(models.Model):
         # 15 -> 9
         # 16 -> 9
 
-        if (num_players <= 6):
+        if num_players <= 6:
             return 3
-        elif (num_players <= 12):
+        elif num_players <= 12:
             return 5
-        elif (num_players <= 14):
+        elif num_players <= 14:
             return 7
         else:
             return 9
@@ -96,7 +111,7 @@ class Game(models.Model):
     def run_week(self, week_number):
 
         # Check if in jury should be turned on
-        if (self.jury_began == False and len(self.in_house) <= self.jury_size + 2):
+        if self.jury_began is False and len(self.in_house) <= self.jury_size + 2:
             self.jury_began = True
 
         # Run HOH competition
@@ -105,9 +120,7 @@ class Game(models.Model):
         self.run_hoh_competition(self.current_hoh)
 
         # Store current hoh in 'hoh'
-        hoh = self.current_hoh
-
-
+        # hoh = self.current_hoh
 
         # Run Nomination ceremony
         self.run_nomination_ceremony()
@@ -122,7 +135,7 @@ class Game(models.Model):
         self.run_veto_competition(players)
 
         # Store POV winner in 'pov'
-        pov = self.pov_holder
+        # pov = self.pov_holder
 
         # Run Veto cerermony
         self.run_veto_ceremony()
@@ -136,12 +149,19 @@ class Game(models.Model):
         # Move evictee to correct spot
         self.in_house.remove(self.evicted)
 
-        if (self.jury_began):
+        if self.jury_began:
             self.jury.add(self.evicted)
         else:
             self.prejury.add(self.evicted)
 
-        wk = Week(number=week_number, hoh=self.current_hoh, pov=self.pov_holder, evicted=self.evicted, vote_count=self.eviction_votes, tied=self.tied)
+        wk = Week(
+            number=week_number,
+            hoh=self.current_hoh,
+            pov=self.pov_holder,
+            evicted=self.evicted,
+            vote_count=self.eviction_votes,
+            tied=self.tied,
+        )
         wk.save()
         wk.initial_nominees.set(initial_noms)
         wk.final_nominees.set(final_noms)
@@ -184,7 +204,7 @@ class Game(models.Model):
         nom_ceremony.participants.set(self.in_house)
         nom_ceremony.run_ceremony()
 
-        noms = list(nom_ceremony.nominees.all())
+        # noms = list(nom_ceremony.nominees.all())
 
         # Get and set nominees
         self.current_nominees = list(nom_ceremony.nominees.all())
@@ -228,7 +248,6 @@ class Game(models.Model):
         self.pov_holder.win_competition()
 
         pov_comp.delete()
-
 
     def run_veto_ceremony(self):
 
@@ -286,4 +305,3 @@ class Game(models.Model):
         self.finale = fn.serialize()
 
         fn.delete()
-
