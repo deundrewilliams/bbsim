@@ -1,37 +1,65 @@
 from django.contrib import admin
 
-from simulator.models import *
+from simulator.models import (
+    Contestant,
+    Houseguest,
+    Game,
+    Competition,
+    EvictionCeremony,
+    Finale,
+    NominationCeremony,
+    VetoCeremony,
+    VetoPlayers,
+    Week,
+)
+
 
 # Register your models here.
 class ContestantAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
+
 
 class HouseguestAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
+
 
 class GameAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ("id",)
+
 
 class CompAdmin(admin.ModelAdmin):
-    list_display = ('id', 'winner', )
+    list_display = (
+        "id",
+        "winner",
+    )
+
 
 class EvictionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'evicted', )
+    list_display = (
+        "id",
+        "evicted",
+    )
+
 
 class FinaleAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ("id",)
+
 
 class NomCeremonyAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ("id",)
+
 
 class VetoCeremonyAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ("id",)
+
 
 class VetoPlayersAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ("id",)
+
 
 class WeekAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ("id",)
+
 
 admin.site.register(Contestant, ContestantAdmin)
 admin.site.register(Houseguest, HouseguestAdmin)
