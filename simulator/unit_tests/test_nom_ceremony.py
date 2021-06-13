@@ -4,7 +4,6 @@ from ..factories import HouseguestFactory, NominationCeremonyFactory
 
 
 class TestNominationCeremony:
-
     @pytest.mark.django_db
     def test_initialization(self):
 
@@ -28,9 +27,11 @@ class TestNominationCeremony:
 
         data = nc.serialize()
 
-        assert data['HOH'] == nc.hoh.serialize()
-        assert data['participants'] == [x.serialize() for x in list(nc.participants.all())]
-        assert data['nominees'] == []
+        assert data["HOH"] == nc.hoh.serialize()
+        assert data["participants"] == [
+            x.serialize() for x in list(nc.participants.all())
+        ]
+        assert data["nominees"] == []
 
     @pytest.mark.django_db
     def test_choose_nominees(self, monkeypatch):
@@ -51,7 +52,9 @@ class TestNominationCeremony:
 
         nc = NominationCeremonyFactory(participants=hgs, hoh=hgs[0])
 
-        monkeypatch.setattr(Houseguest, "choose_negative_relationships", mock_choose_neg_rels)
+        monkeypatch.setattr(
+            Houseguest, "choose_negative_relationships", mock_choose_neg_rels
+        )
 
         nominees = nc.choose_nominees(hgs[1:])
 

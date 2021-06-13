@@ -1,10 +1,8 @@
 import pytest
-from ..models import Contestant
-from ..factories import ContestantFactory, HouseguestFactory, GameFactory
+from ..factories import ContestantFactory, GameFactory
 
 
 class TestContestant:
-
     @pytest.mark.django_db
     def test_serialization(self):
 
@@ -12,8 +10,7 @@ class TestContestant:
 
         data = c.serialize()
 
-        assert data['name'] == "Mike"
-
+        assert data["name"] == "Mike"
 
     @pytest.mark.django_db
     def test_create_houseguest_clone(self):
@@ -25,5 +22,3 @@ class TestContestant:
         new_hg = c.create_houseguest_clone(g)
 
         assert new_hg.name == c.name
-
-

@@ -1,9 +1,8 @@
 from django.test import TestCase, Client
-from ..models import Contestant
 from ..factories import ContestantFactory
 
-class ContestantViewTest(TestCase):
 
+class ContestantViewTest(TestCase):
     @classmethod
     def setUp(cls):
         cls.client = Client()
@@ -18,11 +17,10 @@ class ContestantViewTest(TestCase):
         cs.append(ContestantFactory(name="Nancy"))
         cs.append(ContestantFactory(name="Alex"))
 
-        response = self.client.get('/api/contestants/')
+        response = self.client.get("/api/contestants/")
 
         self.assertEqual(response.status_code, 200)
 
         data = response.data
 
-        self.assertEqual(data['response'], [x.serialize() for x in cs])
-
+        self.assertEqual(data["response"], [x.serialize() for x in cs])

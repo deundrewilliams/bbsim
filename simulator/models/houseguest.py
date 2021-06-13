@@ -3,6 +3,7 @@ from django.db import models
 
 from ..models import Relationship
 
+
 class Houseguest(models.Model):
 
     NEUTRAL_RELATIONSHIP = 50
@@ -12,24 +13,26 @@ class Houseguest(models.Model):
     NEGATIVE = 3
 
     name = models.TextField(blank=False, null=False)
-    game = models.ForeignKey(to="Game", on_delete=models.CASCADE, related_name="players")
+    game = models.ForeignKey(
+        to="Game", on_delete=models.CASCADE, related_name="players"
+    )
     immune = models.BooleanField(blank=False, null=False, default=False)
     evicted = models.BooleanField(blank=False, null=False, default=False)
     competition_count = models.IntegerField(blank=False, null=False, default=0)
     nomination_count = models.IntegerField(blank=False, null=False, default=0)
-    relationships = models.ManyToManyField(to='Relationship', blank=False, default=[])
+    relationships = models.ManyToManyField(to="Relationship", blank=False, default=[])
 
     def __str__(self):
-        return f'{self.name} ({self.id})'
+        return f"{self.name} ({self.id})"
 
     def serialize(self):
         data = {
             "id": self.id,
             "name": self.name,
-            "immune": "True" if self.immune == True else "False",
-            "evicted": "True" if self.evicted == True else "False",
+            "immune": "True" if self.immune else "False",
+            "evicted": "True" if self.evicted else "False",
             "comp_count": self.competition_count,
-            "nom_count": self.nomination_count
+            "nom_count": self.nomination_count,
         }
         return data
 
@@ -49,7 +52,6 @@ class Houseguest(models.Model):
         self.save()
 
     def initialize_relationships(self, houseguests):
-
 
         for hg in houseguests:
             if hg == self:
@@ -92,10 +94,9 @@ class Houseguest(models.Model):
         inverse_rel.value += impact_amount
         inverse_rel.save()
 
-
     def choose_negative_relationships(self, eligible_houseguests, count=1):
 
-        if (len(eligible_houseguests) == 1):
+        if len(eligible_houseguests) == 1:
             return [eligible_houseguests[0]]
 
         # print(self)
@@ -107,7 +108,7 @@ class Houseguest(models.Model):
         picked = []
 
         # While length of picked is less than requested
-        while (len(picked) < count):
+        while len(picked) < count:
 
             # Get three random houseguests
             picked_keys = random.sample(eligible_keys, min(3, len(eligible_keys)))
@@ -115,7 +116,9 @@ class Houseguest(models.Model):
             # print(picked_keys)
 
             # Get the key with the minimum relationship
-            picked_key = min(picked_keys, key= lambda obj: self.relationships.get(player=obj).value)
+            picked_key = min(
+                picked_keys, key=lambda obj: self.relationships.get(player=obj).value
+            )
 
             # print(picked)
 
@@ -125,7 +128,7 @@ class Houseguest(models.Model):
         return picked
 
     def choose_positive_relationships(self, eligible_houseguests, count=1):
-        if (len(eligible_houseguests) == 1):
+        if len(eligible_houseguests) == 1:
             return [eligible_houseguests[0]]
 
         # print(self)
@@ -137,7 +140,7 @@ class Houseguest(models.Model):
         picked = []
 
         # While length of picked is less than requested
-        while (len(picked) < count):
+        while len(picked) < count:
 
             # Get three random houseguests
             picked_keys = random.sample(eligible_keys, min(3, len(eligible_keys)))
@@ -145,7 +148,9 @@ class Houseguest(models.Model):
             # print(picked_keys)
 
             # Get the key with the maximum relationship
-            picked_key = max(picked_keys, key= lambda obj: self.relationships.get(player=obj).value)
+            picked_key = max(
+                picked_keys, key=lambda obj: self.relationships.get(player=obj).value
+            )
 
             # print(picked)
 

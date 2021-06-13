@@ -1,12 +1,18 @@
 import pytest
 
-from ..models import *
+from ..models import (
+    Game,
+    Competition,
+    NominationCeremony,
+    VetoCeremony,
+    EvictionCeremony,
+    Finale,
+    Houseguest,
+)
 from ..factories import HouseguestFactory, GameFactory, WeekFactory
 
 
-
 class TestGame:
-
     @pytest.mark.django_db
     def test_initialization(self):
 
@@ -19,21 +25,19 @@ class TestGame:
 
         data = g.serialize()
 
-        assert data['id'] == g.id
-        assert data['players'] == [x.serialize() for x in hgs]
-        assert data['weeks'] == []
-        assert data['winner'] == None
-        assert data['prejury'] == []
-        assert data['jury'] == []
+        assert data["id"] == g.id
+        assert data["players"] == [x.serialize() for x in hgs]
+        assert data["weeks"] == []
+        assert data["winner"] is None
+        assert data["prejury"] == []
+        assert data["jury"] == []
 
     @pytest.mark.django_db
     def test_determine_jury_size(self):
 
-
-
         g = GameFactory.create()
 
-        hgs = HouseguestFactory.create_batch(2, game=g)
+        _ = HouseguestFactory.create_batch(2, game=g)
 
         assert g.determine_jury_size(5) == 3
         assert g.determine_jury_size(12) == 5
@@ -178,12 +182,16 @@ class TestGame:
         small_game.in_house = hgs.copy()
         small_game.jury_began = False
         small_game.current_hoh = None
-        small_game.jury_size = 4 # wouldn't actually be 4, but tests the first cpl lines of code
+        small_game.jury_size = (
+            4  # wouldn't actually be 4, but tests the first cpl lines of code
+        )
 
         def mock_run_hoh_competition(obj, outgoing_hoh):
-            assert obj.jury_began # Once here, jury began should've been changed to True
+            assert (
+                obj.jury_began
+            )  # Once here, jury began should've been changed to True
 
-            assert outgoing_hoh == None
+            assert outgoing_hoh is None
             obj.current_hoh = hgs[2]
             hgs[2].win_competition()
 
@@ -205,9 +213,10 @@ class TestGame:
             obj.eviction_votes = [2, 1]
             obj.tied = False
 
-
         monkeypatch.setattr(Game, "run_hoh_competition", mock_run_hoh_competition)
-        monkeypatch.setattr(Game, "run_nomination_ceremony", mock_run_nomination_ceremony)
+        monkeypatch.setattr(
+            Game, "run_nomination_ceremony", mock_run_nomination_ceremony
+        )
         monkeypatch.setattr(Game, "get_veto_players", mock_get_veto_players)
         monkeypatch.setattr(Game, "run_veto_ceremony", mock_run_veto_cerermony)
         monkeypatch.setattr(Game, "run_veto_competition", mock_run_veto_competition)
@@ -226,12 +235,14 @@ class TestGame:
         small_game.in_house = hgs.copy()
         small_game.jury_began = False
         small_game.current_hoh = None
-        small_game.jury_size = 1 # wouldn't actually be 4, but tests the first cpl lines of code
+        small_game.jury_size = (
+            1  # wouldn't actually be 4, but tests the first cpl lines of code
+        )
 
         def mock_run_hoh_competition(obj, outgoing_hoh):
-            assert obj.jury_began == False # Jury began should not be true
+            assert obj.jury_began is False  # Jury began should not be true
 
-            assert outgoing_hoh == None
+            assert outgoing_hoh is None
             obj.current_hoh = hgs[2]
             hgs[2].win_competition()
 
@@ -253,9 +264,10 @@ class TestGame:
             obj.eviction_votes = [2, 1]
             obj.tied = True
 
-
         monkeypatch.setattr(Game, "run_hoh_competition", mock_run_hoh_competition)
-        monkeypatch.setattr(Game, "run_nomination_ceremony", mock_run_nomination_ceremony)
+        monkeypatch.setattr(
+            Game, "run_nomination_ceremony", mock_run_nomination_ceremony
+        )
         monkeypatch.setattr(Game, "get_veto_players", mock_get_veto_players)
         monkeypatch.setattr(Game, "run_veto_ceremony", mock_run_veto_cerermony)
         monkeypatch.setattr(Game, "run_veto_competition", mock_run_veto_competition)
@@ -298,9 +310,30 @@ class TestGame:
         # Wk 3: HOH - 0, Nom - 2 and 1, POV - 2, Final 1 and 5, Evicted: 5
         # Final 3: 0, 1, 2
 
-        wk1 = WeekFactory(number=1, hoh=hgs[0], initial_nominees=[hgs[2], hgs[3]], pov=hgs[4], final_nominees=[hgs[2], hgs[3]], evicted=hgs[3])
-        wk2 = WeekFactory(number=2, hoh=hgs[2], initial_nominees=[hgs[0], hgs[4]], pov=hgs[0], final_nominees=[hgs[4], hgs[1]], evicted=hgs[4])
-        wk3 = WeekFactory(number=3, hoh=hgs[0], initial_nominees=[hgs[2], hgs[1]], pov=hgs[2], final_nominees=[hgs[1], hgs[5]], evicted=hgs[5])
+        wk1 = WeekFactory(
+            number=1,
+            hoh=hgs[0],
+            initial_nominees=[hgs[2], hgs[3]],
+            pov=hgs[4],
+            final_nominees=[hgs[2], hgs[3]],
+            evicted=hgs[3],
+        )
+        wk2 = WeekFactory(
+            number=2,
+            hoh=hgs[2],
+            initial_nominees=[hgs[0], hgs[4]],
+            pov=hgs[0],
+            final_nominees=[hgs[4], hgs[1]],
+            evicted=hgs[4],
+        )
+        wk3 = WeekFactory(
+            number=3,
+            hoh=hgs[0],
+            initial_nominees=[hgs[2], hgs[1]],
+            pov=hgs[2],
+            final_nominees=[hgs[1], hgs[5]],
+            evicted=hgs[5],
+        )
 
         wks = [wk1, wk2, wk3]
 
@@ -308,15 +341,15 @@ class TestGame:
 
         def mock_run_week(obj, week_num):
 
-            if (week_num == 1):
+            if week_num == 1:
                 obj.in_house.remove(hgs[3])
                 obj.jury.add(hgs[3])
                 return wks[0]
-            elif (week_num == 2):
+            elif week_num == 2:
                 obj.in_house.remove(hgs[4])
                 obj.jury.add(hgs[4])
                 return wks[1]
-            elif (week_num == 3):
+            elif week_num == 3:
                 obj.in_house.remove(hgs[5])
                 obj.jury.add(hgs[5])
                 return wks[2]
@@ -359,8 +392,6 @@ class TestGame:
         hgs.append(HouseguestFactory(name="D", game=g))
         hgs.append(HouseguestFactory(name="E", game=g))
         hgs.append(HouseguestFactory(name="F", game=g))
-
-
 
         g.run_game()
 

@@ -2,8 +2,8 @@ from django.test import TestCase, Client
 from ..models import Game
 from ..factories import GameFactory, HouseguestFactory, ContestantFactory
 
-class GameViewTest(TestCase):
 
+class GameViewTest(TestCase):
     @classmethod
     def setUp(cls):
         cls.client = Client()
@@ -14,7 +14,7 @@ class GameViewTest(TestCase):
 
         valid_id = g.id
 
-        response = self.client.get(f'/api/game/{valid_id}')
+        response = self.client.get(f"/api/game/{valid_id}")
 
         data = response.data
 
@@ -22,7 +22,7 @@ class GameViewTest(TestCase):
 
     def test_get_game_invalid(self):
 
-        response = self.client.get(f'/api/game/3')
+        response = self.client.get("/api/game/3")
 
         self.assertEqual(response.status_code, 400)
 
@@ -38,9 +38,9 @@ class GameViewTest(TestCase):
 
         ids = [x.id for x in contestant_objs]
 
-        response = self.client.post(f'/api/create-game', {"contestants": ids})
+        response = self.client.post("/api/create-game", {"contestants": ids})
 
-        rec_id = response.data['id']
+        rec_id = response.data["id"]
 
         g = Game.objects.get(id=rec_id)
 
@@ -60,9 +60,6 @@ class GameViewTest(TestCase):
         hg_objs.append(HouseguestFactory(name="E", game=g))
         hg_objs.append(HouseguestFactory(name="F", game=g))
 
-        response = self.client.post(f'/api/sim-game', {"id": g.id})
+        response = self.client.post("/api/sim-game", {"id": g.id})
 
-        updated_g = Game.objects.get(id=g.id)
-
-
-        self.assertTrue(updated_g.completed)
+        self.assertTrue("winner" in response.data)
