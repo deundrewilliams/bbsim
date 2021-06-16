@@ -1,7 +1,7 @@
 from django.db import models
 
+from ..classes import Competition
 from ..models import (
-    Competition,
     NominationCeremony,
     VetoPlayers,
     VetoCeremony,
@@ -183,9 +183,7 @@ class Game(models.Model):
         # Create competition using all players except current (outgoing) hoh
         playing = [x for x in self.in_house if x != outgoing_hoh]
 
-        hoh_comp = Competition(comp_type=Competition.HOH)
-        hoh_comp.save()
-        hoh_comp.participants.set(playing)
+        hoh_comp = Competition(comp_type=Competition.HOH, participants=playing)
 
         # Run competition and get winner
         hoh_comp.run_competition()
@@ -193,8 +191,6 @@ class Game(models.Model):
 
         # Set new hoh and update winner's comp count
         self.current_hoh.win_competition()
-
-        hoh_comp.delete()
 
     def run_nomination_ceremony(self):
 
@@ -236,9 +232,7 @@ class Game(models.Model):
     def run_veto_competition(self, veto_players):
 
         # Create Competition using veto players
-        pov_comp = Competition(comp_type=Competition.POV)
-        pov_comp.save()
-        pov_comp.participants.set(veto_players)
+        pov_comp = Competition(comp_type=Competition.POV, participants=veto_players)
 
         # Run competition and get winner
         pov_comp.run_competition()
@@ -246,8 +240,6 @@ class Game(models.Model):
         # Set pov holder and update winners' comp count
         self.pov_holder = pov_comp.winner
         self.pov_holder.win_competition()
-
-        pov_comp.delete()
 
     def run_veto_ceremony(self):
 

@@ -1,7 +1,8 @@
 import pytest
 
+from ..classes import Competition
 from ..factories import HouseguestFactory, FinaleFactory
-from ..models import Finale, Competition, EvictionCeremony
+from ..models import Finale, EvictionCeremony
 import random
 
 
@@ -160,18 +161,18 @@ class TestFinale:
 
         def mock_run_competition(obj):
 
-            if len(list(obj.participants.all())) == 3:
-                assert list(obj.participants.all()) == finalists
+            if len(obj.participants) == 3:
+                assert obj.participants == finalists
                 obj.winner = finalists[1]
 
-            elif list(obj.participants.all()) == [finalists[0], finalists[2]]:
+            elif obj.participants == [finalists[0], finalists[2]]:
                 obj.winner = finalists[0]
 
-            elif set(obj.participants.all()) == set([finalists[0], finalists[1]]):
+            elif set(obj.participants) == set([finalists[0], finalists[1]]):
                 obj.winner = finalists[0]
 
             else:
-                raise Exception(f"Invalid participants {list(obj.participants.all())}")
+                raise Exception(f"Invalid participants {obj.participants}")
 
         def mock_evc_run_ceremony(obj):
 

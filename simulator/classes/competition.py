@@ -1,11 +1,8 @@
 from django.db import models
-
-# from .houseguest import Houseguest
-
 import random
 
 
-class Competition(models.Model):
+class Competition:
 
     HOH = 1
     POV = 2
@@ -15,17 +12,10 @@ class Competition(models.Model):
         (POV, "POV"),
     )
 
-    comp_type = models.IntegerField(choices=COMPETITION_TYPE_CHOICES)
-    participants = models.ManyToManyField(
-        "Houseguest", related_name="comp_participants"
-    )
-    winner = models.ForeignKey(
-        "Houseguest",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name="winner",
-    )
+    def __init__(self, comp_type, participants):
+        self.comp_type = comp_type
+        self.participants = participants
+        self.winner = None
 
     def serialize(self):
         """
@@ -38,7 +28,7 @@ class Competition(models.Model):
         data = {
             "id": self.id,
             "type": self.COMPETITION_TYPE_CHOICES[self.comp_type - 1][1],
-            "players": [x.serialize() for x in list(self.participants.all())],
+            "players": self.participants,
             "winner": "None" if not self.winner else self.winner.serialize(),
         }
 
@@ -59,6 +49,6 @@ class Competition(models.Model):
         :rtype: simulator.models.Houseguest
         """
 
-        winner = random.choice(list(self.participants.all()))
+        winner = random.choice(self.participants)
 
         return winner

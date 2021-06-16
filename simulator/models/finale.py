@@ -1,6 +1,7 @@
 from django.db import models
 
-from ..models import Competition, EvictionCeremony
+from ..classes import Competition
+from ..models import EvictionCeremony
 
 import random
 
@@ -72,12 +73,9 @@ class Finale(models.Model):
 
         # print(players)
 
-        c = Competition(comp_type=Competition.HOH)
-        c.save()
-        c.participants.set(players)
+        c = Competition(Competition.HOH, players)
         c.run_competition()
         winner = c.winner
-        c.delete()
         return winner
 
     def calculate_finalist_value(self, finalist):

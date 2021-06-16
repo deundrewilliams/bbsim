@@ -1,8 +1,8 @@
 import pytest
 
+from ..classes import Competition
 from ..models import (
     Game,
-    Competition,
     NominationCeremony,
     VetoCeremony,
     EvictionCeremony,
@@ -54,7 +54,7 @@ class TestGame:
         small_game.save()
 
         def mock_run_competition(obj):
-            assert list(obj.participants.all()) == hgs
+            assert obj.participants == hgs
             obj.winner = hgs[1]
 
         monkeypatch.setattr(Competition, "run_competition", mock_run_competition)
@@ -113,7 +113,7 @@ class TestGame:
         small_game.save()
 
         def mock_run_competition(obj):
-            assert list(obj.participants.all()) == hgs
+            assert obj.participants == hgs
             obj.winner = hgs[4]
 
         monkeypatch.setattr(Competition, "run_competition", mock_run_competition)
