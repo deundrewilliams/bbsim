@@ -1,7 +1,7 @@
 import pytest
 import random
-from ..models import VetoCeremony
-from ..factories import HouseguestFactory, VetoCeremonyFactory
+from ..classes import VetoCeremony
+from ..factories import HouseguestFactory
 
 
 class TestVetoCeremony:
@@ -14,12 +14,9 @@ class TestVetoCeremony:
         noms = [hgs[1], hgs[2]]
         veto_holder = hgs[2]
 
-        vc = VetoCeremony(hoh=hoh, veto_holder=veto_holder)
-        vc.save()
-        vc.nominees.set(noms)
-        vc.participants.set(hgs)
+        vc = VetoCeremony(hoh=hoh, veto_holder=veto_holder, nominees=noms, participants=hgs)
 
-        assert list(vc.participants.all()) == hgs
+        assert vc.participants == hgs
 
         data = vc.serialize()
         assert data["HOH"] == hoh.serialize()
@@ -35,7 +32,7 @@ class TestVetoCeremony:
 
         noms = [hgs[0], hgs[1]]
 
-        vc = VetoCeremonyFactory.create(
+        vc = VetoCeremony(
             hoh=hgs[2], nominees=noms, participants=hgs, veto_holder=hgs[3]
         )
 
@@ -62,7 +59,7 @@ class TestVetoCeremony:
 
         noms = [hgs[0], hgs[1]]
 
-        vc = VetoCeremonyFactory.create(
+        vc = VetoCeremony(
             hoh=hgs[2], nominees=noms, participants=hgs, veto_holder=hgs[3]
         )
 
@@ -87,7 +84,7 @@ class TestVetoCeremony:
 
         holder = hgs[2]
 
-        vc = VetoCeremonyFactory.create(
+        vc = VetoCeremony(
             hoh=hgs[3], nominees=noms, participants=hgs, veto_holder=holder
         )
 
@@ -114,13 +111,13 @@ class TestVetoCeremony:
 
         monkeypatch.setattr(VetoCeremony, "get_renom", mock_get_renom)
 
-        vc = VetoCeremonyFactory.create(
+        vc = VetoCeremony(
             hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
         )
 
         vc.run_ceremony()
 
-        assert set(vc.nominees.all()) == set([hgs[2], hgs[3]])
+        assert set(vc.nominees) == set([hgs[2], hgs[3]])
 
         # Assert serializer marks used as True
         data = vc.serialize()
@@ -138,14 +135,14 @@ class TestVetoCeremony:
         noms = [hgs[1], hgs[2]]
         pov = hgs[3]
 
-        vc = VetoCeremonyFactory.create(
+        vc = VetoCeremony(
             hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
         )
 
         vc.run_ceremony()
 
         assert vc.using is False
-        assert list(vc.nominees.all()) == noms
+        assert vc.nominees == noms
 
     @pytest.mark.django_db
     def test_run_ceremony_other_winner(self, monkeypatch):
@@ -171,10 +168,10 @@ class TestVetoCeremony:
         monkeypatch.setattr(VetoCeremony, "get_decision", mock_get_decision)
         monkeypatch.setattr(VetoCeremony, "get_renom", mock_get_renom)
 
-        vc = VetoCeremonyFactory.create(
+        vc = VetoCeremony(
             hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
         )
 
         vc.run_ceremony()
 
-        assert set(vc.nominees.all()) == set([hgs[2], hgs[4]])
+        assert set(vc.nominees) == set([hgs[2], hgs[4]])

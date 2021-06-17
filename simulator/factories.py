@@ -4,7 +4,6 @@ from simulator.models import (
     Game,
     EvictionCeremony,
     Finale,
-    VetoCeremony,
     Week,
 )
 from faker import Faker
@@ -32,30 +31,6 @@ class HouseguestFactory(factory.django.DjangoModelFactory):
 
     name = fake.first_name()
     game = factory.SubFactory(GameFactory)
-
-
-class VetoCeremonyFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = VetoCeremony
-
-    hoh = factory.SubFactory(HouseguestFactory)
-    veto_holder = factory.SubFactory(HouseguestFactory)
-
-    @factory.post_generation
-    def participants(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for participant in extracted:
-                self.participants.add(participant)
-
-    @factory.post_generation
-    def nominees(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for nominee in extracted:
-                self.nominees.add(nominee)
 
 
 class EvictionCeremonyFactory(factory.django.DjangoModelFactory):
