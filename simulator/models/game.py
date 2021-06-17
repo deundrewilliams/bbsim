@@ -1,8 +1,7 @@
 from django.db import models
 
-from ..classes import Competition, NominationCeremony, VetoPlayers, VetoCeremony
+from ..classes import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony
 from ..models import (
-    EvictionCeremony,
     Week,
     Finale,
 )
@@ -242,10 +241,7 @@ class Game(models.Model):
     def run_eviction(self):
 
         # Create Eviction Ceremony
-        evc = EvictionCeremony(hoh=self.current_hoh)
-        evc.save()
-        evc.nominees.set(self.current_nominees)
-        evc.participants.set(self.in_house)
+        evc = EvictionCeremony(hoh=self.current_hoh, nominees=self.current_nominees, participants=self.in_house)
 
         # Run eviction
         evc.run_ceremony()
@@ -258,8 +254,6 @@ class Game(models.Model):
 
         self.eviction_votes = evc.vote_count
         self.tied = evc.tied
-
-        evc.delete()
 
     def run_finale(self):
 

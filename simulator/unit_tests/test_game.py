@@ -1,9 +1,8 @@
 import pytest
 
-from ..classes import Competition, NominationCeremony, VetoCeremony
+from ..classes import Competition, NominationCeremony, VetoCeremony, EvictionCeremony
 from ..models import (
     Game,
-    EvictionCeremony,
     Finale,
     Houseguest,
 )
@@ -158,7 +157,7 @@ class TestGame:
         small_game.save()
 
         def mock_run_ceremony(obj):
-            assert list(obj.nominees.all()) == [hgs[3], hgs[5]]
+            assert obj.nominees == [hgs[3], hgs[5]]
             assert obj.hoh == hgs[2]
             obj.evicted = hgs[5]
             obj.vote_count = [2, 1]

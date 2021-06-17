@@ -1,7 +1,6 @@
 from django.db import models
 
-from ..classes import Competition
-from ..models import EvictionCeremony
+from ..classes import Competition, EvictionCeremony
 
 import random
 
@@ -43,22 +42,16 @@ class Finale(models.Model):
         self.final_hoh.win_competition()
 
         # Run final eviction
-        finalevc = EvictionCeremony(hoh=self.final_hoh)
-        finalevc.save()
-        finalevc.nominees.set(
-            list(filter(lambda x: x != self.final_hoh, list(self.finalists.all())))
-        )
-        finalevc.participants.set(list(self.finalists.all()))
+        finalnoms = list(filter(lambda x: x != self.final_hoh, list(self.finalists.all())))
+        finalparts = list(self.finalists.all())
 
+        finalevc = EvictionCeremony(hoh=self.final_hoh, nominees=finalnoms, participants=finalparts)
         finalevc.run_ceremony()
 
         # Set final juror
         self.final_juror = finalevc.evicted
         self.jury.add(self.final_juror)
         self.finalists.remove(self.final_juror)
-
-        # Delete final eviction object
-        finalevc.delete()
 
         # Run voting process
         self.votes = self.run_voting()

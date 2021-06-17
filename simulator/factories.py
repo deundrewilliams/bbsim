@@ -2,7 +2,6 @@ from simulator.models import (
     Contestant,
     Houseguest,
     Game,
-    EvictionCeremony,
     Finale,
     Week,
 )
@@ -31,30 +30,6 @@ class HouseguestFactory(factory.django.DjangoModelFactory):
 
     name = fake.first_name()
     game = factory.SubFactory(GameFactory)
-
-
-class EvictionCeremonyFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = EvictionCeremony
-
-    hoh = factory.SubFactory(HouseguestFactory)
-    evicted = factory.SubFactory(HouseguestFactory)
-
-    @factory.post_generation
-    def participants(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for participant in extracted:
-                self.participants.add(participant)
-
-    @factory.post_generation
-    def nominees(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for nominee in extracted:
-                self.nominees.add(nominee)
 
 
 class WeekFactory(factory.django.DjangoModelFactory):

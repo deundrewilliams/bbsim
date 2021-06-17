@@ -1,4 +1,3 @@
-from .eviction_ceremony import EvictionCeremony
 from .week import Week
 from .finale import Finale
 from .game import Game

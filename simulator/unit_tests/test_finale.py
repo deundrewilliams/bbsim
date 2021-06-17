@@ -1,8 +1,8 @@
 import pytest
 
-from ..classes import Competition
+from ..classes import Competition, EvictionCeremony
 from ..factories import HouseguestFactory, FinaleFactory
-from ..models import Finale, EvictionCeremony
+from ..models import Finale
 import random
 
 
@@ -176,7 +176,7 @@ class TestFinale:
 
         def mock_evc_run_ceremony(obj):
 
-            assert set(obj.nominees.all()) == set([finalists[1], finalists[2]])
+            assert set(obj.nominees) == set([finalists[1], finalists[2]])
 
             obj.evicted = finalists[1]
 

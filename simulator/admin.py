@@ -4,7 +4,6 @@ from simulator.models import (
     Contestant,
     Houseguest,
     Game,
-    EvictionCeremony,
     Finale,
     Week,
 )
@@ -51,6 +50,5 @@ class WeekAdmin(admin.ModelAdmin):
 admin.site.register(Contestant, ContestantAdmin)
 admin.site.register(Houseguest, HouseguestAdmin)
 admin.site.register(Game, GameAdmin)
-admin.site.register(EvictionCeremony, EvictionAdmin)
 admin.site.register(Finale, FinaleAdmin)
 admin.site.register(Week, WeekAdmin)
