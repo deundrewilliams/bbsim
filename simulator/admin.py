@@ -7,7 +7,6 @@ from simulator.models import (
     EvictionCeremony,
     Finale,
     VetoCeremony,
-    VetoPlayers,
     Week,
 )
 
@@ -51,10 +50,6 @@ class VetoCeremonyAdmin(admin.ModelAdmin):
     list_display = ("id",)
 
 
-class VetoPlayersAdmin(admin.ModelAdmin):
-    list_display = ("id",)
-
-
 class WeekAdmin(admin.ModelAdmin):
     list_display = ("id",)
 
@@ -65,5 +60,4 @@ admin.site.register(Game, GameAdmin)
 admin.site.register(EvictionCeremony, EvictionAdmin)
 admin.site.register(Finale, FinaleAdmin)
 admin.site.register(VetoCeremony, VetoCeremonyAdmin)
-admin.site.register(VetoPlayers, VetoPlayersAdmin)
 admin.site.register(Week, WeekAdmin)

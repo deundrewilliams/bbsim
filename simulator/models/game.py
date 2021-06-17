@@ -1,8 +1,7 @@
 from django.db import models
 
-from ..classes import Competition, NominationCeremony
+from ..classes import Competition, NominationCeremony, VetoPlayers
 from ..models import (
-    VetoPlayers,
     VetoCeremony,
     EvictionCeremony,
     Week,
@@ -209,17 +208,12 @@ class Game(models.Model):
     def get_veto_players(self):
 
         # Create VetoPlayers
-        vp = VetoPlayers(hoh=self.current_hoh)
-        vp.save()
-        vp.nominees.set(self.current_nominees)
-        vp.participants.set(self.in_house)
+        vp = VetoPlayers(hoh=self.current_hoh, nominees=self.current_nominees, participants=self.in_house)
 
         # Run picking
         vp.pick_players()
 
-        picked = list(vp.picked.all()).copy()
-
-        vp.delete()
+        picked = vp.picked
 
         # Returned picked players
         return picked

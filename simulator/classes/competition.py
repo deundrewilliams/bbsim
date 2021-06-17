@@ -26,7 +26,6 @@ class Competition:
         """
 
         data = {
-            "id": self.id,
             "type": self.COMPETITION_TYPE_CHOICES[self.comp_type - 1][1],
             "players": self.participants,
             "winner": "None" if not self.winner else self.winner.serialize(),
