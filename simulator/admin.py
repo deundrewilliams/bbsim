@@ -6,7 +6,6 @@ from simulator.models import (
     Game,
     EvictionCeremony,
     Finale,
-    NominationCeremony,
     VetoCeremony,
     VetoPlayers,
     Week,
@@ -65,7 +64,6 @@ admin.site.register(Houseguest, HouseguestAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(EvictionCeremony, EvictionAdmin)
 admin.site.register(Finale, FinaleAdmin)
-admin.site.register(NominationCeremony, NomCeremonyAdmin)
 admin.site.register(VetoCeremony, VetoCeremonyAdmin)
 admin.site.register(VetoPlayers, VetoPlayersAdmin)
 admin.site.register(Week, WeekAdmin)

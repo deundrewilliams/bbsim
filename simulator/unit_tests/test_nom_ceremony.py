@@ -1,6 +1,7 @@
 import pytest
-from ..models import NominationCeremony, Houseguest
-from ..factories import HouseguestFactory, NominationCeremonyFactory
+from ..classes import NominationCeremony
+from ..models import Houseguest
+from ..factories import HouseguestFactory
 
 
 class TestNominationCeremony:
@@ -11,25 +12,21 @@ class TestNominationCeremony:
 
         participants = HouseguestFactory.create_batch(5)
 
-        nc = NominationCeremony(hoh=hg)
-
-        nc.save()
-
-        nc.participants.set(participants)
+        nc = NominationCeremony(hoh=hg, participants=participants)
 
         assert nc.hoh.serialize() == hg.serialize()
-        assert list(nc.participants.all()) == participants
+        assert nc.participants == participants
 
     @pytest.mark.django_db
     def test_serialization(self):
 
-        nc = NominationCeremonyFactory()
+        nc = NominationCeremony(hoh=HouseguestFactory(), participants=HouseguestFactory.create_batch(6))
 
         data = nc.serialize()
 
         assert data["HOH"] == nc.hoh.serialize()
         assert data["participants"] == [
-            x.serialize() for x in list(nc.participants.all())
+            x.serialize() for x in nc.participants
         ]
         assert data["nominees"] == []
 
@@ -50,7 +47,7 @@ class TestNominationCeremony:
 
             return [hgs[1], hgs[3]]
 
-        nc = NominationCeremonyFactory(participants=hgs, hoh=hgs[0])
+        nc = NominationCeremony(participants=hgs, hoh=hgs[0])
 
         monkeypatch.setattr(
             Houseguest, "choose_negative_relationships", mock_choose_neg_rels
@@ -80,10 +77,10 @@ class TestNominationCeremony:
 
         monkeypatch.setattr(NominationCeremony, "choose_nominees", mock_choose_nominees)
 
-        nc = NominationCeremonyFactory(hoh=hoh, participants=hgs)
+        nc = NominationCeremony(hoh=hoh, participants=hgs)
 
         nc.run_ceremony()
 
-        nominees = list(nc.nominees.all())
+        nominees = nc.nominees
 
         assert nominees == [hgs[1], hgs[2]]

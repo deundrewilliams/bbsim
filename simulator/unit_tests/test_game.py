@@ -1,9 +1,8 @@
 import pytest
 
-from ..classes import Competition
+from ..classes import Competition, NominationCeremony
 from ..models import (
     Game,
-    NominationCeremony,
     VetoCeremony,
     EvictionCeremony,
     Finale,
@@ -76,8 +75,8 @@ class TestGame:
 
         def mock_run_ceremony(obj):
             assert obj.hoh == hgs[2]
-            assert list(obj.participants.all()) == hgs
-            obj.nominees.set([hgs[1], hgs[3]])
+            assert obj.participants == hgs
+            obj.nominees = [hgs[1], hgs[3]]
 
         monkeypatch.setattr(NominationCeremony, "run_ceremony", mock_run_ceremony)
 
