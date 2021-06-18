@@ -37,4 +37,5 @@ jobs:
         black simulator/ --check
     - name: Test with pytest
       run: |
+        pipenv shell
         pytest
