@@ -1,9 +1,6 @@
 from django.db import models
 
-from ..classes import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony, Finale
-from ..models import (
-    Week,
-)
+from ..classes import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony, Finale, Week
 
 
 class Game(models.Model):
@@ -152,18 +149,14 @@ class Game(models.Model):
         wk = Week(
             number=week_number,
             hoh=self.current_hoh,
+            initial_nominees=initial_noms,
             pov=self.pov_holder,
+            final_nominees=final_noms,
             evicted=self.evicted,
             vote_count=self.eviction_votes,
             tied=self.tied,
         )
-        wk.save()
-        wk.initial_nominees.set(initial_noms)
-        wk.final_nominees.set(final_noms)
-
         week_data = wk.serialize()
-
-        wk.delete()
 
         return week_data
 

@@ -1,7 +1,7 @@
 import pytest
 
 from ..factories import HouseguestFactory
-from ..models import Week
+from ..classes import Week
 
 
 class TestWeek:
@@ -14,21 +14,19 @@ class TestWeek:
         w = Week(
             number=1,
             hoh=hgs[0],
+            initial_nominees=[hgs[1], hgs[2]],
             pov=hgs[3],
+            final_nominees=[hgs[1], hgs[4]],
             evicted=hgs[4],
             vote_count=[3, 2],
             tied=True,
         )
-        w.save()
 
         hgs[2].name = "Mike"
         hgs[2].save()
 
         hgs[4].name = "Bill"
         hgs[4].save()
-
-        w.initial_nominees.set([hgs[1], hgs[2]])
-        w.final_nominees.set([hgs[1], hgs[4]])
 
         data = w.serialize()
 

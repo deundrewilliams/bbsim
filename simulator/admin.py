@@ -4,7 +4,6 @@ from simulator.models import (
     Contestant,
     Houseguest,
     Game,
-    Week,
 )
 
 
@@ -26,11 +25,7 @@ class EvictionAdmin(admin.ModelAdmin):
         "evicted",
     )
 
-class WeekAdmin(admin.ModelAdmin):
-    list_display = ("id",)
-
 
 admin.site.register(Contestant, ContestantAdmin)
 admin.site.register(Houseguest, HouseguestAdmin)
 admin.site.register(Game, GameAdmin)
-admin.site.register(Week, WeekAdmin)
