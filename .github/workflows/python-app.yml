@@ -5,9 +5,9 @@ name: Python application
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [master, develop]
   pull_request:
-    branches: [ master, develop ]
+    branches: [master, develop]
 
 jobs:
   build:
@@ -34,7 +34,7 @@ jobs:
     - name: Lint with black
       run: 
         # stop the build if black reformats
-        black simulator/
+        black simulator/ --check
     - name: Test with pytest
       run: |
         pytest
