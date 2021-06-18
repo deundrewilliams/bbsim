@@ -1,23 +1,20 @@
-from django.db import models
-
 from ..classes import Competition, EvictionCeremony
 
 import random
 
 
-class Finale(models.Model):
+class Finale:
 
-    finalists = models.ManyToManyField("Houseguest", related_name="finalists")
-    jury = models.ManyToManyField("Houseguest", related_name="jury")
-    winner = models.ForeignKey(
-        "Houseguest", on_delete=models.CASCADE, blank=True, null=True
-    )
-    completed = models.BooleanField(default=False)
+    def __init__(self, finalists, jury):
+        self.finalists = finalists
+        self.jury = jury
+        self.winner = None
+        self.completed = False
 
     def serialize(self):
         data = {
-            "finalists": [x.serialize() for x in list(self.finalists.all())],
-            "jury": [x.serialize() for x in list(self.jury.all())],
+            "finalists": [x.serialize() for x in self.finalists],
+            "jury": [x.serialize() for x in self.jury],
             "winner": self.winner.serialize() if self.completed else None,
             "final_hoh": self.final_hoh.serialize() if self.completed else None,
             "final_juror": self.final_juror.serialize() if self.completed else None,
@@ -30,11 +27,11 @@ class Finale(models.Model):
     def run_finale(self):
 
         # Get Part 1 HOH
-        p1_hoh = self.run_final_hoh_comp(list(self.finalists.all()))
+        p1_hoh = self.run_final_hoh_comp(self.finalists)
 
         # Get Part 2 HOH
         p2_hoh = self.run_final_hoh_comp(
-            list(filter(lambda x: x != p1_hoh, list(self.finalists.all())))
+            list(filter(lambda x: x != p1_hoh, self.finalists))
         )
 
         self.final_hoh = self.run_final_hoh_comp([p1_hoh, p2_hoh])
@@ -42,15 +39,15 @@ class Finale(models.Model):
         self.final_hoh.win_competition()
 
         # Run final eviction
-        finalnoms = list(filter(lambda x: x != self.final_hoh, list(self.finalists.all())))
-        finalparts = list(self.finalists.all())
+        finalnoms = list(filter(lambda x: x != self.final_hoh, self.finalists))
+        finalparts = self.finalists
 
         finalevc = EvictionCeremony(hoh=self.final_hoh, nominees=finalnoms, participants=finalparts)
         finalevc.run_ceremony()
 
         # Set final juror
         self.final_juror = finalevc.evicted
-        self.jury.add(self.final_juror)
+        self.jury.append(self.final_juror)
         self.finalists.remove(self.final_juror)
 
         # Run voting process
@@ -83,7 +80,7 @@ class Finale(models.Model):
 
         votes = {}
 
-        finalists = list(self.finalists.all())
+        finalists = self.finalists
 
         finalist_values = (
             self.calculate_finalist_value(finalists[0]),
@@ -91,7 +88,7 @@ class Finale(models.Model):
         )
 
         # Iterate through each juror
-        for juror in list(self.jury.all()):
+        for juror in self.jury:
 
             # Get vote
             votes[juror] = self.get_vote(juror, finalists, finalist_values)
@@ -122,7 +119,7 @@ class Finale(models.Model):
 
     def count_votes(self, votes):
 
-        vote_count = {x: 0 for x in list(self.finalists.all())}
+        vote_count = {x: 0 for x in self.finalists}
 
         for voter in votes:
             vote_count[votes[voter]] += 1

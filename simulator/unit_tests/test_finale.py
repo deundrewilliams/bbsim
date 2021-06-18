@@ -1,8 +1,7 @@
 import pytest
 
-from ..classes import Competition, EvictionCeremony
-from ..factories import HouseguestFactory, FinaleFactory
-from ..models import Finale
+from ..classes import Competition, EvictionCeremony, Finale
+from ..factories import HouseguestFactory
 import random
 
 
@@ -15,10 +14,7 @@ class TestFinale:
         finalists = hgs[:3]
         jury = hgs[3:]
 
-        fn = Finale()
-        fn.save()
-        fn.finalists.set(finalists)
-        fn.jury.set(jury)
+        fn = Finale(finalists=finalists, jury=jury)
 
         data = fn.serialize()
 
@@ -34,7 +30,7 @@ class TestFinale:
         finalists = HouseguestFactory.create_batch(2)
         jurors = HouseguestFactory.create_batch(5)
 
-        f = FinaleFactory(finalists=finalists, jury=jurors)
+        f = Finale(finalists=finalists, jury=jurors)
 
         def mock_get_vote(obj, voter, votee, vals):
             if voter == jurors[0] or voter == jurors[1]:
@@ -71,7 +67,7 @@ class TestFinale:
         finalists = HouseguestFactory.create_batch(2)
         jurors = HouseguestFactory.create_batch(5)
 
-        f = FinaleFactory(finalists=finalists, jury=jurors)
+        f = Finale(finalists=finalists, jury=jurors)
 
         vote_dict = {
             jurors[0]: finalists[0],
@@ -93,7 +89,7 @@ class TestFinale:
         finalists = HouseguestFactory.create_batch(2)
         jurors = HouseguestFactory.create_batch(5)
 
-        f = FinaleFactory(finalists=finalists, jury=jurors)
+        f = Finale(finalists=finalists, jury=jurors)
 
         vote_count = {finalists[0]: 2, finalists[1]: 3}
 
@@ -117,7 +113,7 @@ class TestFinale:
         f0.competition_count = 3
         f0.save()
 
-        f = FinaleFactory(finalists=finalists, jury=jurors)
+        f = Finale(finalists=finalists, jury=jurors)
 
         assert f.calculate_finalist_value(f0) == 65
 
@@ -126,7 +122,7 @@ class TestFinale:
         voter = HouseguestFactory.create()
         pool = HouseguestFactory.create_batch(5)
 
-        f = FinaleFactory(finalists=pool, jury=[voter])
+        f = Finale(finalists=pool, jury=[voter])
 
         def mock_randint(low, high):
 
@@ -143,7 +139,7 @@ class TestFinale:
 
         votee = f.get_vote(voter, pool, (45, 65))
 
-        assert votee == list(f.finalists.all())[0]
+        assert votee == f.finalists[0]
 
     @pytest.mark.django_db
     def test_run_finale(self, monkeypatch):
@@ -157,7 +153,7 @@ class TestFinale:
         f1 = finalists[1]
         f2 = finalists[2]
 
-        f = FinaleFactory(finalists=finalists, jury=jurors)
+        f = Finale(finalists=finalists, jury=jurors)
 
         def mock_run_competition(obj):
 
@@ -185,9 +181,9 @@ class TestFinale:
             assert obj.final_hoh == f0
             assert obj.final_juror == f1
 
-            assert set(obj.finalists.all()) == set([f0, f2])
+            assert set(obj.finalists) == set([f0, f2])
 
-            assert set(obj.jury.all()) == set([f1] + jurors)
+            assert set(obj.jury) == set([f1] + jurors)
 
             votes = {
                 jurors[0]: f2,

@@ -4,7 +4,6 @@ from simulator.models import (
     Contestant,
     Houseguest,
     Game,
-    Finale,
     Week,
 )
 
@@ -21,27 +20,11 @@ class HouseguestAdmin(admin.ModelAdmin):
 class GameAdmin(admin.ModelAdmin):
     list_display = ("id",)
 
-
-class CompAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "winner",
-    )
-
-
 class EvictionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "evicted",
     )
-
-
-class FinaleAdmin(admin.ModelAdmin):
-    list_display = ("id",)
-
-
-class NomCeremonyAdmin(admin.ModelAdmin):
-    list_display = ("id",)
 
 class WeekAdmin(admin.ModelAdmin):
     list_display = ("id",)
@@ -50,5 +33,4 @@ class WeekAdmin(admin.ModelAdmin):
 admin.site.register(Contestant, ContestantAdmin)
 admin.site.register(Houseguest, HouseguestAdmin)
 admin.site.register(Game, GameAdmin)
-admin.site.register(Finale, FinaleAdmin)
 admin.site.register(Week, WeekAdmin)

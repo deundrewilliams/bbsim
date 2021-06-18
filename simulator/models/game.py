@@ -1,9 +1,8 @@
 from django.db import models
 
-from ..classes import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony
+from ..classes import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony, Finale
 from ..models import (
     Week,
-    Finale,
 )
 
 
@@ -258,10 +257,7 @@ class Game(models.Model):
     def run_finale(self):
 
         # Create finale
-        fn = Finale()
-        fn.save()
-        fn.finalists.set(self.in_house)
-        fn.jury.set(list(self.jury.all()))
+        fn = Finale(finalists=self.in_house, jury=list(self.jury.all()))
 
         # Run finale
         fn.run_finale()
@@ -272,4 +268,3 @@ class Game(models.Model):
 
         self.finale = fn.serialize()
 
-        fn.delete()

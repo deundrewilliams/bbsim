@@ -2,7 +2,6 @@ from simulator.models import (
     Contestant,
     Houseguest,
     Game,
-    Finale,
     Week,
 )
 from faker import Faker
@@ -56,24 +55,3 @@ class WeekFactory(factory.django.DjangoModelFactory):
         if extracted:
             for nominee in extracted:
                 self.final_nominees.add(nominee)
-
-
-class FinaleFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Finale
-
-    @factory.post_generation
-    def finalists(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for finalist in extracted:
-                self.finalists.add(finalist)
-
-    @factory.post_generation
-    def jury(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for juror in extracted:
-                self.jury.add(juror)

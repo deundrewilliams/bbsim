@@ -1,9 +1,8 @@
 import pytest
 
-from ..classes import Competition, NominationCeremony, VetoCeremony, EvictionCeremony
+from ..classes import Competition, NominationCeremony, VetoCeremony, EvictionCeremony, Finale
 from ..models import (
     Game,
-    Finale,
     Houseguest,
 )
 from ..factories import HouseguestFactory, GameFactory, WeekFactory
@@ -370,11 +369,6 @@ class TestGame:
 
         assert set(saved_wks) == set(wks)
 
-        # sm = small_game.summarize()
-
-        # print(sm)
-
-        # assert False
 
     @pytest.mark.django_db
     def test_full(self):
