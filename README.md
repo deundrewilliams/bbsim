@@ -4,7 +4,7 @@ BBSim is a simulator of the TV show Big Brother. In this show, there are 14-16 c
 
 # Technologies Used
 ---
-* Backend: Django, SQLite, Python
+* Backend: Django, Postgres, Python
 * Frontend: React
 
 # How to Use
