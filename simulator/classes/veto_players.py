@@ -2,7 +2,6 @@ import random
 
 
 class VetoPlayers:
-
     def __init__(self, hoh, nominees, participants):
         self.hoh = hoh
         self.nominees = nominees

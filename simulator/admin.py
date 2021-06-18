@@ -19,6 +19,7 @@ class HouseguestAdmin(admin.ModelAdmin):
 class GameAdmin(admin.ModelAdmin):
     list_display = ("id",)
 
+
 class EvictionAdmin(admin.ModelAdmin):
     list_display = (
         "id",

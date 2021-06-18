@@ -2,10 +2,9 @@ import random
 
 
 class VetoCeremony:
-
     def __init__(self, hoh, nominees, veto_holder, participants, using=None):
         self.hoh = hoh
-        self.nominees= nominees
+        self.nominees = nominees
         self.veto_holder = veto_holder
         self.participants = participants
         self.using = using
@@ -59,9 +58,7 @@ class VetoCeremony:
     def get_decision(self):
 
         # Get the relationship with nominees, keep the max val and player
-        max_hg = self.veto_holder.choose_positive_relationships(
-            self.nominees
-        )[0]
+        max_hg = self.veto_holder.choose_positive_relationships(self.nominees)[0]
         max_val = self.veto_holder.relationships.get(player=max_hg).value
 
         # print(f'{max_hg} ({max_val})')

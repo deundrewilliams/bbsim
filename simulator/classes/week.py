@@ -1,7 +1,15 @@
-
-
 class Week:
-    def __init__(self, number, hoh, initial_nominees, pov, final_nominees, evicted, vote_count, tied=False):
+    def __init__(
+        self,
+        number,
+        hoh,
+        initial_nominees,
+        pov,
+        final_nominees,
+        evicted,
+        vote_count,
+        tied=False,
+    ):
         self.number = number
         self.hoh = hoh
         self.initial_nominees = initial_nominees
@@ -10,7 +18,6 @@ class Week:
         self.evicted = evicted
         self.vote_count = vote_count
         self.tied = tied
-
 
     def serialize(self):
         data = {

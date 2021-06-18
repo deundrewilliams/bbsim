@@ -1,6 +1,13 @@
 import pytest
 
-from ..classes import Competition, NominationCeremony, VetoCeremony, EvictionCeremony, Finale, Week
+from ..classes import (
+    Competition,
+    NominationCeremony,
+    VetoCeremony,
+    EvictionCeremony,
+    Finale,
+    Week,
+)
 from ..models import (
     Game,
     Houseguest,
@@ -313,7 +320,7 @@ class TestGame:
             pov=hgs[4],
             final_nominees=[hgs[2], hgs[3]],
             evicted=hgs[3],
-            vote_count=[2,1]
+            vote_count=[2, 1],
         )
         wk2 = Week(
             number=2,
@@ -322,7 +329,7 @@ class TestGame:
             pov=hgs[0],
             final_nominees=[hgs[4], hgs[1]],
             evicted=hgs[4],
-            vote_count=[2,0]
+            vote_count=[2, 0],
         )
         wk3 = Week(
             number=3,
@@ -331,7 +338,7 @@ class TestGame:
             pov=hgs[2],
             final_nominees=[hgs[1], hgs[5]],
             evicted=hgs[5],
-            vote_count=[1, 0]
+            vote_count=[1, 0],
         )
 
         wks = [wk1, wk2, wk3]
@@ -371,7 +378,6 @@ class TestGame:
         saved_wks = list(small_game.weeks)
 
         assert set(saved_wks) == set(wks)
-
 
     @pytest.mark.django_db
     def test_full(self):

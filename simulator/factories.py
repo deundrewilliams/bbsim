@@ -28,4 +28,3 @@ class HouseguestFactory(factory.django.DjangoModelFactory):
 
     name = fake.first_name()
     game = factory.SubFactory(GameFactory)
-

@@ -14,7 +14,9 @@ class TestVetoCeremony:
         noms = [hgs[1], hgs[2]]
         veto_holder = hgs[2]
 
-        vc = VetoCeremony(hoh=hoh, veto_holder=veto_holder, nominees=noms, participants=hgs)
+        vc = VetoCeremony(
+            hoh=hoh, veto_holder=veto_holder, nominees=noms, participants=hgs
+        )
 
         assert vc.participants == hgs
 
@@ -111,9 +113,7 @@ class TestVetoCeremony:
 
         monkeypatch.setattr(VetoCeremony, "get_renom", mock_get_renom)
 
-        vc = VetoCeremony(
-            hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
-        )
+        vc = VetoCeremony(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
 
         vc.run_ceremony()
 
@@ -135,9 +135,7 @@ class TestVetoCeremony:
         noms = [hgs[1], hgs[2]]
         pov = hgs[3]
 
-        vc = VetoCeremony(
-            hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
-        )
+        vc = VetoCeremony(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
 
         vc.run_ceremony()
 
@@ -168,9 +166,7 @@ class TestVetoCeremony:
         monkeypatch.setattr(VetoCeremony, "get_decision", mock_get_decision)
         monkeypatch.setattr(VetoCeremony, "get_renom", mock_get_renom)
 
-        vc = VetoCeremony(
-            hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs
-        )
+        vc = VetoCeremony(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
 
         vc.run_ceremony()
 

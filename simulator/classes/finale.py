@@ -4,7 +4,6 @@ import random
 
 
 class Finale:
-
     def __init__(self, finalists, jury):
         self.finalists = finalists
         self.jury = jury
@@ -42,7 +41,9 @@ class Finale:
         finalnoms = list(filter(lambda x: x != self.final_hoh, self.finalists))
         finalparts = self.finalists
 
-        finalevc = EvictionCeremony(hoh=self.final_hoh, nominees=finalnoms, participants=finalparts)
+        finalevc = EvictionCeremony(
+            hoh=self.final_hoh, nominees=finalnoms, participants=finalparts
+        )
         finalevc.run_ceremony()
 
         # Set final juror

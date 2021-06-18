@@ -20,14 +20,14 @@ class TestNominationCeremony:
     @pytest.mark.django_db
     def test_serialization(self):
 
-        nc = NominationCeremony(hoh=HouseguestFactory(), participants=HouseguestFactory.create_batch(6))
+        nc = NominationCeremony(
+            hoh=HouseguestFactory(), participants=HouseguestFactory.create_batch(6)
+        )
 
         data = nc.serialize()
 
         assert data["HOH"] == nc.hoh.serialize()
-        assert data["participants"] == [
-            x.serialize() for x in nc.participants
-        ]
+        assert data["participants"] == [x.serialize() for x in nc.participants]
         assert data["nominees"] == []
 
     @pytest.mark.django_db

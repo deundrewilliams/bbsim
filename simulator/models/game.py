@@ -1,6 +1,14 @@
 from django.db import models
 
-from ..classes import Competition, NominationCeremony, VetoPlayers, VetoCeremony, EvictionCeremony, Finale, Week
+from ..classes import (
+    Competition,
+    NominationCeremony,
+    VetoPlayers,
+    VetoCeremony,
+    EvictionCeremony,
+    Finale,
+    Week,
+)
 
 
 class Game(models.Model):
@@ -183,7 +191,9 @@ class Game(models.Model):
     def run_nomination_ceremony(self):
 
         # Create nom ceremony
-        nom_ceremony = NominationCeremony(hoh=self.current_hoh, participants=self.in_house)
+        nom_ceremony = NominationCeremony(
+            hoh=self.current_hoh, participants=self.in_house
+        )
         nom_ceremony.run_ceremony()
 
         # noms = list(nom_ceremony.nominees.all())
@@ -198,7 +208,11 @@ class Game(models.Model):
     def get_veto_players(self):
 
         # Create VetoPlayers
-        vp = VetoPlayers(hoh=self.current_hoh, nominees=self.current_nominees, participants=self.in_house)
+        vp = VetoPlayers(
+            hoh=self.current_hoh,
+            nominees=self.current_nominees,
+            participants=self.in_house,
+        )
 
         # Run picking
         vp.pick_players()
@@ -223,7 +237,12 @@ class Game(models.Model):
     def run_veto_ceremony(self):
 
         # Create VetoCeremony
-        vc = VetoCeremony(hoh=self.current_hoh, veto_holder=self.pov_holder, nominees=self.current_nominees, participants=self.in_house)
+        vc = VetoCeremony(
+            hoh=self.current_hoh,
+            veto_holder=self.pov_holder,
+            nominees=self.current_nominees,
+            participants=self.in_house,
+        )
         # Run ceremony
         vc.run_ceremony()
 
@@ -233,7 +252,11 @@ class Game(models.Model):
     def run_eviction(self):
 
         # Create Eviction Ceremony
-        evc = EvictionCeremony(hoh=self.current_hoh, nominees=self.current_nominees, participants=self.in_house)
+        evc = EvictionCeremony(
+            hoh=self.current_hoh,
+            nominees=self.current_nominees,
+            participants=self.in_house,
+        )
 
         # Run eviction
         evc.run_ceremony()
@@ -260,4 +283,3 @@ class Game(models.Model):
         self.final_juror = fn.final_juror
 
         self.finale = fn.serialize()
-

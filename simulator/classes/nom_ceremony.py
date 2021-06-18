@@ -2,7 +2,6 @@ NUM_NOMINEES = 2
 
 
 class NominationCeremony:
-
     def __init__(self, hoh, participants):
 
         self.hoh = hoh
@@ -23,9 +22,7 @@ class NominationCeremony:
 
         # Get eligible people to be nominated
         nom_eligible = list(
-            filter(
-                lambda x: x != self.hoh and x.immune is False, self.participants
-            )
+            filter(lambda x: x != self.hoh and x.immune is False, self.participants)
         )
 
         # Get new nominees
