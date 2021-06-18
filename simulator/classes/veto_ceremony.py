@@ -1,30 +1,20 @@
-from django.db import models
-
 import random
 
 
-class VetoCeremony(models.Model):
-
-    hoh = models.ForeignKey(
-        "Houseguest", on_delete=models.CASCADE, related_name="veto_meeting_hoh"
-    )
-    nominees = models.ManyToManyField(
-        "Houseguest", related_name="veto_meeting_init_noms"
-    )
-    veto_holder = models.ForeignKey(
-        "Houseguest", on_delete=models.CASCADE, related_name="veto_meeting_pov"
-    )
-    participants = models.ManyToManyField(
-        "Houseguest", related_name="veto_meeting_participants"
-    )
-    using = models.BooleanField(default=None, null=True, blank=True)
+class VetoCeremony:
+    def __init__(self, hoh, nominees, veto_holder, participants, using=None):
+        self.hoh = hoh
+        self.nominees = nominees
+        self.veto_holder = veto_holder
+        self.participants = participants
+        self.using = using
 
     def serialize(self):
 
         data = {
             "HOH": self.hoh.serialize(),
             "Used": self.using,
-            "Final Nominees": [x.serialize() for x in list(self.nominees.all())],
+            "Final Nominees": [x.serialize() for x in self.nominees],
         }
 
         return data
@@ -34,13 +24,13 @@ class VetoCeremony(models.Model):
         decision_info = {}
 
         # If veto holder is nominee, use on theirself
-        if self.veto_holder in list(self.nominees.all()):
+        if self.veto_holder in self.nominees:
             self.using = True
             decision_info["Using"] = True
             decision_info["On"] = self.veto_holder
 
         # If length of participants is 4 and holder is not hoh, don't use
-        elif self.veto_holder != self.hoh and len(list(self.participants.all())) == 4:
+        elif self.veto_holder != self.hoh and len(self.participants) == 4:
             self.using = False
             decision_info["Using"] = False
             decision_info["On"] = None
@@ -61,16 +51,14 @@ class VetoCeremony(models.Model):
 
             # Remove old nominee from nominees, add new nominee
             self.nominees.remove(decision_info["On"])
-            self.nominees.add(renom)
+            self.nominees.append(renom)
 
         return self.nominees
 
     def get_decision(self):
 
         # Get the relationship with nominees, keep the max val and player
-        max_hg = self.veto_holder.choose_positive_relationships(
-            list(self.nominees.all())
-        )[0]
+        max_hg = self.veto_holder.choose_positive_relationships(self.nominees)[0]
         max_val = self.veto_holder.relationships.get(player=max_hg).value
 
         # print(f'{max_hg} ({max_val})')
@@ -93,9 +81,9 @@ class VetoCeremony(models.Model):
         nom_pool = list(
             filter(
                 lambda x: x != self.hoh
-                and x not in list(self.nominees.all())
+                and x not in self.nominees
                 and x != self.veto_holder,
-                list(self.participants.all()),
+                self.participants,
             )
         )
 

@@ -1,15 +1,18 @@
 import pytest
 
-from ..models import (
-    Game,
+from ..classes import (
     Competition,
     NominationCeremony,
     VetoCeremony,
     EvictionCeremony,
     Finale,
+    Week,
+)
+from ..models import (
+    Game,
     Houseguest,
 )
-from ..factories import HouseguestFactory, GameFactory, WeekFactory
+from ..factories import HouseguestFactory, GameFactory
 
 
 class TestGame:
@@ -54,7 +57,7 @@ class TestGame:
         small_game.save()
 
         def mock_run_competition(obj):
-            assert list(obj.participants.all()) == hgs
+            assert obj.participants == hgs
             obj.winner = hgs[1]
 
         monkeypatch.setattr(Competition, "run_competition", mock_run_competition)
@@ -76,8 +79,8 @@ class TestGame:
 
         def mock_run_ceremony(obj):
             assert obj.hoh == hgs[2]
-            assert list(obj.participants.all()) == hgs
-            obj.nominees.set([hgs[1], hgs[3]])
+            assert obj.participants == hgs
+            obj.nominees = [hgs[1], hgs[3]]
 
         monkeypatch.setattr(NominationCeremony, "run_ceremony", mock_run_ceremony)
 
@@ -113,7 +116,7 @@ class TestGame:
         small_game.save()
 
         def mock_run_competition(obj):
-            assert list(obj.participants.all()) == hgs
+            assert obj.participants == hgs
             obj.winner = hgs[4]
 
         monkeypatch.setattr(Competition, "run_competition", mock_run_competition)
@@ -137,7 +140,7 @@ class TestGame:
 
         def mock_run_ceremony(obj):
             assert obj.hoh == hgs[2]
-            obj.nominees.set([hgs[3], hgs[5]])
+            obj.nominees = [hgs[3], hgs[5]]
 
         monkeypatch.setattr(VetoCeremony, "run_ceremony", mock_run_ceremony)
 
@@ -160,7 +163,7 @@ class TestGame:
         small_game.save()
 
         def mock_run_ceremony(obj):
-            assert list(obj.nominees.all()) == [hgs[3], hgs[5]]
+            assert obj.nominees == [hgs[3], hgs[5]]
             assert obj.hoh == hgs[2]
             obj.evicted = hgs[5]
             obj.vote_count = [2, 1]
@@ -310,29 +313,32 @@ class TestGame:
         # Wk 3: HOH - 0, Nom - 2 and 1, POV - 2, Final 1 and 5, Evicted: 5
         # Final 3: 0, 1, 2
 
-        wk1 = WeekFactory(
+        wk1 = Week(
             number=1,
             hoh=hgs[0],
             initial_nominees=[hgs[2], hgs[3]],
             pov=hgs[4],
             final_nominees=[hgs[2], hgs[3]],
             evicted=hgs[3],
+            vote_count=[2, 1],
         )
-        wk2 = WeekFactory(
+        wk2 = Week(
             number=2,
             hoh=hgs[2],
             initial_nominees=[hgs[0], hgs[4]],
             pov=hgs[0],
             final_nominees=[hgs[4], hgs[1]],
             evicted=hgs[4],
+            vote_count=[2, 0],
         )
-        wk3 = WeekFactory(
+        wk3 = Week(
             number=3,
             hoh=hgs[0],
             initial_nominees=[hgs[2], hgs[1]],
             pov=hgs[2],
             final_nominees=[hgs[1], hgs[5]],
             evicted=hgs[5],
+            vote_count=[1, 0],
         )
 
         wks = [wk1, wk2, wk3]
@@ -372,12 +378,6 @@ class TestGame:
         saved_wks = list(small_game.weeks)
 
         assert set(saved_wks) == set(wks)
-
-        # sm = small_game.summarize()
-
-        # print(sm)
-
-        # assert False
 
     @pytest.mark.django_db
     def test_full(self):

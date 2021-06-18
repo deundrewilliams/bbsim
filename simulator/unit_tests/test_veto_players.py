@@ -1,6 +1,6 @@
 import pytest
-from ..models import VetoPlayers
-from ..factories import HouseguestFactory, VetoPlayersFactory
+from ..classes import VetoPlayers
+from ..factories import HouseguestFactory
 
 
 class TestVetoPlayers:
@@ -16,18 +16,12 @@ class TestVetoPlayers:
 
         nominees = [hgs[0], hgs[1]]
 
-        vp = VetoPlayers(hoh=hgs[2])
+        vp = VetoPlayers(hoh=hgs[2], nominees=nominees, participants=hgs)
 
-        vp.save()
-
-        vp.nominees.set(nominees)
-
-        vp.participants.set(hgs)
-
-        assert list(vp.nominees.all()) == nominees
-        assert list(vp.participants.all()) == hgs
+        assert vp.nominees == nominees
+        assert vp.participants == hgs
         assert vp.hoh == hgs[2]
-        assert list(vp.picked.all()) == []
+        assert vp.picked == []
 
     @pytest.mark.django_db
     def test_serialization_before_run(self):
@@ -43,7 +37,7 @@ class TestVetoPlayers:
 
         hoh = hgs[2]
 
-        vps = VetoPlayersFactory.create(hoh=hoh, nominees=noms, participants=hgs)
+        vps = VetoPlayers(hoh=hoh, nominees=noms, participants=hgs)
 
         data = vps.serialize()
 
@@ -65,7 +59,7 @@ class TestVetoPlayers:
 
         hoh = hgs[2]
 
-        vps = VetoPlayersFactory.create(hoh=hoh, nominees=noms, participants=hgs)
+        vps = VetoPlayers(hoh=hoh, nominees=noms, participants=hgs)
 
         vps.pick_players()
 
@@ -89,11 +83,11 @@ class TestVetoPlayers:
 
         hoh = hgs[2]
 
-        vps = VetoPlayersFactory.create(hoh=hoh, nominees=noms, participants=hgs)
+        vps = VetoPlayers(hoh=hoh, nominees=noms, participants=hgs)
 
         vps.pick_players()
 
-        assert set(list(vps.picked.all())) == set(hgs)
+        assert set(vps.picked) == set(hgs)
 
     @pytest.mark.django_db
     def test_pick_players_more_six(self):
@@ -112,8 +106,8 @@ class TestVetoPlayers:
 
         hoh = hgs[2]
 
-        vps = VetoPlayersFactory.create(hoh=hoh, nominees=noms, participants=hgs)
+        vps = VetoPlayers(hoh=hoh, nominees=noms, participants=hgs)
 
         vps.pick_players()
 
-        assert len(set(vps.picked.all())) == 6
+        assert len(vps.picked) == 6
