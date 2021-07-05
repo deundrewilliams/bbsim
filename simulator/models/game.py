@@ -1,13 +1,13 @@
 from django.db import models
 
-from ..models import (
+from ..classes import (
     Competition,
     NominationCeremony,
     VetoPlayers,
     VetoCeremony,
     EvictionCeremony,
-    Week,
     Finale,
+    Week,
 )
 
 
@@ -157,18 +157,14 @@ class Game(models.Model):
         wk = Week(
             number=week_number,
             hoh=self.current_hoh,
+            initial_nominees=initial_noms,
             pov=self.pov_holder,
+            final_nominees=final_noms,
             evicted=self.evicted,
             vote_count=self.eviction_votes,
             tied=self.tied,
         )
-        wk.save()
-        wk.initial_nominees.set(initial_noms)
-        wk.final_nominees.set(final_noms)
-
         week_data = wk.serialize()
-
-        wk.delete()
 
         return week_data
 
@@ -183,9 +179,7 @@ class Game(models.Model):
         # Create competition using all players except current (outgoing) hoh
         playing = [x for x in self.in_house if x != outgoing_hoh]
 
-        hoh_comp = Competition(comp_type=Competition.HOH)
-        hoh_comp.save()
-        hoh_comp.participants.set(playing)
+        hoh_comp = Competition(comp_type=Competition.HOH, participants=playing)
 
         # Run competition and get winner
         hoh_comp.run_competition()
@@ -194,41 +188,36 @@ class Game(models.Model):
         # Set new hoh and update winner's comp count
         self.current_hoh.win_competition()
 
-        hoh_comp.delete()
-
     def run_nomination_ceremony(self):
 
         # Create nom ceremony
-        nom_ceremony = NominationCeremony(hoh=self.current_hoh)
-        nom_ceremony.save()
-        nom_ceremony.participants.set(self.in_house)
+        nom_ceremony = NominationCeremony(
+            hoh=self.current_hoh, participants=self.in_house
+        )
         nom_ceremony.run_ceremony()
 
         # noms = list(nom_ceremony.nominees.all())
 
         # Get and set nominees
-        self.current_nominees = list(nom_ceremony.nominees.all())
+        self.current_nominees = nom_ceremony.nominees
 
         # Update nominees' nomination count
         for nom in self.current_nominees:
             nom.nominate()
 
-        nom_ceremony.delete()
-
     def get_veto_players(self):
 
         # Create VetoPlayers
-        vp = VetoPlayers(hoh=self.current_hoh)
-        vp.save()
-        vp.nominees.set(self.current_nominees)
-        vp.participants.set(self.in_house)
+        vp = VetoPlayers(
+            hoh=self.current_hoh,
+            nominees=self.current_nominees,
+            participants=self.in_house,
+        )
 
         # Run picking
         vp.pick_players()
 
-        picked = list(vp.picked.all()).copy()
-
-        vp.delete()
+        picked = vp.picked
 
         # Returned picked players
         return picked
@@ -236,9 +225,7 @@ class Game(models.Model):
     def run_veto_competition(self, veto_players):
 
         # Create Competition using veto players
-        pov_comp = Competition(comp_type=Competition.POV)
-        pov_comp.save()
-        pov_comp.participants.set(veto_players)
+        pov_comp = Competition(comp_type=Competition.POV, participants=veto_players)
 
         # Run competition and get winner
         pov_comp.run_competition()
@@ -247,31 +234,29 @@ class Game(models.Model):
         self.pov_holder = pov_comp.winner
         self.pov_holder.win_competition()
 
-        pov_comp.delete()
-
     def run_veto_ceremony(self):
 
         # Create VetoCeremony
-        vc = VetoCeremony(hoh=self.current_hoh, veto_holder=self.pov_holder)
-        vc.save()
-        vc.nominees.set(self.current_nominees)
-        vc.participants.set(self.in_house)
-
+        vc = VetoCeremony(
+            hoh=self.current_hoh,
+            veto_holder=self.pov_holder,
+            nominees=self.current_nominees,
+            participants=self.in_house,
+        )
         # Run ceremony
         vc.run_ceremony()
 
         # Set new nominees to equal ceremony nominees
-        self.current_nominees = list(vc.nominees.all())
-
-        vc.delete()
+        self.current_nominees = vc.nominees
 
     def run_eviction(self):
 
         # Create Eviction Ceremony
-        evc = EvictionCeremony(hoh=self.current_hoh)
-        evc.save()
-        evc.nominees.set(self.current_nominees)
-        evc.participants.set(self.in_house)
+        evc = EvictionCeremony(
+            hoh=self.current_hoh,
+            nominees=self.current_nominees,
+            participants=self.in_house,
+        )
 
         # Run eviction
         evc.run_ceremony()
@@ -285,15 +270,10 @@ class Game(models.Model):
         self.eviction_votes = evc.vote_count
         self.tied = evc.tied
 
-        evc.delete()
-
     def run_finale(self):
 
         # Create finale
-        fn = Finale()
-        fn.save()
-        fn.finalists.set(self.in_house)
-        fn.jury.set(list(self.jury.all()))
+        fn = Finale(finalists=self.in_house, jury=list(self.jury.all()))
 
         # Run finale
         fn.run_finale()
@@ -303,5 +283,3 @@ class Game(models.Model):
         self.final_juror = fn.final_juror
 
         self.finale = fn.serialize()
-
-        fn.delete()

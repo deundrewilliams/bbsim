@@ -1,30 +1,18 @@
-from django.db import models
-
-# from ..models import Houseguest
-
 import random
 
 
-class EvictionCeremony(models.Model):
-
-    hoh = models.ForeignKey(
-        "Houseguest", on_delete=models.CASCADE, related_name="hoh_eviction"
-    )
-    nominees = models.ManyToManyField("Houseguest", related_name="noms_eviction")
-    participants = models.ManyToManyField("Houseguest", related_name="parts_eviction")
-    completed = models.BooleanField(default=False)
-    evicted = models.ForeignKey(
-        "Houseguest",
-        on_delete=models.CASCADE,
-        related_name="evicted_hg",
-        blank=True,
-        null=True,
-    )
+class EvictionCeremony:
+    def __init__(self, hoh, nominees, participants, evicted=None, completed=False):
+        self.hoh = hoh
+        self.nominees = nominees
+        self.participants = participants
+        self.evicted = evicted
+        self.completed = completed
 
     def serialize(self):
         data = {
             "HOH": self.hoh.serialize(),
-            "Nominees": [x.serialize() for x in list(self.nominees.all())],
+            "Nominees": [x.serialize() for x in self.nominees],
             "Evicted": self.evicted.serialize() if self.completed else None,
             "Votes": self.vote_count if self.completed else None,
         }
@@ -36,8 +24,8 @@ class EvictionCeremony(models.Model):
 
         voters = list(
             filter(
-                lambda x: x != self.hoh and x not in list(self.nominees.all()),
-                participants or list(self.participants.all()),
+                lambda x: x != self.hoh and x not in self.nominees,
+                participants or self.participants,
             )
         )
 
@@ -59,7 +47,7 @@ class EvictionCeremony(models.Model):
             self.vote_count_objs[evictee] += 1
             self.tied = True
         elif len(evicted) == 0:  # Final Eviction
-            evictee = self.tiebreaker(list(self.nominees.all()))
+            evictee = self.tiebreaker(self.nominees)
             self.vote_count_objs[evictee] = 1
         else:
             evictee = evicted[0]
@@ -81,7 +69,7 @@ class EvictionCeremony(models.Model):
 
         # Get vote for each voter
         for voter in voters:
-            votee = self.get_vote(voter, list(self.nominees.all()))
+            votee = self.get_vote(voter, self.nominees)
             votes[voter] = votee
 
         return votes
