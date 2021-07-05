@@ -8,62 +8,117 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Contestant',
+            name="Contestant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='Game',
+            name="Game",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('completed', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("completed", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='Houseguest',
+            name="Houseguest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField()),
-                ('immune', models.BooleanField(default=False)),
-                ('evicted', models.BooleanField(default=False)),
-                ('competition_count', models.IntegerField(default=0)),
-                ('nomination_count', models.IntegerField(default=0)),
-                ('game', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='players', to='simulator.game')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField()),
+                ("immune", models.BooleanField(default=False)),
+                ("evicted", models.BooleanField(default=False)),
+                ("competition_count", models.IntegerField(default=0)),
+                ("nomination_count", models.IntegerField(default=0)),
+                (
+                    "game",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="players",
+                        to="simulator.game",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Relationship',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.IntegerField(default=50)),
-                ('player', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='affected_hg', to='simulator.houseguest')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.IntegerField(default=50)),
+                (
+                    "player",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="affected_hg",
+                        to="simulator.houseguest",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='houseguest',
-            name='relationships',
-            field=models.ManyToManyField(default=[], to='simulator.Relationship'),
+            model_name="houseguest",
+            name="relationships",
+            field=models.ManyToManyField(default=[], to="simulator.Relationship"),
         ),
         migrations.AddField(
-            model_name='game',
-            name='jury',
-            field=models.ManyToManyField(default=[], related_name='game_jury', to='simulator.Houseguest'),
+            model_name="game",
+            name="jury",
+            field=models.ManyToManyField(
+                default=[], related_name="game_jury", to="simulator.Houseguest"
+            ),
         ),
         migrations.AddField(
-            model_name='game',
-            name='prejury',
-            field=models.ManyToManyField(default=[], related_name='game_prejury', to='simulator.Houseguest'),
+            model_name="game",
+            name="prejury",
+            field=models.ManyToManyField(
+                default=[], related_name="game_prejury", to="simulator.Houseguest"
+            ),
         ),
         migrations.AddField(
-            model_name='game',
-            name='winner',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='game_winner', to='simulator.houseguest'),
+            model_name="game",
+            name="winner",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="game_winner",
+                to="simulator.houseguest",
+            ),
         ),
     ]
