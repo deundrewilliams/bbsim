@@ -91,6 +91,10 @@ def sim_game(request, *args, **kwargs):
         obj = Game.objects.get(id=game_id)
         info = obj.advance_step()
         obj.save()
+
+        if obj.completed == True:
+            obj.delete()
+
         return Response(info, content_type="application/javascript")
     except Exception:
         return Response({"Unable to run game"}, status=400)
