@@ -21,8 +21,7 @@ class TestVetoCeremony:
         assert vc.participants == hgs
 
         data = vc.serialize()
-        assert data["HOH"] == hoh.serialize()
-        assert data["Used"] == vc.using
+        assert data["Decision"] == None
         assert data["Final Nominees"] == [x.serialize() for x in noms]
 
     @pytest.mark.django_db
@@ -121,7 +120,7 @@ class TestVetoCeremony:
 
         # Assert serializer marks used as True
         data = vc.serialize()
-        assert data["Used"] is True
+        assert data["Decision"] == {"Using": True, "On": hgs[1].serialize()}
         assert data["Final Nominees"] == [x.serialize() for x in [hgs[2], hgs[3]]]
 
     @pytest.mark.django_db

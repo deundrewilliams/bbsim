@@ -8,12 +8,12 @@ class VetoCeremony:
         self.veto_holder = veto_holder
         self.participants = participants
         self.using = using
+        self.decision_info = None
 
     def serialize(self):
 
         data = {
-            "HOH": self.hoh.serialize(),
-            "Used": self.using,
+            "Decision": self.decision_info,
             "Final Nominees": [x.serialize() for x in self.nominees],
         }
 
@@ -21,24 +21,24 @@ class VetoCeremony:
 
     def run_ceremony(self):
 
-        decision_info = {}
+        self.decision_info = {}
 
         # If veto holder is nominee, use on theirself
         if self.veto_holder in self.nominees:
             self.using = True
-            decision_info["Using"] = True
-            decision_info["On"] = self.veto_holder
+            self.decision_info["Using"] = True
+            self.decision_info["On"] = self.veto_holder
 
         # If length of participants is 4 and holder is not hoh, don't use
         elif self.veto_holder != self.hoh and len(self.participants) == 4:
             self.using = False
-            decision_info["Using"] = False
-            decision_info["On"] = None
+            self.decision_info["Using"] = False
+            self.decision_info["On"] = None
 
         # Else generate veto decision
         else:
-            decision_info = self.get_decision()
-            self.using = decision_info["Using"]
+            self.decision_info = self.get_decision()
+            self.using = self.decision_info["Using"]
 
         # If using
         if self.using:
@@ -50,10 +50,10 @@ class VetoCeremony:
             renom.impact_relationship(self.hoh, 3)
 
             # Remove old nominee from nominees, add new nominee
-            self.nominees.remove(decision_info["On"])
+            self.nominees.remove(self.decision_info["On"])
             self.nominees.append(renom)
 
-        return self.nominees
+            self.decision_info["On"] = self.decision_info["On"].serialize()
 
     def get_decision(self):
 
