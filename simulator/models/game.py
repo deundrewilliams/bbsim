@@ -78,6 +78,9 @@ class Game(models.Model):
     def advance_step(self):
         # if completed, return nothing, or msg saying "game is completed"
 
+        if self.completed:
+            return "Game is completed"
+
         # If at memory wall step, return list of serialized players
         if self.step == self.MEMORYWALL:
             self.step = self.HOH
