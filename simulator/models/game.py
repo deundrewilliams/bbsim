@@ -16,6 +16,24 @@ class Game(models.Model):
     MIN_PLAYERS = 5
     MAX_PLAYERS = 16
 
+    HOH = 0
+    NOM = 1
+    POV = 2
+    VETO_CEREMONY = 3
+    EVICTION = 4
+    FINALE = 5
+    MEMORYWALL = 6
+
+    GAME_STEP_CHOICES = (
+        (HOH, 'HOH Competition'),
+        (NOM, 'Nom Ceremony'),
+        (POV, 'POV Competition'),
+        (VETO_CEREMONY, 'Veto Ceremony'),
+        (EVICTION, 'Eviction'),
+        (FINALE, 'Finale'),
+        (MEMORYWALL, 'Memory Wall'),
+    )
+
     winner = models.ForeignKey(
         "Houseguest",
         on_delete=models.CASCADE,
@@ -28,76 +46,107 @@ class Game(models.Model):
         "Houseguest", related_name="game_prejury", default=[]
     )
     completed = models.BooleanField(default=False)
+    step = models.IntegerField(choices=GAME_STEP_CHOICES, default=MEMORYWALL)
+    hoh = models.ForeignKey("Houseguest", on_delete=models.CASCADE, blank=True, null=True, related_name="game_hoh")
+    nominees = models.ManyToManyField("Houseguest", related_name="game_nominees", default=[])
+    pov = models.ForeignKey("Houseguest", on_delete=models.CASCADE, blank=True, null=True, related_name="game_pov")
+    jury_size = models.IntegerField(default=0)
 
     def serialize(self):
-        data = {
-            "id": self.id,
-            "players": [x.serialize() for x in list(self.players.all())],
-            "weeks": self.weeks if self.completed else [],
-            "winner": self.winner.serialize() if self.completed else None,
-            "jury": [x.serialize() for x in list(self.jury.all())],
-            "prejury": [x.serialize() for x in list(self.prejury.all())],
-            "finale": self.finale if self.completed else None,
-        }
-        return data
 
-    def run_game(self):
+        return {
+            "id": self.id,
+            "completed": self.completed,
+            "current_step": self.GAME_STEP_CHOICES[self.step][1]
+        }
+
+    def setup_game(self):
 
         # Validate number of players
         num_players = len(list(self.players.all()))
 
-        # if (num_players < self.MIN_PLAYERS or num_players > self.MAX_PLAYERS):
-        #     raise Exception("Too few/many players")
-
         # Determine jury size and prejury size -> determine_jury_size(num_players)
         self.jury_size = self.determine_jury_size(num_players)
 
-        # Create in house array of players not evicted
-        self.in_house = [x for x in list(self.players.all())]
+        # Get in house array of players
+        in_house = [x for x in list(self.players.all())]
 
         # Initialize all relationships
-        for hg in self.in_house:
-            hg.initialize_relationships(self.in_house)
+        for hg in in_house:
+            hg.initialize_relationships(in_house)
 
-        # Initialize an 'in jury' var and set it to false
-        self.jury_began = False
+    def advance_step(self):
 
-        # Initialize current hoh to None
-        self.current_hoh = None
+        # If at memory wall step, return list of serialized players
+        if self.step == self.MEMORYWALL:
+            self.step = self.HOH
 
-        current_week = 1
+            data = {"players": [x.serialize() for x in self.players.all()]}
+            data["current_step"] = "Memory Wall"
+            return data
 
-        self.weeks = []
+        # If at hoh step, run hoh comp and return hoh
+        if self.step == self.HOH:
+            self.run_hoh_competition(self.hoh)
+            self.step = self.NOM
 
-        # While in house array is > 3
-        while len(self.in_house) > 3:
-            # Run each week
-            week_data = self.run_week(current_week)
+            data = {"hoh": self.hoh.serialize()}
+            data["current_step"] = "HOH Competition"
+            return data
 
-            # Add week to weeks array
-            self.weeks.append(week_data)
+        # If at noms, run nom ceremony and return noms
+        if self.step == self.NOM:
+            self.run_nomination_ceremony()
+            self.step = self.POV
+            data = {"nominees": [x.serialize() for x in list(self.nominees.all())]}
+            data["current_step"] = "Nomination Ceremony"
+            return data
 
-            current_week += 1
+        # If at pov, get pov players, run pov comp and return pov holder
+            # push step to veto ceremony
+        if self.step == self.POV:
+            pov_players = self.get_veto_players()
+            self.run_veto_competition(pov_players)
+            self.step = self.VETO_CEREMONY
+            data = {"pov": self.pov.serialize()}
+            data["current_step"] = "POV Competition"
+            return data
 
-        # Run finale
-        self.run_finale()
+        # If at veto ceremony, run ceremony, and return info
+        if self.step == self.VETO_CEREMONY:
+            meeting_info = self.run_veto_ceremony()
+            self.step = self.EVICTION
 
-        # Set completed to true
-        self.completed = True
+            data = { "results": meeting_info }
+            data["current_step"] = "POV Ceremony"
+            return data
+
+        # If at eviction, run eviction and return info
+        if self.step == self.EVICTION:
+
+            eviction_info = self.run_eviction()
+
+            data = { "results": eviction_info, "current_step": "Eviction" }
+
+            if len([x for x in self.players.all() if x.evicted is False]) > 3:
+                self.step = self.MEMORYWALL
+            else:
+                self.step = self.FINALE
+
+            return data
+
+        # If at finale, run finale and return info, set completed to true
+        if self.step == self.FINALE:
+
+            finale_info = self.run_finale()
+
+            self.completed = True
+
+            data = { "results": finale_info, "current_step": "Finale" }
+
+            return data
 
     def determine_jury_size(self, num_players):
-
-        # 5 -> 3
-        # 6 -> 3
-        # 7 -> 5
-        # 8 -> 5
-        # 9 -> 5
-        # 11 -> 5
-        # 12 -> 5
-        # 13 -> 7
-        # 14 -> 7
-        # 15 -> 9
-        # 16 -> 9
 
         if num_players <= 6:
             return 3
@@ -108,66 +157,6 @@ class Game(models.Model):
         else:
             return 9
 
-    def run_week(self, week_number):
-
-        # Check if in jury should be turned on
-        if self.jury_began is False and len(self.in_house) <= self.jury_size + 2:
-            self.jury_began = True
-
-        # Run HOH competition
-
-        # Pass in current hoh
-        self.run_hoh_competition(self.current_hoh)
-
-        # Store current hoh in 'hoh'
-        # hoh = self.current_hoh
-
-        # Run Nomination ceremony
-        self.run_nomination_ceremony()
-
-        # Store current noms in 'initial' noms
-        initial_noms = self.current_nominees.copy()
-
-        # Run Veto Players
-        players = self.get_veto_players()
-
-        # Run POV Competition
-        self.run_veto_competition(players)
-
-        # Store POV winner in 'pov'
-        # pov = self.pov_holder
-
-        # Run Veto cerermony
-        self.run_veto_ceremony()
-
-        # Store current noms in 'final noms'
-        final_noms = self.current_nominees
-
-        # Run Eviction
-        self.run_eviction()
-
-        # Move evictee to correct spot
-        self.in_house.remove(self.evicted)
-
-        if self.jury_began:
-            self.jury.add(self.evicted)
-        else:
-            self.prejury.add(self.evicted)
-
-        wk = Week(
-            number=week_number,
-            hoh=self.current_hoh,
-            initial_nominees=initial_noms,
-            pov=self.pov_holder,
-            final_nominees=final_noms,
-            evicted=self.evicted,
-            vote_count=self.eviction_votes,
-            tied=self.tied,
-        )
-        week_data = wk.serialize()
-
-        return week_data
-
     def run_hoh_competition(self, outgoing_hoh):
         """
         Runs the hoh competition
@@ -177,41 +166,41 @@ class Game(models.Model):
         """
 
         # Create competition using all players except current (outgoing) hoh
-        playing = [x for x in self.in_house if x != outgoing_hoh]
+        playing = [x for x in self.players.all() if x != outgoing_hoh and x.evicted == False]
 
         hoh_comp = Competition(comp_type=Competition.HOH, participants=playing)
 
         # Run competition and get winner
         hoh_comp.run_competition()
-        self.current_hoh = hoh_comp.winner
+        self.hoh = hoh_comp.winner
 
         # Set new hoh and update winner's comp count
-        self.current_hoh.win_competition()
+        self.hoh.win_competition()
 
     def run_nomination_ceremony(self):
 
         # Create nom ceremony
         nom_ceremony = NominationCeremony(
-            hoh=self.current_hoh, participants=self.in_house
+            hoh=self.hoh, participants=[x for x in self.players.all() if x.evicted == False]
         )
         nom_ceremony.run_ceremony()
 
         # noms = list(nom_ceremony.nominees.all())
 
         # Get and set nominees
-        self.current_nominees = nom_ceremony.nominees
+        self.nominees.set(nom_ceremony.nominees)
 
         # Update nominees' nomination count
-        for nom in self.current_nominees:
+        for nom in nom_ceremony.nominees:
             nom.nominate()
 
     def get_veto_players(self):
 
         # Create VetoPlayers
         vp = VetoPlayers(
-            hoh=self.current_hoh,
-            nominees=self.current_nominees,
-            participants=self.in_house,
+            hoh=self.hoh,
+            nominees=list(self.nominees.all()),
+            participants=[x for x in self.players.all() if x.evicted == False],
         )
 
         # Run picking
@@ -231,55 +220,60 @@ class Game(models.Model):
         pov_comp.run_competition()
 
         # Set pov holder and update winners' comp count
-        self.pov_holder = pov_comp.winner
-        self.pov_holder.win_competition()
+        self.pov = pov_comp.winner
+        self.pov.win_competition()
 
     def run_veto_ceremony(self):
 
         # Create VetoCeremony
         vc = VetoCeremony(
-            hoh=self.current_hoh,
-            veto_holder=self.pov_holder,
-            nominees=self.current_nominees,
-            participants=self.in_house,
+            hoh=self.hoh,
+            veto_holder=self.pov,
+            nominees=list(self.nominees.all()),
+            participants=[x for x in self.players.all() if x.evicted == False],
         )
         # Run ceremony
         vc.run_ceremony()
 
         # Set new nominees to equal ceremony nominees
-        self.current_nominees = vc.nominees
+        self.nominees.set(vc.nominees)
+
+        return vc.serialize()
 
     def run_eviction(self):
 
         # Create Eviction Ceremony
         evc = EvictionCeremony(
-            hoh=self.current_hoh,
-            nominees=self.current_nominees,
-            participants=self.in_house,
+            hoh=self.hoh,
+            nominees=list(self.nominees.all()),
+            participants=[x for x in self.players.all() if x.evicted == False],
         )
 
         # Run eviction
         evc.run_ceremony()
 
-        # Set evicted and update their evicted status
-        self.evicted = evc.evicted
-        self.evicted.toggle_evicted(True)
+        # Update their evicted status
+        evc.evicted.toggle_evicted(True)
 
-        # print(evc.serialize())
+        prejury_size = len(self.players.all()) - self.jury_size - 2
 
-        self.eviction_votes = evc.vote_count
-        self.tied = evc.tied
+        # If before jury, move evictee into prejury
+        if len(list(self.prejury.all())) < prejury_size:
+            self.prejury.add(evc.evicted)
+        else:
+            self.jury.add(evc.evicted)
+
+        return evc.serialize()
 
     def run_finale(self):
 
         # Create finale
-        fn = Finale(finalists=self.in_house, jury=list(self.jury.all()))
+        fn = Finale(finalists=[x for x in self.players.all() if x.evicted == False], jury=list(self.jury.all()))
 
         # Run finale
         fn.run_finale()
 
-        # Set winner and final juror
+        # Set winner
         self.winner = fn.winner
-        self.final_juror = fn.final_juror
 
-        self.finale = fn.serialize()
+        return fn.serialize()
