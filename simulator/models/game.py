@@ -84,19 +84,27 @@ class Game(models.Model):
         # If at memory wall step, return list of serialized players
         if self.step == self.MEMORYWALL:
             self.step = self.HOH
-            return [x.serialize() for x in self.players.all()]
+
+            data = {"players": [x.serialize() for x in self.players.all()]}
+            data["current_step"] = "Memory Wall"
+            return data
 
         # If at hoh step, run hoh comp and return hoh
         if self.step == self.HOH:
             self.run_hoh_competition(self.hoh)
             self.step = self.NOM
-            return self.hoh.serialize()
+
+            data = {"hoh": self.hoh.serialize()}
+            data["current_step"] = "HOH Competition"
+            return data
 
         # If at noms, run nom ceremony and return noms
         if self.step == self.NOM:
             self.run_nomination_ceremony()
             self.step = self.POV
-            return [x.serialize() for x in list(self.nominees.all())]
+            data = {"nominees": [x.serialize() for x in list(self.nominees.all())]}
+            data["current_step"] = "Nomination Ceremony"
+            return data
 
         # If at pov, get pov players, run pov comp and return pov holder
             # push step to veto ceremony
@@ -104,28 +112,32 @@ class Game(models.Model):
             pov_players = self.get_veto_players()
             self.run_veto_competition(pov_players)
             self.step = self.VETO_CEREMONY
-            return self.pov.serialize()
+            data = {"pov": self.pov.serialize()}
+            data["current_step"] = "POV Competition"
+            return data
 
         # If at veto ceremony, run ceremony, and return info
         if self.step == self.VETO_CEREMONY:
             meeting_info = self.run_veto_ceremony()
             self.step = self.EVICTION
-            return meeting_info
+
+            data = { "results": meeting_info }
+            data["current_step"] = "POV Ceremony"
+            return data
 
         # If at eviction, run eviction and return info
         if self.step == self.EVICTION:
 
             eviction_info = self.run_eviction()
 
+            data = { "results": eviction_info, "current_step": "Eviction" }
+
             if len([x for x in self.players.all() if x.evicted is False]) > 3:
-
-                print([x for x in self.players.all() if x.evicted is False])
-
                 self.step = self.MEMORYWALL
             else:
                 self.step = self.FINALE
 
-            return eviction_info
+            return data
 
         # If at finale, run finale and return info, set completed to true
         if self.step == self.FINALE:
@@ -134,7 +146,9 @@ class Game(models.Model):
 
             self.completed = True
 
-            return finale_info
+            data = { "results": finale_info, "current_step": "Finale" }
+
+            return data
 
     def determine_jury_size(self, num_players):
 

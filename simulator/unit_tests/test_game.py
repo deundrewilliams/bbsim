@@ -64,7 +64,7 @@ class TestGame:
 
         data = g.advance_step()
 
-        assert data == [x.serialize() for x in hgs]
+        assert data['players'] == [x.serialize() for x in hgs]
         assert g.step == Game.HOH
 
     @pytest.mark.django_db
@@ -83,7 +83,7 @@ class TestGame:
 
         data = small_game.advance_step()
 
-        assert data == hgs[0].serialize()
+        assert data['hoh'] == hgs[0].serialize()
         assert small_game.step == Game.NOM
 
     @pytest.mark.django_db
@@ -102,7 +102,7 @@ class TestGame:
 
         data = small_game.advance_step()
 
-        assert data == [x.serialize() for x in [hgs[1], hgs[2]]]
+        assert data['nominees'] == [x.serialize() for x in [hgs[1], hgs[2]]]
         assert small_game.step == Game.POV
 
     @pytest.mark.django_db
@@ -124,7 +124,7 @@ class TestGame:
 
         data = small_game.advance_step()
 
-        assert data == hgs[5].serialize()
+        assert data['pov'] == hgs[5].serialize()
         assert small_game.step == Game.VETO_CEREMONY
 
     @pytest.mark.django_db
@@ -154,7 +154,7 @@ class TestGame:
             "Final Nominees": [x.serialize() for x in [hgs[1], hgs[3]]]
         }
 
-        assert expected_data == data
+        assert data['results'] == expected_data
         assert small_game.step == Game.EVICTION
 
     @pytest.mark.django_db
@@ -188,7 +188,7 @@ class TestGame:
             "Tied": False,
         }
 
-        assert data == expected_data
+        assert data['results'] == expected_data
         assert small_game.step == Game.MEMORYWALL
 
 
@@ -228,7 +228,7 @@ class TestGame:
             "Tied": False,
         }
 
-        assert data == expected_data
+        assert data['results'] == expected_data
         assert g.step == Game.FINALE
 
     @pytest.mark.django_db
@@ -252,7 +252,7 @@ class TestGame:
 
         data = small_game.advance_step()
 
-        assert data == { "mock": "data"}
+        assert data['results'] == { "mock": "data"}
         assert small_game.winner == hgs[5]
         assert small_game.completed == True
 
