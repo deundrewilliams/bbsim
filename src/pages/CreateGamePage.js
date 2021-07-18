@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
-import AppButton from '../components/AppButton';
-import ContestantView from '../components/ContestantView'
+import SiteBanner from '../components/SiteBanner';
+import ButtonBar from '../components/ButtonBar';
+
+import '../css/CreateGamePage.css';
 
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
@@ -24,117 +25,162 @@ const options = {
     headers: {"X-CSRFToken": getCookie('csrftoken')}
 }
 
+const ContestantTile = (props) => {
+
+    const { object, clickAction, removable } = props;
+
+    let class_name = "contestant-tile";
+
+    if (removable) {
+        class_name += " removable";
+    }
+
+    return(
+        <div className={class_name} onClick={() => clickAction(object)}>
+            <p>{object.name}</p>
+        </div>
+    )
+
+}
 
 class CreateGamePage extends React.Component {
 
-    constructor(props) {
-        super(props)
+    constructor() {
+        super();
 
         this.state = {
-            game_id: undefined,
-            game_created: false,
-            game_received: false,
-            picked_contestants: new Set(),
-            num_picked: 0
+            playersChosen: false,
+            currentSearch: '',
+            chosenPlayers: new Set(),
         }
 
-        this.simGame = this.simGame.bind(this);
-        this.setGame = this.setGame.bind(this);
-        this.createGame = this.createGame.bind(this);
-        this.handleContestantClick = this.handleContestantClick.bind(this);
+        this.handleSubmitPlayers = this.handleSubmitPlayers.bind(this);
+        this.deleteChosenPlayer = this.deleteChosenPlayer.bind(this);
+        this.handleConfirmDetails = this.handleConfirmDetails.bind(this);
     }
 
-    setGame(data) {
-        console.log(data)
-        this.setState({
-            game_id: data.id,
-            game_info: data
-        })
+    handleSubmitPlayers()  {
+
+        this.setState({ playersChosen: true });
+
     }
 
-    handleContestantClick(contestant_id) {
+    async handleConfirmDetails() {
 
-        const clicked = document.getElementById(contestant_id + "-contestant-panel")
+        let arr_players = Array.from(this.state.chosenPlayers);
 
-        if (this.state.picked_contestants.has(contestant_id))
-        {
-            this.state.picked_contestants.delete(contestant_id);
+        let arr_ids = arr_players.map(obj => obj.id);
 
-            clicked.style.backgroundColor = "#f5f5f5";
+        let results = await axios.post(`/api/create-game`, { "contestants": arr_ids }, options)
+        .then(res => res.data)
+        .catch(err => err.response.data);
+
+        console.log(results);
+
+        this.props.history.push('/game',
+            { "game_info": results }
+        );
+
+    }
+
+    async searchPlayer(e) {
+
+        e.preventDefault();
+
+        console.log("Searching for", this.state.currentSearch);
+
+        let results = await axios.get(`/api/contestant/${this.state.currentSearch}`, options)
+        .then(res => res.data)
+        .catch(err => err.response.data);
+
+        let _set = this.state.chosenPlayers;
+
+        if (results.name) {
+            _set.add(results);
         }
-        else
-        {
-            this.state.picked_contestants.add(contestant_id);
-            clicked.style.backgroundColor = "green";
+
+        console.log(this.state.chosenPlayers);
+        this.setState({ chosenPlayers: _set })
+
+    }
+
+    deleteChosenPlayer(player_info) {
+
+        console.log("Will remove id ", player_info);
+
+        let _set = this.state.chosenPlayers;
+
+        if (_set.has(player_info)) {
+            _set.delete(player_info);
         }
 
-        console.log(this.state.picked_contestants)
-        this.setState({ num_picked: this.state.picked_contestants.size})
-        // console.log(this.state.picked_contestants.size)
+        this.setState({ chosenPlayers: _set });
+
+        console.log(_set);
 
     }
 
-    async createGame() {
-
-        await axios.post('/api/create-game', {"contestants": Array.from(this.state.picked_contestants)}, options)
-        .then((res) => this.setGame(res.data))
-        .catch((err) => console.log(err))
-
-        this.setState({ game_created: true })
-
-        this.simGame()
-
-    }
-
-    async simGame() {
-
-        await axios.post('/api/sim-game', {"id": this.state.game_id}, options)
-        .then((res) => this.setGame(res.data))
-        .catch((err) => console.log(err))
-
-        this.setState({ game_received: true })
-
-    }
+    // console.log(currentSearch);
 
     render() {
 
-        if (!this.state.game_created)
-        {
+        if (this.state.playersChosen) {
             return(
-                <div className="create-game-page">
-                    <ContestantView
-                        contestants={this.props.location.state.contestants}
-                        clickAction={this.handleContestantClick}
+                <div className="create-game">
+                    <SiteBanner />
+                    <h2>GAME DETAILS</h2>
+                    <div className="chosen-players">
+                        <h2 className="chosen-heading">PLAYERS</h2>
+                        {this.state.chosenPlayers.size === 0 ? (<p>None chosen</p>) :
+                         Array.from(this.state.chosenPlayers).map((item, index) => {
+                            return(
+                                <ContestantTile key={index} object={item} clickAction={() => {}} />
+                            )
+                        })}
+                    </div>
+                    <ButtonBar
+                        option_1="Back"
+                        option_2="Create Game"
+                        clickAction_1={() => this.setState({ playersChosen: false })}
+                        clickAction_2={() => this.handleConfirmDetails()}
                     />
-                    <AppButton
-                        text="Create Game"
-                        clickAction={this.createGame}
-                        disabled={this.state.num_picked < 5 || this.state.num_picked > 16}
-                    />
-                </div>
-            )
-
-        }
-
-        else
-        {
-            return(
-                <div className="create-game-page">
-                    <Link to={{
-                        pathname: '/game',
-                        state: {
-                            info: this.state.game_info
-                        }
-                    }}>
-                        <AppButton disabled={!this.state.game_received} text="Simulate Game"/>
-                    </Link>
-
                 </div>
             )
         }
 
+        else {
+            return(
+                <div className="create-game">
+                    <SiteBanner />
+                    <div className="player-search">
+                        <h2 className="search-heading">Search for Players</h2>
+                        <form>
+                            <label>
+                                <input id="name-field" type="text" name="name" onChange={(e) => this.setState({ currentSearch: e.target.value })}/>
+                            </label>
+                            <input id="add-btn" type="submit" value="Add" onClick={(e) => this.searchPlayer(e)}/>
+                        </form>
+                    </div>
+                    <div className="chosen-players">
+                        <h2 className="chosen-heading">SELECTED PLAYERS</h2>
+                        {this.state.chosenPlayers.size === 0 ? (<p>None chosen</p>) :
+                         Array.from(this.state.chosenPlayers).map((item, index) => {
+                            return(
+                                <ContestantTile key={index} object={item} clickAction={this.deleteChosenPlayer} removable/>
+                            )
+                        })}
+                    </div>
+                    <ButtonBar
+                        option_1="Back"
+                        option_2="Continue"
+                        clickAction_2={this.handleSubmitPlayers}
+                    />
+                </div>
+            )
+        }
 
     }
+
 
 }
 

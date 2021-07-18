@@ -30,6 +30,19 @@ def get_all_contestants(request, *args, **kwargs):
 
     return Response(data, content_type="application/javascript")
 
+@api_view(["GET"])
+def get_contestant(request, *args, **kwargs):
+
+    requested_name = kwargs["name"]
+
+    try:
+        obj = Contestant.objects.get(name=requested_name)
+        contestant = obj.serialize()
+        return Response(contestant, content_type="application/javascript")
+    except Exception:
+        return Response(
+            {f"Cannot find contestant with name: {requested_name}"}, status=400
+        )
 
 # GAMES
 @api_view(["GET"])

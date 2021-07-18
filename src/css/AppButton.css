@@ -2,9 +2,16 @@
 
     font-family: 'Roboto', sans-serif;
     font-size: 32px;
+    font-weight: bold;
 
     border: none;
     padding: 25px;
+
+    width: 50%;
+
+    margin: 50px auto;
+
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
 
 }
 
@@ -16,4 +23,12 @@
 .app-button:disabled {
     filter: brightness(70%);
     cursor: default;
+}
+
+.newgame-btn {
+    background: #63DF61;
+}
+
+.playerbank-btn {
+    background: #c4c4c4;
 }

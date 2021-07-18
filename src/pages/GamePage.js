@@ -1,118 +1,178 @@
 import React from 'react'
-import FinaleView from '../components/FinaleView'
-import WeekView from '../components/WeekView'
+// import axios from 'axios';
+
+import ButtonBar from '../components/ButtonBar';
+import SiteBanner from '../components/SiteBanner';
 
 import '../css/GamePage.css';
+import MemoryWall from '../components/MemoryWall';
 
-// const mock_weeks = [
-//     {week_num: 1, vote_count: [2,1], tied: false, hoh: "Tera", pov: "Jedson", evicted: "Jedson", fnoms: ["Breydon", "Jedson"], inoms: ["Beth", "Jedson"]},
-//     {week_num: 2, vote_count: [2,1], tied: true, hoh: "Breydon", pov: "Breydon", evicted: "Beth", fnoms: ["Beth", "Tera"], inoms: ["Beth", "Tera"]},
-//     {week_num: 3, vote_count: [1,0], tied: false, hoh: "Tychon", pov: "Tera", evicted: "Kiefer", fnoms: ["Kiefer", "Breydon"], inoms: ["Tera", "Kiefer"]}
-// ]
-
-// const mock_prejury = [
-//     { id: 1, name: "Julie" },
-//     { id: 1, name: "Josh" },
-//     { id: 1, name: "Latoya" },
-//     { id: 1, name: "Kyle" },
-//     { id: 1, name: "Austin" },
-// ]
-
-// const mock_jury = [
-//     { id: 1, name: "Victoria"},
-//     { id: 1, name: "Rohan"},
-//     { id: 1, name: "Tina"},
-//     { id: 1, name: "Jedson"},
-//     { id: 1, name: "Beth"},
-//     { id: 1, name: "Kiefer"},
-//     { id: 1, name: "Tera"},
-// ]
-
-// const mock_finale = {
-//     final_hoh: { id: 1, name: "Tychon" },
-//     final_juror: { id: 1, name: "Tera" },
-//     finalists: [
-//         { id: 1, name: "Tychon" },
-//         { id: 1, name: "Breydon" }
-//     ],
-//     jury: mock_jury,
-//     votes:
-//         {
-//             Victoria: "Tychon",
-//             Rohan: "Tychon",
-//             Tina: "Tychon",
-//             Jedson: "Tychon",
-//             Beth: "Tychon",
-//             Kiefer: "Tychon",
-//             Tera: "Breydon",
-//         },
-//     winner: { id: 1, name: "Tychon" }
+// function getCookie(cname) {
+//     var name = cname + "=";
+//     var ca = document.cookie.split(';');
+//     for(var i=0; i<ca.length; i++) {
+//        var c = ca[i];
+//        while (c.charAt(0) ===' ') c = c.substring(1);
+//        if(c.indexOf(name) === 0)
+//           return c.substring(name.length,c.length);
+//     }
+//     return "";
 // }
 
-// const mock_game = {
-//     finale: mock_finale,
-//     jury: mock_jury,
-//     prejury: mock_prejury,
-//     weeks: mock_weeks,
-//     winner: { id: 1, name: "Tychon" }
+// const options = {
+//     headers: {"X-CSRFToken": getCookie('csrftoken')}
 // }
 
+const mock_data = [
+    {
+        "current_step": "Memory Wall",
+        "players": [
+            {"id": 1, "name": "Tiffany", "evicted": false },
+            {"id": 2, "name": "Derek X", "evicted": false },
+            {"id": 3, "name": "Brent", "evicted": true },
+            {"id": 4, "name": "Derek F", "evicted": false },
+            {"id": 5, "name": "Frenchie", "evicted": false },
+        ]
+    },
+    {
+        "current_step": "HOH Competition",
+        "hoh": {"id": 2, "name": "Derek X", "evicted": false },
+    },
+    {
+        "current_step": "Nomination Ceremony",
+        "nominees": [
+            {"id": 4, "name": "Derek F", "evicted": false },
+            {"id": 5, "name": "Frenchie", "evicted": false }
+        ]
+    },
+    {
+        "current_step": "POV Competition",
+        "pov": {"id": 1, "name": "Tiffany", "evicted": false }
+    },
+    {
+        "current_step": "POV Ceremony",
+        "results": {
+            "Decision": {"Using": false, "On": null },
+            "Final Nominees": [
+                {"id": 4, "name": "Derek F", "evicted": false },
+                {"id": 5, "name": "Frenchie", "evicted": false }
+            ]
+        }
+    },
+    {
+        "current_step": "Eviction",
+        "results": {
+            "Evicted": {"id": 5, "name": "Frenchie", "evicted": true },
+            "Votes": [1],
+            "Nominees": [
+                {"id": 4, "name": "Derek F", "evicted": false },
+                {"id": 5, "name": "Frenchie", "evicted": false }
+            ],
+            "Tied": false,
+        }
+    },
+    {
+        "current_step": "Finale",
+        "results": {
+            "part_one": {"id": 1, "name": "Tiffany", "evicted": false },
+            "part_two": {"id": 2, "name": "Derek X", "evicted": false },
+            "final_hoh": {"id": 2, "name": "Derek X", "evicted": false },
+            "final_juror": {"id": 4, "name": "Derek F", "evicted": false },
+            "jury": [
+                {"id": 3, "name": "Brent", "evicted": true },
+                {"id": 4, "name": "Derek F", "evicted": false },
+                {"id": 5, "name": "Frenchie", "evicted": false },
+            ],
+            "winner": {"id": 1, "name": "Tiffany", "evicted": false },
+            "finalists": [
+                {"id": 1, "name": "Tiffany", "evicted": false },
+                {"id": 2, "name": "Derek X", "evicted": false },
+            ],
+            "votes": {"Brent": "Derek X", "Derek F": "Tiffany", "Frenchie": "Tiffany"}
+        }
+    }
+]
+
+
+const Picker = (props) => {
+
+    const { step, info } = props;
+
+    switch (step) {
+        case "Memory Wall":
+            return (<MemoryWall players={info.players}/>)
+        case "HOH Competition":
+            return null
+        default:
+            return null
+    }
+
+}
 class GamePage extends React.Component {
 
     constructor(props) {
         super(props)
 
         this.state = {
-            current_week: 0,
-            in_finale: false,
-            game_info:  props.location.state.info,
-            complete: false,
+            mock_index: -1,
         }
 
-        this.advanceSimulation = this.advanceSimulation.bind(this);
+        // this.advanceSimulation = this.advanceSimulation.bind(this);
+        this.mockAdvance = this.mockAdvance.bind(this);
 
     }
 
-    componentDidUpdate() {
-        window.scrollTo(0, 0);
-    }
+    componentDidMount() {
 
-    advanceSimulation() {
+        // this.setState({ game_step: this.props.location.state.game_info.current_step })
+        // this.setState({ game_id: this.props.location.state.game_info.id })
 
-        // If already at week limit, set finale on
-        if (this.state.current_week + 1 === this.state.game_info.weeks.length)
-        {
-            this.setState({ in_finale: true })
-        }
+        this.setState({ game_step: "Memory Wall"})
+        this.setState({ game_id: 999 })
 
-        // Else
-        else
-        {
-            this.setState({ current_week: this.state.current_week + 1})
-        }
-
-
-
+        this.mockAdvance();
 
     }
+
+    mockAdvance() {
+
+        let num = this.state.mock_index + 1;
+
+        this.setState({
+            mock_index: num,
+            game_info: mock_data[num],
+            game_step: mock_data[num].current_step
+        })
+
+    }
+
+    // async advanceSimulation() {
+
+    //     let results = await axios.post('/api/simulate', {"id": this.state.game_id}, options)
+    //     .then(res => res.data)
+    //     .catch(err => err.response.data)
+
+    //     if (results.current_step) {
+
+    //         this.setState({
+    //             game_info: results,
+    //             game_step: results.current_step
+    //         })
+    //     }
+
+    // }
 
     render() {
 
-        // console.log(this.state.game_info)
-
-        if (this.state.in_finale) {
-
-            return(
-                <div className="game-page">
-                    <FinaleView info={this.state.game_info.finale} weeks={this.state.game_info.weeks}/>
-                </div>
-            )
-
-        }
-
-        return(
+        return (
             <div className="game-page">
-                <WeekView week={this.state.game_info.weeks[this.state.current_week]} handleClick={this.advanceSimulation}/>
+                <SiteBanner />
+                <Picker step={this.state.game_step} info={this.state.game_info}/>
+                <ButtonBar
+                    option_1="Quit"
+                    option_2="Continue"
+                    clickAction_2={this.mockAdvance}
+                />
             </div>
         )
     }

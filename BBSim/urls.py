@@ -22,12 +22,14 @@ from simulator.views import (
     create_contestant,
     sim_game,
     get_relationships,
+    get_contestant
 )
 from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/contestants/", get_all_contestants),
+    path("api/contestant/<str:name>", get_contestant),
     path("api/game/<int:id>", get_single_game),
     path("api/create-game", create_game),
     path("api/create-contestant", create_contestant),
