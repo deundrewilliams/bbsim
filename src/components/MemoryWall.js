@@ -2,12 +2,13 @@ import React from 'react';
 
 import '../css/MemoryWall.css';
 import StepHeader from './StepHeader';
+import ButtonBar from '../components/ButtonBar';
 
 const PlayerTile = (props) => {
 
     let class_name = "player-tile"
 
-    if (props.info.evicted) {
+    if (props.info.evicted === "True") {
         class_name += " evicted"
     }
 
@@ -33,6 +34,11 @@ const MemoryWall = (props) => {
                     )
                 })}
             </div>
+            <ButtonBar
+                option_1="Quit"
+                option_2="Continue"
+                clickAction_2={props.advance}
+            />
         </div>
     )
 

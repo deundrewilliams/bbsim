@@ -1,0 +1,17 @@
+.hoh-competition {
+    width: 65%;
+    margin: auto;
+}
+
+.hoh-container > .hg-tile {
+    margin-bottom: 25px;
+    height: 250px;
+
+}
+
+.hoh-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

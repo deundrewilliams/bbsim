@@ -1,0 +1,37 @@
+.eviction-ceremony {
+    width: 65%;
+    margin: auto;
+}
+
+.eviction-ceremony > h3 {
+    background-color: #c4c4c4;
+    font-size: 23px;
+    padding: 10px;
+    width: 50%;
+    margin: auto;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.evicted-container > .hg-tile {
+    margin: 25px auto;
+    height: 200px;
+}
+
+.nom-tiles {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.nom-tiles > .hg-tile {
+    margin: 25px;
+    height: 150px;
+}
+
+.evicted-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

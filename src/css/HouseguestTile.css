@@ -1,17 +1,32 @@
 .hg-tile {
     background-color: #c4c4c4;
-    height: 100px;
-    width: 100px;
-    margin: 15px auto;
+    aspect-ratio: 1 / 1;
     padding: 5px;
     font-size: 20px;
     display: flex;
     justify-content: center;
     align-content: center;
     flex-direction: column;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
 }
 
 .hg-name {
     margin: auto;
     display: inline-block;
+}
+
+.green {
+    border: solid #2DC215 35px;
+}
+
+.red {
+    border: solid #F95252 35px;
+}
+
+.gold {
+    border: solid #F5D114 35px;
+}
+
+.black {
+    border: solid #262626 35px;
 }

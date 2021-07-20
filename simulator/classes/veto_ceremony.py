@@ -13,8 +13,8 @@ class VetoCeremony:
     def serialize(self):
 
         data = {
-            "Decision": self.decision_info,
-            "Final Nominees": [x.serialize() for x in self.nominees],
+            "decision": self.decision_info,
+            "final_nominees": [x.serialize() for x in self.nominees],
         }
 
         return data
