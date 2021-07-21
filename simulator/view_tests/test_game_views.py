@@ -62,4 +62,4 @@ class GameViewTest(TestCase):
 
         response = self.client.post("/api/simulate", {"id": g.id})
 
-        self.assertEqual(len(response.data), 6)
+        self.assertEqual(len(response.data['players']), 6)

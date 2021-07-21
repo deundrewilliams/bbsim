@@ -377,9 +377,9 @@ class TestGame:
 
         data = small_game.run_eviction()
 
-        assert data['Evicted'] == hgs[5].serialize()
-        assert data['Votes'] == [2, 1]
-        assert data['Tied'] is False
+        assert data['evicted'] == hgs[5].serialize()
+        assert data['votes'] == [2, 1]
+        assert data['tied'] is False
 
     @pytest.mark.django_db
     def test_run_finale(self, small_game, monkeypatch):
