@@ -11,7 +11,7 @@ class EvictionCeremony:
 
     def serialize(self):
         data = {
-            "hOH": self.hoh.serialize(),
+            "hoh": self.hoh.serialize(),
             "nominees": [x.serialize() for x in self.nominees],
             "evicted": self.evicted.serialize() if self.evicted else None,
             "votes": self.vote_count if self.evicted else None,
