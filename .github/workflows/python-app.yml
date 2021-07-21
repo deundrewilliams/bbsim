@@ -27,5 +27,7 @@ jobs:
         pip install pipenv
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
+      env: 
+        DJANGO_KEY: ${{ secrets.DJANGO_KEY }}
       run: |
         pipenv run py.test
