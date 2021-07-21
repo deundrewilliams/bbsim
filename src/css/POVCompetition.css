@@ -1,0 +1,16 @@
+.pov-competition {
+    width: 65%;
+    margin: auto;
+}
+
+.pov-container > .hg-tile {
+    margin-bottom: 25px;
+    height: 250px;
+}
+
+.pov-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

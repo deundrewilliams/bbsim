@@ -1,0 +1,32 @@
+.button-bar {
+    background-color: #c4c4c4;
+    padding: 2px 5px;
+    display: flexbox;
+    width: fit-content;
+    border-radius: 15px;
+    margin: auto;
+    margin-bottom: 15px;
+}
+
+.button-bar > button {
+    font-size: 20px;
+    border: none;
+    margin: 10px;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 15px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.button-bar > button:hover {
+    cursor: pointer;
+    filter: brightness(90%);
+}
+
+.bad-option {
+    background-color: #F95252;
+}
+
+.good-option {
+    background-color: #63DF61;
+}

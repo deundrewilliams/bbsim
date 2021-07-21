@@ -1,9 +1,11 @@
 import '../css/SiteBanner.css';
 
-export default function SiteBanner(props) {
+const SiteBanner = () => {
     return(
         <div className="site-banner">
-            <h1>BIG BROTHER SIMULATOR</h1>
+            <h1>BIG BROTHER SIM</h1>
         </div>
     )
 }
+
+export default SiteBanner;

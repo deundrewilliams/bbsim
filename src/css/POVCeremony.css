@@ -1,0 +1,22 @@
+.pov-ceremony {
+    width: 65%;
+    margin: auto;
+}
+
+.pov-ceremony > h3 {
+    background-color: #c4c4c4;
+    font-size: 25px;
+    width: 50%;
+    margin: auto;
+    padding: 10px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.nom-tiles {
+    display: flex;
+    flex-direction: row;
+}
+
+.nom-tiles > .hg-tile {
+    height: 150px;
+}
