@@ -29,5 +29,6 @@ jobs:
     - name: Test with pytest
       env: 
         DJANGO_KEY: ${{ secrets.DJANGO_KEY }}
+        DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
       run: |
         pipenv run py.test
