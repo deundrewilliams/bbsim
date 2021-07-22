@@ -7,7 +7,6 @@ from ..classes import (
     VetoCeremony,
     EvictionCeremony,
     Finale,
-    Week,
 )
 
 
