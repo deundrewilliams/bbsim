@@ -291,7 +291,8 @@ class TestGame:
 
         data = small_game.advance_step()
 
-        assert data['results'] == { "mock": "data"}
+        assert data['results']['finale'] == { "mock": "data"}
+        assert data['results']['summary']['weeks'] == [{ "mock": "week"}]
         assert small_game.winner == hgs[5]
         assert small_game.completed == True
 

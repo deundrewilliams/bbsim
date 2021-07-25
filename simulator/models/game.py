@@ -193,7 +193,11 @@ class Game(models.Model):
 
             self.completed = True
 
-            data = { "results": finale_info, "current_step": "Finale", "summary": self.get_summary(finale_info) }
+            data = { "results": {
+                        "finale": finale_info,
+                        "summary": self.get_summary(finale_info)
+                    },
+                    "current_step": "Finale" }
 
             return data
 
