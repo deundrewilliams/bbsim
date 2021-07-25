@@ -82,6 +82,8 @@ class Game(models.Model):
 
     def advance_step(self):
 
+        print("Current step is " + str(self.step))
+
         # If at memory wall step, return list of serialized players
         if self.step == self.MEMORYWALL:
             self.step = self.HOH
@@ -98,7 +100,11 @@ class Game(models.Model):
 
             return data
 
+        print("number of weeks " + str(len(self.weeks.all())))
+        print("Week Number: " + str(self.week_number))
+
         current_week = list(self.weeks.all())[self.week_number - 1]
+
 
         # If at hoh step, run hoh comp and return hoh
         if self.step == self.HOH:
@@ -167,6 +173,7 @@ class Game(models.Model):
 
             if len([x for x in self.players.all() if x.evicted is False]) > 3:
                 self.step = self.MEMORYWALL
+                self.week_number += 1
             else:
                 self.step = self.FINALE
 
@@ -181,7 +188,6 @@ class Game(models.Model):
 
             current_week.save()
 
-            self.week_number += 1
             self.save()
 
             return data
@@ -189,9 +195,13 @@ class Game(models.Model):
         # If at finale, run finale and return info, set completed to true
         if self.step == self.FINALE:
 
+            print("Running finale")
+
             finale_info = self.run_finale()
 
             self.completed = True
+
+            print("Finished running finale")
 
             data = { "results": {
                         "finale": finale_info,

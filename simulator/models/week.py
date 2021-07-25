@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 
 class Week(models.Model):
 
-    number = models.IntegerField(unique=True)
+    number = models.IntegerField(unique=False)
     hoh = models.ForeignKey("Houseguest", on_delete=models.CASCADE, blank=True, null=True, related_name="weeks")
     initial_nominees = models.ManyToManyField("Houseguest", related_name="initial_noms_weeks", default=[])
     pov = models.ForeignKey("Houseguest", on_delete=models.CASCADE, related_name="pov_weeks", default=None, blank=True, null=True)
