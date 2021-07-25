@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
-from ..models import Houseguest
-
-
 class Week(models.Model):
 
     number = models.IntegerField(unique=True)
@@ -12,16 +9,16 @@ class Week(models.Model):
     pov = models.ForeignKey("Houseguest", on_delete=models.CASCADE, related_name="pov_weeks", default=None, blank=True, null=True)
     final_nominees = models.ManyToManyField("Houseguest", related_name="final_noms_weeks", default=[])
     evicted = models.ForeignKey("Houseguest", on_delete=models.CASCADE, related_name="evicted_weeks", default=None, blank=True, null=True)
-    vote_count = models.CharField(max_length=10, default="")
+    vote_count = ArrayField(models.CharField(max_length=20), blank=True, default=list)
     tied = models.BooleanField(default=False)
 
     def serialize(self):
         data = {
             "week_num": self.number,
             "hoh": self.hoh.name,
-            "inoms": [x.name for x in self.initial_nominees],
+            "initial_noms": [x.name for x in self.initial_nominees.all()],
             "pov": self.pov.name,
-            "fnoms": [x.name for x in self.final_nominees],
+            "final_noms": [x.name for x in self.final_nominees.all()],
             "evicted": self.evicted.name,
             "vote_count": self.vote_count,
             "tied": self.tied,
