@@ -39,7 +39,9 @@ def get_contestant(request, *args, **kwargs):
         obj = Contestant.objects.get(name=requested_name)
         contestant = obj.serialize()
         return Response(contestant, content_type="application/javascript")
-    except Exception:
+    except Exception as e:
+        print(e)
+        print(f"Could not find contestant with name {requested_name}")
         return Response(
             {f"Cannot find contestant with name: {requested_name}"}, status=400
         )
