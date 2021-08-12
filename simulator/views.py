@@ -102,6 +102,7 @@ def sim_game(request, *args, **kwargs):
 
     try:
         obj = Game.objects.get(id=game_id)
+        print("Advancing")
         info = obj.advance_step()
         obj.save()
         print("Finished advancing")

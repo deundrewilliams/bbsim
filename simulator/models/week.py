@@ -13,6 +13,13 @@ class Week(models.Model):
     tied = models.BooleanField(default=False)
 
     def serialize(self):
+        print(f"In week # {self.number}")
+        print(f"HOH: {self.hoh.name}")
+        print(f"Initial nominees: {self.initial_nominees.all()}")
+        print(f"POV: {self.pov.name}")
+        print(f"Final nominees: {self.final_nominees.all()}")
+        print(f"Evicted: {self.evicted.name}")
+
         data = {
             "week_num": self.number,
             "hoh": self.hoh.name,

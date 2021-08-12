@@ -10,9 +10,10 @@ from ..classes import (
 from ..models import (
     Game,
     Houseguest,
-    Week
+    Week,
+    Contestant
 )
-from ..factories import HouseguestFactory, GameFactory, WeekFactory
+from ..factories import HouseguestFactory, GameFactory, WeekFactory, ContestantFactory
 
 
 class TestGame:
@@ -260,7 +261,7 @@ class TestGame:
         assert data['results'] == expected_data
         assert g.step == Game.FINALE
         assert g.weeks.all()[0].evicted == hgs[2]
-        assert g.week_number == 2
+        assert g.week_number == 1
 
     @pytest.mark.django_db
     def test_advance_from_finale(self, small_game, monkeypatch):
@@ -394,6 +395,31 @@ class TestGame:
         assert set(small_game.nominees.all()) == set([hgs[3], hgs[5]])
 
     @pytest.mark.django_db
+    def test_run_veto_ceremony_at_final_four(self, small_game, monkeypatch):
+
+        # HOH: 2, Noms: 1, 3, POV: 1 use on 1, Final: 3 and 4
+        hgs = list(small_game.players.all())
+
+        hgs[4].toggle_evicted(True)
+        hgs[5].toggle_evicted(True)
+
+        small_game.hoh = hgs[1]
+        small_game.nominees.set([hgs[0], hgs[2]])
+        small_game.pov = hgs[0]
+        small_game.save()
+
+        def mock_run_ceremony(obj):
+
+            assert obj.hoh == hgs[1]
+            obj.nominees = [hgs[2], hgs[3]]
+
+        monkeypatch.setattr(VetoCeremony, "run_ceremony", mock_run_ceremony)
+
+        small_game.run_veto_ceremony()
+
+        assert set(small_game.nominees.all()) == set([hgs[3], hgs[2]])
+
+    @pytest.mark.django_db
     def test_run_eviction(self, small_game, monkeypatch):
 
         # HOH: 2, Noms: 1, 3, POV: 4 use on 1, Final: 3 and 5, 5 evicted
@@ -468,4 +494,21 @@ class TestGame:
         }
 
         assert expected_data == small_game.get_summary(finale_info)
+
+    @pytest.mark.django_db
+    def test_full_sim(self):
+
+        game = Game()
+        game.save()
+        for c in ContestantFactory.create_batch(16):
+            _ = c.create_houseguest_clone(game_obj=game)
+
+        game.setup_game()
+        game.save()
+
+        while game.completed is False:
+            _ = game.advance_step()
+            game.save()
+
+        assert game.completed is True
 

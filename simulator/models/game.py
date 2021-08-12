@@ -150,11 +150,16 @@ class Game(models.Model):
 
         # If at veto ceremony, run ceremony, and return info
         if self.step == self.VETO_CEREMONY:
+
+            # At final 4, nominees aren't being set if the veto is used
+
             meeting_info = self.run_veto_ceremony()
             self.step = self.EVICTION
 
             data = { "results": meeting_info }
             data["current_step"] = "POV Ceremony"
+
+            print(self.nominees.all())
 
             # Add final noms to current week
             current_week.final_nominees.set(self.nominees.all())
@@ -188,6 +193,8 @@ class Game(models.Model):
 
             current_week.save()
 
+            print(current_week.__dict__)
+
             self.save()
 
             return data
@@ -209,6 +216,8 @@ class Game(models.Model):
                     },
                     "current_step": "Finale" }
 
+            print("Assembled data")
+
             return data
 
     def get_summary(self, finale_info):
@@ -218,9 +227,18 @@ class Game(models.Model):
             "finale": None
         }
 
+        # print(len(self.weeks.all()))
+        # print(self.week_number)
+
+        for week in self.weeks.all():
+            print(week.__dict__)
+
         # Iterate through weeks, add serializaed info to list
         for week in self.weeks.all():
+            # print(week.serialize())
+            # print(f"Adding week {week.number}")
             summary_info["weeks"].append(week.serialize())
+            # print(f"Added week {week.number}")
 
         # Add finale info to list
         summary_info["finale"] = finale_info
@@ -315,6 +333,8 @@ class Game(models.Model):
         )
         # Run ceremony
         vc.run_ceremony()
+
+        print(vc.nominees)
 
         # Set new nominees to equal ceremony nominees
         self.nominees.set(vc.nominees)
