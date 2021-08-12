@@ -46,7 +46,7 @@ const options = {
 //     {
 //         "current_step": "Nomination Ceremony",
 //         "nominees": [
-//             {"id": 4, "name": "Derek F", "evicted": false },
+//             {"id": 3, "name": "Brent", "evicted": true },
 //             {"id": 5, "name": "Frenchie", "evicted": false }
 //         ]
 //     },
@@ -57,7 +57,7 @@ const options = {
 //     {
 //         "current_step": "POV Ceremony",
 //         "results": {
-//             "decision": {"using": false, "on": null },
+//             "decision": {"Using": true, "On": {"id": 3, "name": "Brent", "evicted": true } },
 //             "final_nominees": [
 //                 {"id": 4, "name": "Derek F", "evicted": false },
 //                 {"id": 5, "name": "Frenchie", "evicted": false }
@@ -131,31 +131,36 @@ class GamePage extends React.Component {
         this.state = {
             game_step: this.props.location.state.game_info.current_step,
             game_id: this.props.location.state.game_info.id
+            // mock_index: 0,
         }
 
         this.advanceSimulation = this.advanceSimulation.bind(this);
-        // this.mockAdvance = this.mockAdvance.bind(this);
+        this.mockAdvance = this.mockAdvance.bind(this);
 
     }
 
     async componentDidMount() {
 
-        // this.setState({ game_step: this.props.location.state.game_info.current_step })
-        // this.setState({ game_id: this.props.location.state.game_info.id })
+        this.setState({ game_step: this.props.location.state.game_info.current_step })
+        this.setState({ game_id: this.props.location.state.game_info.id })
 
-        // this.setState({ game_step: "Memory Wall"})
-        // this.setState({ game_id: 999 })
 
-        // this.mockAdvance();
 
         console.log("Advancing...")
         await this.advanceSimulation();
+
+        // this.setState({ game_step: "Memory Wall"})
+        // this.setState({ game_id: 999, mock_index: 0 })
+
+        // this.mockAdvance();
 
     }
 
     // mockAdvance() {
 
     //     let num = this.state.mock_index + 1;
+
+    //     console.log(this.state.mock_index);
 
     //     this.setState({
     //         mock_index: num,

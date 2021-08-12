@@ -2,7 +2,7 @@ import pytest
 import random
 from ..classes import VetoCeremony
 from ..factories import HouseguestFactory
-
+from ..models import Houseguest
 
 class TestVetoCeremony:
     @pytest.mark.django_db
@@ -140,6 +140,28 @@ class TestVetoCeremony:
 
         assert vc.using is False
         assert vc.nominees == noms
+
+    @pytest.mark.django_db
+    def test_run_ceremony_final_four_veto_used(self, monkeypatch):
+
+        # HOH: 0, Noms: 1 and 2, POV: 2, Renom: 3
+        hgs = HouseguestFactory.create_batch(4)
+
+        hoh = hgs[0]
+        noms = [hgs[1], hgs[2]]
+        pov = hgs[2]
+
+        def mock_impact_relationship(obj, a, b):
+            return
+
+        monkeypatch.setattr(Houseguest, "impact_relationship", mock_impact_relationship)
+
+        vc = VetoCeremony(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
+        vc.run_ceremony()
+
+        assert vc.using is True
+        assert vc.nominees == [hgs[1], hgs[3]]
+
 
     @pytest.mark.django_db
     def test_run_ceremony_other_winner(self, monkeypatch):

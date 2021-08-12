@@ -1,5 +1,7 @@
 from django.db import models
 
+from ..models.week import Week
+
 from ..classes import (
     Competition,
     NominationCeremony,
@@ -7,7 +9,6 @@ from ..classes import (
     VetoCeremony,
     EvictionCeremony,
     Finale,
-    Week,
 )
 
 
@@ -51,6 +52,8 @@ class Game(models.Model):
     nominees = models.ManyToManyField("Houseguest", related_name="game_nominees", default=[])
     pov = models.ForeignKey("Houseguest", on_delete=models.CASCADE, blank=True, null=True, related_name="game_pov")
     jury_size = models.IntegerField(default=0)
+    weeks = models.ManyToManyField("Week", related_name="game_weeks", default=[])
+    week_number = models.IntegerField(default=1)
 
     def serialize(self):
 
@@ -75,7 +78,11 @@ class Game(models.Model):
         for hg in in_house:
             hg.initialize_relationships(in_house)
 
+
+
     def advance_step(self):
+
+        print("Current step is " + str(self.step))
 
         # If at memory wall step, return list of serialized players
         if self.step == self.MEMORYWALL:
@@ -83,7 +90,21 @@ class Game(models.Model):
 
             data = {"players": [x.serialize() for x in self.players.all()]}
             data["current_step"] = "Memory Wall"
+            data["week_number"] = self.week_number
+
+            # Create new empty week
+            new_week = Week(number=self.week_number)
+            new_week.save()
+
+            self.weeks.add(new_week)
+
             return data
+
+        print("number of weeks " + str(len(self.weeks.all())))
+        print("Week Number: " + str(self.week_number))
+
+        current_week = list(self.weeks.all())[self.week_number - 1]
+
 
         # If at hoh step, run hoh comp and return hoh
         if self.step == self.HOH:
@@ -92,6 +113,11 @@ class Game(models.Model):
 
             data = {"hoh": self.hoh.serialize()}
             data["current_step"] = "HOH Competition"
+
+            # Add hoh to current week
+            current_week.hoh = self.hoh
+            current_week.save()
+
             return data
 
         # If at noms, run nom ceremony and return noms
@@ -100,6 +126,11 @@ class Game(models.Model):
             self.step = self.POV
             data = {"nominees": [x.serialize() for x in list(self.nominees.all())]}
             data["current_step"] = "Nomination Ceremony"
+
+            # Add noms to current week
+            current_week.initial_nominees.set(self.nominees.all())
+            current_week.save()
+
             return data
 
         # If at pov, get pov players, run pov comp and return pov holder
@@ -110,41 +141,109 @@ class Game(models.Model):
             self.step = self.VETO_CEREMONY
             data = {"pov": self.pov.serialize()}
             data["current_step"] = "POV Competition"
+
+            # Add POV winner to current week
+            current_week.pov = self.pov
+            current_week.save()
+
             return data
 
         # If at veto ceremony, run ceremony, and return info
         if self.step == self.VETO_CEREMONY:
+
+            # At final 4, nominees aren't being set if the veto is used
+
             meeting_info = self.run_veto_ceremony()
             self.step = self.EVICTION
 
             data = { "results": meeting_info }
             data["current_step"] = "POV Ceremony"
+
+            print(self.nominees.all())
+
+            # Add final noms to current week
+            current_week.final_nominees.set(self.nominees.all())
+            current_week.save()
+
             return data
 
         # If at eviction, run eviction and return info
         if self.step == self.EVICTION:
 
-            eviction_info = self.run_eviction()
+            eviction_obj = self.run_eviction()
 
-            data = { "results": eviction_info, "current_step": "Eviction" }
+            eviction_data = eviction_obj.serialize()
+
+            data = { "results": eviction_data, "current_step": "Eviction" }
 
             if len([x for x in self.players.all() if x.evicted is False]) > 3:
                 self.step = self.MEMORYWALL
+                self.week_number += 1
             else:
                 self.step = self.FINALE
+
+            # Add evicted houseguest to current week
+            current_week.evicted = eviction_obj.evicted
+
+            # Add vote count to current week
+            current_week.vote_count = eviction_obj.vote_count
+
+            # Add tied bool to current week
+            current_week.tied = eviction_obj.tied
+
+            current_week.save()
+
+            print(current_week.__dict__)
+
+            self.save()
 
             return data
 
         # If at finale, run finale and return info, set completed to true
         if self.step == self.FINALE:
 
+            print("Running finale")
+
             finale_info = self.run_finale()
 
             self.completed = True
 
-            data = { "results": finale_info, "current_step": "Finale" }
+            print("Finished running finale")
+
+            data = { "results": {
+                        "finale": finale_info,
+                        "summary": self.get_summary(finale_info)
+                    },
+                    "current_step": "Finale" }
+
+            print("Assembled data")
 
             return data
+
+    def get_summary(self, finale_info):
+
+        summary_info = {
+            "weeks": [],
+            "finale": None
+        }
+
+        # print(len(self.weeks.all()))
+        # print(self.week_number)
+
+        for week in self.weeks.all():
+            print(week.__dict__)
+
+        # Iterate through weeks, add serializaed info to list
+        for week in self.weeks.all():
+            # print(week.serialize())
+            # print(f"Adding week {week.number}")
+            summary_info["weeks"].append(week.serialize())
+            # print(f"Added week {week.number}")
+
+        # Add finale info to list
+        summary_info["finale"] = finale_info
+
+        return summary_info
 
     def determine_jury_size(self, num_players):
 
@@ -235,6 +334,8 @@ class Game(models.Model):
         # Run ceremony
         vc.run_ceremony()
 
+        print(vc.nominees)
+
         # Set new nominees to equal ceremony nominees
         self.nominees.set(vc.nominees)
 
@@ -263,7 +364,7 @@ class Game(models.Model):
         else:
             self.jury.add(evc.evicted)
 
-        return evc.serialize()
+        return evc
 
     def run_finale(self):
 

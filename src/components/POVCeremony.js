@@ -12,8 +12,8 @@ const POVCeremony = (props) => {
     return(
         <div className="pov-ceremony">
             <StepHeader text="POWER OF VETO MEETING" />
-            {decision.Using === true ?
-                (<h3>POV USED ON {decision.On.name.toUpperCase()}</h3>) :
+            {decision.Using ?
+                (<h3 id="used-pov">POV USED ON {decision.On.name.toUpperCase()}</h3>) :
                 (<h3>POV NOT USED</h3>)
             }
             <div className="nom-tiles">

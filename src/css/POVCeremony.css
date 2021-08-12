@@ -20,3 +20,7 @@
 .nom-tiles > .hg-tile {
     height: 150px;
 }
+
+#used-pov {
+    background-color: #F5D114;
+}

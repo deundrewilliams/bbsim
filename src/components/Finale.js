@@ -6,11 +6,32 @@ import { useState } from "react";
 
 import '../css/Finale.css';
 
+const WeekSummary = (props) => {
+
+    const { week_num, hoh, pov, evicted, final_noms, initial_noms, tied, vote_count } = props.data;
+
+    const vote_str = `(${vote_count[0]} - ${vote_count.length === 2 ? vote_count[1] : 0})${tied ? "*" : ""}`;
+
+
+    return (
+        <div className="week-summary">
+            <h2>WEEK {week_num}</h2>
+            <p>HOH: {hoh}</p>
+            <p>Nominees: {initial_noms.join(', ')}</p>
+            <p>POV: {pov}</p>
+            <p>Final Nominees: {final_noms.join(', ')}</p>
+            <p>Evicted: {evicted} {vote_str}</p>
+        </div>
+    )
+}
+
 const Finale = (props) => {
 
     const [finaleStep, setFinaleStep] = useState('Final HOH');
-    const { part_one, part_two, final_hoh, final_juror, winner, finalists, votes } = props.results;
+    const { part_one, part_two, final_hoh, final_juror, winner, finalists, votes } = props.results.finale;
+    const { weeks } = props.results.summary
 
+    console.log("Weeks: ", weeks);
 
     if (finaleStep === 'Final HOH') {
 
@@ -88,6 +109,28 @@ const Finale = (props) => {
                 <StepHeader text="WINNER"/>
                 <div className="single-tile">
                     <HouseguestTile name={winner.name} borderStyle="gold"/>
+                </div>
+                <ButtonBar
+                    option_1="Quit"
+                    option_2="Continue"
+                    clickAction_2={() => setFinaleStep('Summary')}
+                />
+            </div>
+        )
+    } else if (finaleStep === "Summary") {
+        return (
+            <div className="summary">
+                <StepHeader text="SUMMARY"/>
+                {weeks.map((week, index) => {
+                    return(
+                        <WeekSummary key={index} data={week} />
+                    )
+                })}
+                <div className="finale-summary">
+                    <h2>FINALE</h2>
+                    <p>Final HOH: {final_hoh.name}</p>
+                    <p>Final Evictee: {final_juror.name}</p>
+                    <p>Winner: {winner.name}</p>
                 </div>
                 <ButtonBar
                     option_1="Quit"

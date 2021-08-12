@@ -2,6 +2,7 @@ from simulator.models import (
     Contestant,
     Houseguest,
     Game,
+    Week
 )
 from faker import Faker
 
@@ -28,3 +29,9 @@ class HouseguestFactory(factory.django.DjangoModelFactory):
 
     name = fake.first_name()
     game = factory.SubFactory(GameFactory)
+
+class WeekFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Week
+
+    number = 1
