@@ -1,13 +1,14 @@
 import '../css/HouseguestTile.css';
 
-export default function HouseguestTile(props) {
+const HouseguestTile = (props) => {
 
-    const { name } = props;
+    let class_name = "hg-tile " + props.borderStyle;
 
     return(
-        <div className="hg-tile">
-            <p className="hg-name">{name}</p>
+        <div className={class_name}>
+            <p>{props.name}</p>
         </div>
     )
-
 }
+
+export default HouseguestTile;

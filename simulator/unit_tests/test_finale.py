@@ -215,6 +215,8 @@ class TestFinale:
 
         f.run_finale()
 
+        assert f.part_one == f1
+        assert f.part_two == f0
         assert f.final_juror == f1
         assert f.winner == f0
         assert f.completed

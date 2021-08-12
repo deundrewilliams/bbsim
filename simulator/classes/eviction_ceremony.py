@@ -7,14 +7,15 @@ class EvictionCeremony:
         self.nominees = nominees
         self.participants = participants
         self.evicted = evicted
-        self.completed = completed
+        self.tied = False
 
     def serialize(self):
         data = {
-            "HOH": self.hoh.serialize(),
-            "Nominees": [x.serialize() for x in self.nominees],
-            "Evicted": self.evicted.serialize() if self.completed else None,
-            "Votes": self.vote_count if self.completed else None,
+            "hoh": self.hoh.serialize(),
+            "nominees": [x.serialize() for x in self.nominees],
+            "evicted": self.evicted.serialize() if self.evicted else None,
+            "votes": self.vote_count if self.evicted else None,
+            "tied": self.tied or False
         }
         return data
 

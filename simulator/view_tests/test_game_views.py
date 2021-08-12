@@ -60,6 +60,6 @@ class GameViewTest(TestCase):
         hg_objs.append(HouseguestFactory(name="E", game=g))
         hg_objs.append(HouseguestFactory(name="F", game=g))
 
-        response = self.client.post("/api/sim-game", {"id": g.id})
+        response = self.client.post("/api/simulate", {"id": g.id})
 
-        self.assertTrue("winner" in response.data)
+        self.assertEqual(len(response.data['players']), 6)

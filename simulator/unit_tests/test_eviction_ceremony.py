@@ -20,10 +20,10 @@ class TestEvictionCeremony:
 
         data = ev.serialize()
 
-        assert data["HOH"] == hoh.serialize()
-        assert data["Nominees"] == [x.serialize() for x in noms]
-        assert data["Evicted"] is None
-        assert data["Votes"] is None
+        assert data["hoh"] == hoh.serialize()
+        assert data["nominees"] == [x.serialize() for x in noms]
+        assert data["evicted"] is None
+        assert data["votes"] is None
 
     @pytest.mark.django_db
     def test_get_vote(self):

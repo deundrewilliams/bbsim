@@ -1,0 +1,82 @@
+.finale {
+    width: 65%;
+    margin: auto;
+}
+
+.summary {
+    width: 65%;
+    margin: auto;
+}
+
+.winners {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.hoh-winner {
+    margin: auto 35px;
+}
+
+.hoh-winner > h2 {
+    background-color: #c4c4c4;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+    padding: 15px;
+}
+
+.hoh-winner > .hg-tile {
+    height: 175px;
+}
+
+.final-evictee, .single-tile {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.final-evictee > .hg-tile, .single-tile > .hg-tile {
+    height: 200px;
+    margin-bottom: 25px;
+}
+
+#evicted-bar {
+    background-color: #c4c4c4;
+    padding: 15px;
+    width: 50%;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.finalists {
+    display: flex;
+}
+
+.finalists > .hg-tile {
+    height: 150px;
+    margin: 0 auto 25px auto;
+}
+
+.week-summary {
+    background-color: #c4c4c4;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+    width: 65%;
+    margin: 15px auto;
+    padding: 0 0 5px 0;
+}
+
+.week-summary > h2 {
+    background-color: white;
+}
+
+.finale-summary {
+    background-color: #c4c4c4;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+    width: 65%;
+    margin: 15px auto;
+    padding: 0 0 5px 0;
+}
+
+.finale-summary > h2 {
+    background-color: white;
+}

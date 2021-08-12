@@ -2,7 +2,7 @@ import pytest
 import random
 from ..classes import VetoCeremony
 from ..factories import HouseguestFactory
-
+from ..models import Houseguest
 
 class TestVetoCeremony:
     @pytest.mark.django_db
@@ -21,9 +21,8 @@ class TestVetoCeremony:
         assert vc.participants == hgs
 
         data = vc.serialize()
-        assert data["HOH"] == hoh.serialize()
-        assert data["Used"] == vc.using
-        assert data["Final Nominees"] == [x.serialize() for x in noms]
+        assert data["decision"] == None
+        assert data["final_nominees"] == [x.serialize() for x in noms]
 
     @pytest.mark.django_db
     def test_get_decision_using(self, monkeypatch):
@@ -121,8 +120,8 @@ class TestVetoCeremony:
 
         # Assert serializer marks used as True
         data = vc.serialize()
-        assert data["Used"] is True
-        assert data["Final Nominees"] == [x.serialize() for x in [hgs[2], hgs[3]]]
+        assert data["decision"] == {"Using": True, "On": hgs[1].serialize()}
+        assert data["final_nominees"] == [x.serialize() for x in [hgs[2], hgs[3]]]
 
     @pytest.mark.django_db
     def test_run_ceremony_final_four(self):
@@ -141,6 +140,28 @@ class TestVetoCeremony:
 
         assert vc.using is False
         assert vc.nominees == noms
+
+    @pytest.mark.django_db
+    def test_run_ceremony_final_four_veto_used(self, monkeypatch):
+
+        # HOH: 0, Noms: 1 and 2, POV: 2, Renom: 3
+        hgs = HouseguestFactory.create_batch(4)
+
+        hoh = hgs[0]
+        noms = [hgs[1], hgs[2]]
+        pov = hgs[2]
+
+        def mock_impact_relationship(obj, a, b):
+            return
+
+        monkeypatch.setattr(Houseguest, "impact_relationship", mock_impact_relationship)
+
+        vc = VetoCeremony(hoh=hoh, nominees=noms, veto_holder=pov, participants=hgs)
+        vc.run_ceremony()
+
+        assert vc.using is True
+        assert vc.nominees == [hgs[1], hgs[3]]
+
 
     @pytest.mark.django_db
     def test_run_ceremony_other_winner(self, monkeypatch):

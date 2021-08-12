@@ -6,6 +6,19 @@ from rest_framework.response import Response
 from .models import Game, Contestant
 
 # CONTESTANTS
+@api_view(["POST"])
+def create_contestant(request, *args, **kwargs):
+
+    data = dict(request.data)
+
+    try:
+        new_contestant = Contestant(name=data["name"])
+        new_contestant.save()
+        data = new_contestant.serialize()
+        return Response(data, content_type="application/javascript")
+    except Exception as e:
+        return Response({f"Could not create contestant, received error: {e}"}, status=400)
+
 
 
 @api_view(["GET"])
@@ -17,6 +30,19 @@ def get_all_contestants(request, *args, **kwargs):
 
     return Response(data, content_type="application/javascript")
 
+@api_view(["GET"])
+def get_contestant(request, *args, **kwargs):
+
+    requested_name = kwargs["name"]
+
+    try:
+        obj = Contestant.objects.get(name=requested_name)
+        contestant = obj.serialize()
+        return Response(contestant, content_type="application/javascript")
+    except Exception:
+        return Response(
+            {f"Cannot find contestant with name: {requested_name}"}, status=400
+        )
 
 # GAMES
 @api_view(["GET"])
@@ -45,7 +71,6 @@ def create_game(request, *args, **kwargs):
     new_g.save()
 
     for c_id in data["contestants"]:
-        # print(f"Getting id of {c_id}")
         c_obj = Contestant.objects.get(id=c_id)
 
         if c_obj:
@@ -55,6 +80,10 @@ def create_game(request, *args, **kwargs):
             return Response(
                 {f"Unable to create houseguest from contestant id: {c_id}"}, status=400
             )
+
+    new_g.setup_game()
+
+    new_g.save()
 
     return Response(new_g.serialize(), content_type="application/javascript")
 
@@ -73,16 +102,18 @@ def sim_game(request, *args, **kwargs):
 
     try:
         obj = Game.objects.get(id=game_id)
-        obj.run_game()
+        print("Advancing")
+        info = obj.advance_step()
         obj.save()
-    except Exception:
-        return Response({"Unable to run game"}, status=400)
+        print("Finished advancing")
+        if obj.completed == True:
+            obj.delete()
 
-    game_data = obj.serialize()
+        return Response(info, content_type="application/javascript")
+    except Exception as e:
+        return Response({f"Unable to run game: {e}"}, status=400)
 
-    obj.delete()
 
-    return Response(game_data, content_type="application/javascript")
 
 
 @api_view(["GET"])

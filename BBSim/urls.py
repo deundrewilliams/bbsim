@@ -19,17 +19,21 @@ from simulator.views import (
     get_all_contestants,
     get_single_game,
     create_game,
+    create_contestant,
     sim_game,
     get_relationships,
+    get_contestant
 )
 from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/contestants/", get_all_contestants),
+    path("api/contestant/<str:name>", get_contestant),
     path("api/game/<int:id>", get_single_game),
     path("api/create-game", create_game),
-    path("api/sim-game", sim_game),
+    path("api/create-contestant", create_contestant),
+    path("api/simulate", sim_game),
     path("api/relationships/<int:id>", get_relationships),
     path("", TemplateView.as_view(template_name="index.html")),
 ]

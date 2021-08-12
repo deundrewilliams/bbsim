@@ -15,6 +15,8 @@ class Finale:
             "finalists": [x.serialize() for x in self.finalists],
             "jury": [x.serialize() for x in self.jury],
             "winner": self.winner.serialize() if self.completed else None,
+            "part_one": self.part_one.serialize() if self.completed else None,
+            "part_two": self.part_two.serialize() if self.completed else None,
             "final_hoh": self.final_hoh.serialize() if self.completed else None,
             "final_juror": self.final_juror.serialize() if self.completed else None,
             "votes": {k.name: self.votes[k].name for k in list(self.votes.keys())}
@@ -26,14 +28,14 @@ class Finale:
     def run_finale(self):
 
         # Get Part 1 HOH
-        p1_hoh = self.run_final_hoh_comp(self.finalists)
+        self.part_one = self.run_final_hoh_comp(self.finalists)
 
         # Get Part 2 HOH
-        p2_hoh = self.run_final_hoh_comp(
-            list(filter(lambda x: x != p1_hoh, self.finalists))
+        self.part_two = self.run_final_hoh_comp(
+            list(filter(lambda x: x != self.part_one, self.finalists))
         )
 
-        self.final_hoh = self.run_final_hoh_comp([p1_hoh, p2_hoh])
+        self.final_hoh = self.run_final_hoh_comp([self.part_one, self.part_two])
 
         self.final_hoh.win_competition()
 
