@@ -135,7 +135,7 @@ class GamePage extends React.Component {
         }
 
         this.advanceSimulation = this.advanceSimulation.bind(this);
-        this.mockAdvance = this.mockAdvance.bind(this);
+        // this.mockAdvance = this.mockAdvance.bind(this);
 
     }
 
