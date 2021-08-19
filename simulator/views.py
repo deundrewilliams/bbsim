@@ -2,8 +2,43 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 # from .serializers import GameSerializer
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 
 from .models import Game, Contestant
+
+# USER AUTHENTICATION
+@api_view(['POST'])
+def login_user(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return Response({"success": True})
+    else:
+        return Response({"success": False}, status=400)
+
+@api_view(['POST'])
+def signup_user(request):
+    try:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+
+        if not username or not password or not email:
+            return Response({"success": False, "error": "Missing credentials"}, status=400)
+
+        if User.objects.filter(username=username).exists():
+            return Response({"success": False, "error": "Username already exists"}, status=400)
+
+        if User.objects.filter(email=email).exists():
+            return Response({"success": False, "error": "Email already exists"}, status=400)
+
+        user = User.objects.create_user(username=username, password=password, email=email)
+        return Response({"success": True})
+    except Exception as e:
+        return Response({"success": False, "error": e}, status=400)
 
 # CONTESTANTS
 @api_view(["POST"])
