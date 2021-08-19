@@ -13,7 +13,7 @@ from ..models import (
     Week,
     Contestant
 )
-from ..factories import HouseguestFactory, GameFactory, WeekFactory, ContestantFactory
+from ..factories import HouseguestFactory, GameFactory, WeekFactory, ContestantFactory, UserFactory
 
 
 class TestGame:
@@ -22,7 +22,7 @@ class TestGame:
 
         # hgs = HouseguestFactory.create_batch(12)
 
-        g = Game()
+        g = Game(user=UserFactory.create())
         g.save()
 
         hgs = HouseguestFactory.create_batch(12, game=g)
@@ -498,7 +498,7 @@ class TestGame:
     @pytest.mark.django_db
     def test_full_sim(self):
 
-        game = Game()
+        game = Game(user=UserFactory.create())
         game.save()
         for c in ContestantFactory.create_batch(16):
             _ = c.create_houseguest_clone(game_obj=game)
