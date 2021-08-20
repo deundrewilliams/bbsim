@@ -37,7 +37,6 @@ urlpatterns = [
     path("api/create-contestant", create_contestant),
     path("api/simulate", sim_game),
     path("api/relationships/<int:id>", get_relationships),
-    path("login/", login_user),
     path("signup/", signup_user),
     path("", TemplateView.as_view(template_name="index.html")),
 ]

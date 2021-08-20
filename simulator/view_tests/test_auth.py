@@ -10,7 +10,7 @@ class ContestantViewTest(TestCase):
 
         user = User.objects.create_user('user', 'mail@me.com', 'pass')
 
-        response = self.client.post('/login/', {'username': 'user', 'password': 'pass'})
+        response = self.client.post('/api/login', {'username': 'user', 'password': 'pass'})
 
         self.assertTrue(response.data['success'])
         self.assertTrue(user.is_authenticated)
