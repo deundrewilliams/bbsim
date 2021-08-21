@@ -55,7 +55,7 @@ class Game(models.Model):
     jury_size = models.IntegerField(default=0)
     weeks = models.ManyToManyField("Week", related_name="game_weeks", default=[])
     week_number = models.IntegerField(default=1)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="game")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="game_user")
 
     def serialize(self):
 
