@@ -117,3 +117,8 @@
     cursor: pointer;
     filter: brightness(95%);
 }
+
+.error-text {
+    color: rgb(158, 5, 5);
+    font-style: italic;
+}

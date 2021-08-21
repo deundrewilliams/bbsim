@@ -15,11 +15,12 @@ def login_user(request):
     password = request.data.get('password')
 
     user = authenticate(request, username=username, password=password)
+
     if user is not None:
         login(request, user)
         return Response({"success": True})
     else:
-        return Response({"success": False}, status=400)
+        return Response({"success": False, "error": "Invalid Username/Password combination"}, status=400)
 
 @api_view(['POST'])
 def signup_user(request):
@@ -31,17 +32,19 @@ def signup_user(request):
         if not username or not password or not email:
             return Response({"success": False, "error": "Missing credentials"}, status=400)
 
-        if User.objects.filter(username=username).exists():
-            return Response({"success": False, "error": "Username already exists"}, status=400)
-
         if User.objects.filter(email=email).exists():
             return Response({"success": False, "error": "Email already exists"}, status=400)
+
+        if User.objects.filter(username=username).exists():
+            return Response({"success": False, "error": "Username already exists"}, status=400)
 
         user = User.objects.create_user(username=username, password=password, email=email)
 
         sim_user = Group.objects.get(name='Simulator User')
 
         user.groups.add(sim_user)
+
+        login(request, user)
 
         return Response({"success": True})
     except Exception as e:

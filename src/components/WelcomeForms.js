@@ -44,13 +44,32 @@ const InputBox = ({ placeholder, type, updateField }) => {
 
 }
 
+const ErrorText = ({ text }) => {
+
+    return (
+        <div className="error-text">{text}</div>
+    )
+}
+
 const LoginForm = ({ setShowLogin, completeLogin }) => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showError, setShowError] = useState(false);
+    const [errorText, setErrorText] = useState('');
 
     const doLogin = async () => {
-        console.log("Logging in ", username, password);
+
+        // Reset error text
+        setShowError(false);
+        setErrorText('');
+
+        // Validate fields
+        if (password === '' || username === '') {
+            setErrorText('Both fields are required');
+            setShowError(true);
+            return;
+        }
 
         const results = await axios.post('/api/login', {"username": username, "password": password}, options)
         .then(res => res.data)
@@ -58,6 +77,10 @@ const LoginForm = ({ setShowLogin, completeLogin }) => {
 
         if (results.success) {
             completeLogin();
+        } else {
+            setErrorText(results.error);
+            setShowError(true);
+            console.log(results.error);
         }
 
     }
@@ -65,6 +88,7 @@ const LoginForm = ({ setShowLogin, completeLogin }) => {
     return (
         <div className="login-form">
             <h1>Welcome Back</h1>
+            {showError ? (<ErrorText text={errorText}/>) : (null)}
             <InputBox type="text" placeholder="Username" updateField={setUsername}/>
             <InputBox type="password" placeholder="Password" updateField={setPassword}/>
             <button className="switch-button" onClick={() => setShowLogin(false)}>Don't have an account? Sign Up</button>
@@ -73,17 +97,32 @@ const LoginForm = ({ setShowLogin, completeLogin }) => {
     )
 }
 
-const SignUpForm = ({ setShowLogin }) => {
+const SignUpForm = ({ setShowLogin, completeLogin }) => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
 
+    const [showError, setShowError] = useState(false);
+    const [errorText, setErrorText] = useState('');
+
     const doSignUp = async () => {
 
+        // Reset error text
+        setShowError(false);
+        setErrorText('');
+
+        // Validate fields
         if (password !== confirmPassword) {
-            alert("Passwords don't match");
+            setErrorText('Passwords do not match');
+            setShowError(true);
+            return;
+        }
+
+        if (password === '' || username === '' || email === '') {
+            setErrorText('All fields are required');
+            setShowError(true);
             return;
         }
 
@@ -97,12 +136,18 @@ const SignUpForm = ({ setShowLogin }) => {
         .then(res => res.data)
         .catch(err => err.response.data);
 
-        console.log(results);
+        if (results.success) {
+            completeLogin();
+        } else {
+            setErrorText(results.error);
+            setShowError(true);
+        }
     }
 
     return (
         <div className="signup-form">
             <h1>Welcome</h1>
+            {showError ? (<ErrorText text={errorText}/>) : (null)}
             <InputBox type="text" placeholder="Email" updateField={setEmail}/>
             <InputBox type="text" placeholder="Username" updateField={setUsername}/>
             <InputBox type="text" placeholder="Password" updateField={setPassword}/>
@@ -123,7 +168,7 @@ const WelcomeForms = (props) => {
             {showLogin ? (
                 <LoginForm setShowLogin={setShowLogin} completeLogin={props.handleLoginSuccess}/>
             ) : (
-                <SignUpForm setShowLogin={setShowLogin}/>
+                <SignUpForm setShowLogin={setShowLogin} completeLogin={props.handleLoginSuccess}/>
             )}
         </div>
 
