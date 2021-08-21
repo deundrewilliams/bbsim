@@ -5,11 +5,19 @@ from simulator.models import (
     Week
 )
 from faker import Faker
+from django.contrib.auth.models import User
 
 import factory
+import random
 
 fake = Faker()
 
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+    username=factory.LazyAttribute(lambda x: str(random.randint(1, 1000000)))
+    password='factorypassword'
+    email=factory.LazyAttribute(lambda x: str(random.randint(1, 1000000)))
 
 class ContestantFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -21,7 +29,7 @@ class ContestantFactory(factory.django.DjangoModelFactory):
 class GameFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Game
-
+    user = factory.SubFactory(UserFactory)
 
 class HouseguestFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -35,3 +43,4 @@ class WeekFactory(factory.django.DjangoModelFactory):
         model = Week
 
     number = 1
+

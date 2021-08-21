@@ -2,8 +2,63 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 # from .serializers import GameSerializer
+from django.contrib.auth.models import User, Group
+from django.contrib.auth import authenticate, login, logout
 
 from .models import Game, Contestant
+
+# USER AUTHENTICATION
+@api_view(['POST'])
+def login_user(request):
+
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is not None:
+        login(request, user)
+        return Response({"success": True})
+    else:
+        return Response({"success": False, "error": "Invalid Username/Password combination"}, status=400)
+
+@api_view(['POST'])
+def signup_user(request):
+    try:
+        username = request.data.get('username')
+        password = request.data.get('password')
+        email = request.data.get('email')
+
+        if not username or not password or not email:
+            return Response({"success": False, "error": "Missing credentials"}, status=400)
+
+        if User.objects.filter(email=email).exists():
+            return Response({"success": False, "error": "Email already exists"}, status=400)
+
+        if User.objects.filter(username=username).exists():
+            return Response({"success": False, "error": "Username already exists"}, status=400)
+
+        user = User.objects.create_user(username=username, password=password, email=email)
+
+        sim_user = Group.objects.get(name='Simulator User')
+
+        user.groups.add(sim_user)
+
+        login(request, user)
+
+        return Response({"success": True})
+    except Exception as e:
+        return Response({"success": False, "error": e}, status=400)
+
+@api_view(["POST"])
+def logout_user(request):
+
+    try:
+        logout(request)
+        return Response({"success": True})
+
+    except Exception as e:
+        return Response({"success": False, "error": e}, status=400)
 
 # CONTESTANTS
 @api_view(["POST"])
@@ -67,27 +122,33 @@ def get_single_game(request, *args, **kwargs):
 @api_view(["POST"])
 def create_game(request, *args, **kwargs):
 
-    data = dict(request.data)
+    if request.user.is_authenticated:
 
-    new_g = Game()
-    new_g.save()
+        data = dict(request.data)
 
-    for c_id in data["contestants"]:
-        c_obj = Contestant.objects.get(id=c_id)
+        new_g = Game(user=request.user)
+        new_g.save()
 
-        if c_obj:
-            _ = c_obj.create_houseguest_clone(game_obj=new_g)
-        else:
-            new_g.delete()
-            return Response(
-                {f"Unable to create houseguest from contestant id: {c_id}"}, status=400
-            )
+        for c_id in data["contestants"]:
+            c_obj = Contestant.objects.get(id=c_id)
 
-    new_g.setup_game()
+            if c_obj:
+                _ = c_obj.create_houseguest_clone(game_obj=new_g)
+            else:
+                new_g.delete()
+                return Response(
+                    {f"Unable to create houseguest from contestant id: {c_id}"}, status=400
+                )
 
-    new_g.save()
+        new_g.setup_game()
 
-    return Response(new_g.serialize(), content_type="application/javascript")
+        new_g.save()
+
+        return Response(new_g.serialize(), content_type="application/javascript")
+
+    else:
+
+        return Response({"User is not authenticated"}, status=400)
 
 
 @api_view(["POST"])

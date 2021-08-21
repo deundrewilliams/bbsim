@@ -22,7 +22,10 @@ from simulator.views import (
     create_contestant,
     sim_game,
     get_relationships,
-    get_contestant
+    get_contestant,
+    login_user,
+    signup_user,
+    logout_user,
 )
 from django.views.generic import TemplateView
 
@@ -35,5 +38,8 @@ urlpatterns = [
     path("api/create-contestant", create_contestant),
     path("api/simulate", sim_game),
     path("api/relationships/<int:id>", get_relationships),
+    path("api/signup", signup_user),
+    path("api/login", login_user),
+    path("api/logout", logout_user),
     path("", TemplateView.as_view(template_name="index.html")),
 ]

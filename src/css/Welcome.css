@@ -1,0 +1,124 @@
+.welcome-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.welcome-container {
+    display: grid;
+    grid-template-areas: "title buttons";
+    grid-template-columns: 1fr 1fr;
+    margin: auto;
+    height: 100%;
+}
+
+.welcome-container > div {
+    margin: 10px;
+}
+
+.site-title {
+    background-color: #7F98F0;
+    font-size: 94px;
+    font-weight: bold;
+    grid-area: title;
+    text-align: right;
+    padding: 75px 25px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-area {
+    grid-area: buttons;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-area > button {
+    background-color: #c4c4c4;
+    width: 75%;
+    font-size: 64px;
+    font-weight: bold;
+    margin: 15px auto;
+    padding: 10px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+    border: none;
+}
+
+.login-button:hover {
+    background-color: #666262;
+    cursor: pointer;
+}
+
+.signup-button:hover {
+    background-color: #666262;
+    cursor: pointer;
+}
+
+.input-box {
+    font-size: 24px;
+    width: 80%;
+    margin: 10px auto;
+    padding: 5px;
+    border-radius: 2px;
+    border: none;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    background-color: #c4c4c4;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    background-color: #c4c4c4;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.login-form > h1 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.switch-button {
+    border: none;
+    font-size: 18px;
+    background-color: #c4c4c4;
+}
+
+.switch-button:hover {
+    cursor: pointer;
+}
+
+.submit-button {
+    background-color: #7F98F0;
+    border: none;
+    width: fit-content;
+    margin: 15px auto;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.submit-button:hover {
+    cursor: pointer;
+    filter: brightness(95%);
+}
+
+.error-text {
+    color: rgb(158, 5, 5);
+    font-style: italic;
+}

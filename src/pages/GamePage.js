@@ -117,7 +117,7 @@ const Picker = (props) => {
         case "Eviction":
             return (<EvictionCeremony results={info.results} advance={advance} />)
         case "Finale":
-            return (<Finale results={info.results} advance={() => history.push('/')} />)
+            return (<Finale results={info.results} advance={() => history.push('/home')} />)
         default:
             return null
     }
