@@ -44,7 +44,7 @@ const InputBox = ({ placeholder, type, updateField }) => {
 
 }
 
-const LoginForm = ({ setShowLogin }) => {
+const LoginForm = ({ setShowLogin, completeLogin }) => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -53,8 +53,12 @@ const LoginForm = ({ setShowLogin }) => {
         console.log("Logging in ", username, password);
 
         const results = await axios.post('/api/login', {"username": username, "password": password}, options)
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+        .then(res => res.data)
+        .catch(err => err.response.data);
+
+        if (results.success) {
+            completeLogin();
+        }
 
     }
 
@@ -71,17 +75,38 @@ const LoginForm = ({ setShowLogin }) => {
 
 const SignUpForm = ({ setShowLogin }) => {
 
-    const doSignUp = () => {
-        console.log("Signing up");
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [email, setEmail] = useState('');
+
+    const doSignUp = async () => {
+
+        if (password !== confirmPassword) {
+            alert("Passwords don't match");
+            return;
+        }
+
+        const data = {
+            "username": username,
+            "password": password,
+            "email": email
+        }
+
+        const results = await axios.post('/api/signup', data, options)
+        .then(res => res.data)
+        .catch(err => err.response.data);
+
+        console.log(results);
     }
 
     return (
         <div className="signup-form">
             <h1>Welcome</h1>
-            <InputBox type="text" placeholder="Email" />
-            <InputBox type="text" placeholder="Username" />
-            <InputBox type="text" placeholder="Password" />
-            <InputBox type="text" placeholder="Confirm Password" />
+            <InputBox type="text" placeholder="Email" updateField={setEmail}/>
+            <InputBox type="text" placeholder="Username" updateField={setUsername}/>
+            <InputBox type="text" placeholder="Password" updateField={setPassword}/>
+            <InputBox type="text" placeholder="Confirm Password" updateField={setConfirmPassword}/>
             <button className="switch-button" onClick={() => setShowLogin(true)}>Already have an account? Log In</button>
             <SubmitButton text="SIGN UP" action={doSignUp}/>
         </div>
@@ -96,7 +121,7 @@ const WelcomeForms = (props) => {
     return (
         <div className="forms">
             {showLogin ? (
-                <LoginForm setShowLogin={setShowLogin}/>
+                <LoginForm setShowLogin={setShowLogin} completeLogin={props.handleLoginSuccess}/>
             ) : (
                 <SignUpForm setShowLogin={setShowLogin}/>
             )}

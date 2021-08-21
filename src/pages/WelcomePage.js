@@ -12,6 +12,15 @@ class WelcomePage extends React.Component {
             landing: true,
             showLogin: false,
         };
+
+        this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
+    }
+
+    handleLoginSuccess = () => {
+
+        // navigate to /home
+        this.props.history.push('/home');
+
     }
 
     render() {
@@ -35,7 +44,7 @@ class WelcomePage extends React.Component {
                         </div>
                     ) : (
                         <div className="right-area">
-                            <WelcomeForms showLogin={this.state.showLogin}/>
+                            <WelcomeForms showLogin={this.state.showLogin} handleLoginSuccess={this.handleLoginSuccess}/>
                         </div>
                     )}
 
