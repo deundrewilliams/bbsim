@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+import { login } from '../utils';
 
 import '../css/Welcome.css';
 
@@ -76,6 +77,7 @@ const LoginForm = ({ setShowLogin, completeLogin }) => {
         .catch(err => err.response.data);
 
         if (results.success) {
+            login();
             completeLogin();
         } else {
             setErrorText(results.error);
@@ -137,6 +139,7 @@ const SignUpForm = ({ setShowLogin, completeLogin }) => {
         .catch(err => err.response.data);
 
         if (results.success) {
+            login();
             completeLogin();
         } else {
             setErrorText(results.error);
@@ -150,8 +153,8 @@ const SignUpForm = ({ setShowLogin, completeLogin }) => {
             {showError ? (<ErrorText text={errorText}/>) : (null)}
             <InputBox type="text" placeholder="Email" updateField={setEmail}/>
             <InputBox type="text" placeholder="Username" updateField={setUsername}/>
-            <InputBox type="text" placeholder="Password" updateField={setPassword}/>
-            <InputBox type="text" placeholder="Confirm Password" updateField={setConfirmPassword}/>
+            <InputBox type="password" placeholder="Password" updateField={setPassword}/>
+            <InputBox type="password" placeholder="Confirm Password" updateField={setConfirmPassword}/>
             <button className="switch-button" onClick={() => setShowLogin(true)}>Already have an account? Log In</button>
             <SubmitButton text="SIGN UP" action={doSignUp}/>
         </div>

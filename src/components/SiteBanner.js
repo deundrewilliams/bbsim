@@ -1,5 +1,7 @@
 import '../css/SiteBanner.css';
 
+import { logout } from '../utils';
+
 import axios from 'axios';
 
 function getCookie(cname) {
@@ -27,6 +29,7 @@ const SiteBanner = () => {
         .catch(err => err.response.data)
         .then(data => {
             if (data.success) {
+                logout();
                 window.location.href = '/';
             }
         });
