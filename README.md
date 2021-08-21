@@ -1,13 +1,6 @@
 # BBSim
----
-BBSim is a simulator of the TV show Big Brother. In this show, there are 14-16 contestants that live in a house, and week by week, 1 by 1, someone is voted out of the house. During this process, a large amount of strategy, relationship building, and manipulation is involved. The purpose of this application is to replicate that behavior as closely as possible.
 
-# Technologies Used
----
-* Backend: Django, Postgres, Python
-* Frontend: React
-
-# How to Use
+## How to Use
 ---
 BBSim is hosted on Heroku at https://bigbrothersim.herokuapp.com/, but can also be run locally by following the steps below
  
