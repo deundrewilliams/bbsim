@@ -35,7 +35,7 @@ class HouseguestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Houseguest
 
-    name = fake.first_name()
+    name = factory.LazyAttribute(lambda x: fake.first_name())
     game = factory.SubFactory(GameFactory)
 
 class WeekFactory(factory.django.DjangoModelFactory):

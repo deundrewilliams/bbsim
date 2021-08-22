@@ -193,7 +193,18 @@ def home(request, *args, **kwargs):
         try:
             data = {}
 
-            data["games"] = [x.serialize() for x in Game.objects.filter(user=request.user)]
+            games = Game.objects.filter(user=request.user)
+
+            data["games"] = []
+
+            for game in games:
+                data["games"].append({
+                    "id": game.id,
+                    "players_left": len([player for player in game.players.all() if player.evicted == False]),
+                    "total_players": len(game.players.all()),
+                    "players": [{"name": player.name, "evicted": player.evicted} for player in game.players.all()],
+                })
+
             data["username"] = request.user.username
 
             return Response(data, content_type="application/javascript", status=200)

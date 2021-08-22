@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User, Group
-from simulator.factories import GameFactory
+from simulator.factories import GameFactory, HouseguestFactory
 
 class ContestantViewTest(TestCase):
     @classmethod
@@ -49,13 +49,21 @@ class ContestantViewTest(TestCase):
         u = User.objects.create_user('fakeuser', 'fakemail', 'pass')
 
         g_1 = GameFactory.create(user=u)
+        hgs_1 = HouseguestFactory.create_batch(6, game=g_1)
+        hgs_1[3].toggle_evicted(True)
+
         g_2 = GameFactory.create(user=u)
+        hgs_2 = HouseguestFactory.create_batch(4, game=g_2)
+        hgs_2[2].toggle_evicted(True)
 
         self.client.force_login(u)
 
         response = self.client.get('/api/home')
 
+        games = response.data["games"]
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data['games']), 2)
-        self.assertEqual(response.data['games'][0], g_1.serialize())
-        self.assertEqual(response.data['username'], u.username)
+        self.assertEqual(games[0]["id"], g_1.id)
+        self.assertEqual(games[0]["players_left"], 5)
+        self.assertEqual(games[0]["total_players"], 6)
