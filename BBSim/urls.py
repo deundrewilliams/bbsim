@@ -26,6 +26,7 @@ from simulator.views import (
     login_user,
     signup_user,
     logout_user,
+    home,
 )
 from django.views.generic import TemplateView
 
@@ -41,5 +42,6 @@ urlpatterns = [
     path("api/signup", signup_user),
     path("api/login", login_user),
     path("api/logout", logout_user),
+    path("api/home", home),
     path("", TemplateView.as_view(template_name="index.html")),
 ]

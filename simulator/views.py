@@ -183,3 +183,23 @@ def sim_game(request, *args, **kwargs):
 def get_relationships(request, *args, **kwargs):
 
     return Response({}, status=400)
+
+
+@api_view(["GET"])
+def home(request, *args, **kwargs):
+
+    if request.user.is_authenticated:
+
+        try:
+            data = {}
+
+            data["games"] = [x.serialize() for x in Game.objects.filter(user=request.user)]
+            data["username"] = request.user.username
+
+            return Response(data, content_type="application/javascript")
+
+        except Exception as e:
+            return Response({"error": e}, status=400)
+
+    else:
+        return Response({"error": "User not authenticated"}, status=400)
