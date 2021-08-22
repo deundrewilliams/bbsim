@@ -26,33 +26,6 @@ const options = {
     headers: {"X-CSRFToken": getCookie('csrftoken')}
 }
 
-
-const AppButton = (props) => {
-
-    const { text, class_name } = props;
-
-    return(
-        <div className={class_name}>
-            <p>{text}</p>
-        </div>
-    )
-}
-
-const mock_players = [
-    {"name": "Mitch", "evicted": false},
-    {"name": "Claire", "evicted": false},
-    {"name": "Cam", "evicted": true},
-    {"name": "Gloria", "evicted": false},
-    {"name": "Jay", "evicted": false},
-    {"name": "Phil", "evicted": true},
-    {"name": "Mitch", "evicted": false},
-    {"name": "Claire", "evicted": false},
-    {"name": "Cam", "evicted": true},
-    {"name": "Gloria", "evicted": false},
-    {"name": "Jay", "evicted": false},
-    {"name": "Phil", "evicted": true},
-]
-
 const PlayerTile = (props) => {
 
     const { name, evicted } = props;
