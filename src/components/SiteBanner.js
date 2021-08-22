@@ -20,7 +20,9 @@ const options = {
     headers: {"X-CSRFToken": getCookie('csrftoken')}
 }
 
-const SiteBanner = () => {
+const SiteBanner = (props) => {
+
+    const { buttonText, buttonAction } = props;
 
     const handleLogout = async () => {
 
@@ -41,7 +43,7 @@ const SiteBanner = () => {
         <div className="site-banner">
             <button id="log-out" onClick={handleLogout}>Log Out</button>
             <h1>BIG BROTHER SIM</h1>
-            <button id="settings">Settings</button>
+            {buttonText ? <button id="side-button" onClick={buttonAction}>{buttonText}</button> : null}
         </div>
     )
 }

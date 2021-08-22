@@ -169,7 +169,7 @@ class HomePage extends React.Component {
 
         return(
             <div className="home-page">
-                <SiteBanner />
+                <SiteBanner buttonText="Settings" />
                 <div className="container">
                     <h2 id="greeting">Hello, {this.state.username}</h2>
                     <h2 id="in-progress-header">GAMES IN PROGRESS</h2>

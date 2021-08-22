@@ -101,23 +101,23 @@ const options = {
 
 const Picker = (props) => {
 
-    const { step, info, advance, history } = props;
+    const { step, info, advance, history, quit } = props;
 
     switch (step) {
         case "Memory Wall":
-            return (<MemoryWall players={info.players} advance={advance}/>)
+            return (<MemoryWall players={info.players} advance={advance} quit={quit}/>)
         case "HOH Competition":
-            return (<HOHCompetition hoh={info.hoh} advance={advance} />)
+            return (<HOHCompetition hoh={info.hoh} advance={advance} quit={quit}/>)
         case "Nomination Ceremony":
-            return (<NomCeremony nominees={info.nominees} advance={advance} />)
+            return (<NomCeremony nominees={info.nominees} advance={advance} quit={quit}/>)
         case "POV Competition":
-            return (<POVCompetition pov={info.pov} advance={advance} />)
+            return (<POVCompetition pov={info.pov} advance={advance} quit={quit}/>)
         case "POV Ceremony":
-            return (<POVCeremony results={info.results} advance={advance} />)
+            return (<POVCeremony results={info.results} advance={advance} quit={quit}/>)
         case "Eviction":
-            return (<EvictionCeremony results={info.results} advance={advance} />)
+            return (<EvictionCeremony results={info.results} advance={advance} quit={quit}/>)
         case "Finale":
-            return (<Finale results={info.results} advance={() => history.push('/home')} />)
+            return (<Finale results={info.results} advance={() => history.push('/home')} quit={quit}/>)
         default:
             return null
     }
@@ -186,6 +186,10 @@ class GamePage extends React.Component {
 
     }
 
+    saveAndQuit() {
+        window.location.href = "/home"
+    }
+
     render() {
 
         if (this.state.game_info) {
@@ -196,6 +200,7 @@ class GamePage extends React.Component {
                         step={this.state.game_step}
                         info={this.state.game_info}
                         advance={this.advanceSimulation}
+                        quit={this.saveAndQuit}
                         history={this.props.history}
                     />
                 </div>
