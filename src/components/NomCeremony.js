@@ -18,6 +18,7 @@ const NomCeremony = (props) => {
             <ButtonBar
                 option_1="Quit"
                 option_2="Continue"
+                clickAction_1={props.quit}
                 clickAction_2={props.advance}
             />
         </div>

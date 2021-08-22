@@ -1,0 +1,138 @@
+.game-table {
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    margin: auto;
+}
+
+#in-progress-header {
+    background-color: #c4c4c4;
+    padding: 15px;
+    font-size: 25px;
+    font-weight: bold;
+    width: fit-content;
+    margin: 25px auto;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.empty-game-table {
+    background-color: #c4c4c4;
+    margin: 15px;
+
+    width: 65%;
+    margin: auto;
+
+    border: solid black 3px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+
+    font-style: italic;
+}
+
+.game-table-cell {
+    background-color: #7F98F0;
+    margin: 15px;
+
+    display: flex;
+
+    padding: 10px 0;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+.player-list {
+    display: flex;
+    width: 60%;
+    margin: auto;
+    overflow: scroll;
+    align-items: center;
+    border: solid black 3px;
+}
+
+.player-cell-tile {
+    background-color: #c4c4c4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 5px;
+    font-size: 18px;
+    min-width: 50px;
+    max-width: fit-content;
+    height: 30px;
+    padding: 0 10px;
+
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+
+}
+
+.evicted {
+    background-color: #818181;
+}
+
+.remaining {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 20%;
+    margin: auto 25px;
+}
+
+.cell-buttons {
+    display: flex;
+    flex-direction: column;
+
+    width: 20%;
+
+    margin: auto 25px;
+}
+
+.remaining-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin: auto 0;
+}
+
+.remaining-value {
+    font-size: 32px;
+    font-weight: bolder;
+    margin: auto 0;
+}
+
+.cell-buttons > button {
+    border: none;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+    font-size: 24px;
+    margin: 5px auto;
+    width: 100%;
+    font-weight: bold;
+}
+
+.cell-buttons > button:hover {
+    cursor: pointer;
+    filter: brightness(.90);
+}
+
+.continue-btn {
+    background-color: #63DF61;
+}
+
+.delete-btn {
+    background-color: #F95252;
+}
+
+#create-game {
+    background-color: #63DF61;
+    font-size: 24px;
+    padding: 10px;
+    margin: 25px auto;
+    border: none;
+    font-weight: bold;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.75);
+}
+
+#create-game:hover {
+    cursor: pointer;
+    filter: brightness(.90);
+}

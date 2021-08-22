@@ -151,7 +151,7 @@ class CreateGamePage extends React.Component {
         else {
             return(
                 <div className="create-game">
-                    <SiteBanner />
+                    <SiteBanner buttonText="Settings"/>
                     <div className="player-search">
                         <h2 className="search-heading">Search for Players</h2>
                         <form>

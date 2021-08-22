@@ -183,3 +183,35 @@ def sim_game(request, *args, **kwargs):
 def get_relationships(request, *args, **kwargs):
 
     return Response({}, status=400)
+
+
+@api_view(["GET"])
+def home(request, *args, **kwargs):
+
+    if request.user.is_authenticated:
+
+        try:
+            data = {}
+
+            games = Game.objects.filter(user=request.user)
+
+            data["games"] = []
+
+            for game in games:
+                data["games"].append({
+                    "id": game.id,
+                    "players_left": len([player for player in game.players.all() if player.evicted == False]),
+                    "total_players": len(game.players.all()),
+                    "players": [{"name": player.name, "evicted": player.evicted} for player in game.players.all()],
+                    "full_info": game.serialize()
+                })
+
+            data["username"] = request.user.username
+
+            return Response(data, content_type="application/javascript", status=200)
+
+        except Exception as e:
+            return Response({"error": e}, status=400)
+
+    else:
+        return Response({"error": "User not authenticated"}, status=400)
