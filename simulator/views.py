@@ -196,7 +196,7 @@ def home(request, *args, **kwargs):
             data["games"] = [x.serialize() for x in Game.objects.filter(user=request.user)]
             data["username"] = request.user.username
 
-            return Response(data, content_type="application/javascript")
+            return Response(data, content_type="application/javascript", status=200)
 
         except Exception as e:
             return Response({"error": e}, status=400)
