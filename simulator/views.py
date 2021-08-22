@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, logout
 
-from .models import Game, Contestant
+from .models import Game, Contestant, Houseguest
 
 # USER AUTHENTICATION
 @api_view(['POST'])
@@ -129,6 +129,7 @@ def create_game(request, *args, **kwargs):
         new_g = Game(user=request.user)
         new_g.save()
 
+        # Add contestants to game
         for c_id in data["contestants"]:
             c_obj = Contestant.objects.get(id=c_id)
 
@@ -139,6 +140,11 @@ def create_game(request, *args, **kwargs):
                 return Response(
                     {f"Unable to create houseguest from contestant id: {c_id}"}, status=400
                 )
+
+        # Add houseguests to game
+        if "houseguests" in data:
+            for name in data["houseguests"]:
+                Houseguest.objects.create(name=name, game=new_g)
 
         new_g.setup_game()
 

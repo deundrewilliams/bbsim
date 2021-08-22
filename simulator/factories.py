@@ -23,7 +23,7 @@ class ContestantFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Contestant
 
-    name = fake.name()
+    name = factory.LazyAttribute(lambda x: fake.first_name())
 
 
 class GameFactory(factory.django.DjangoModelFactory):

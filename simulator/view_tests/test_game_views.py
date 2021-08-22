@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from ..models import Game
 from ..factories import GameFactory, HouseguestFactory, ContestantFactory
+from django.contrib.auth.models import User
 
 
 class GameViewTest(TestCase):
@@ -38,6 +39,9 @@ class GameViewTest(TestCase):
 
         ids = [x.id for x in contestant_objs]
 
+        u = User.objects.create_user(username="test", password="test")
+        self.client.force_login(u)
+
         response = self.client.post("/api/create-game", {"contestants": ids})
 
         rec_id = response.data["id"]
@@ -47,6 +51,31 @@ class GameViewTest(TestCase):
         # Check that created houseguests have the same names as the contestants
         for i in range(len(list(g.players.all()))):
             self.assertEqual(list(g.players.all())[i].name, contestant_objs[i].name)
+
+    def test_create_game_with_custom_hgs(self):
+
+        contestant_objs = ContestantFactory.create_batch(6)
+
+        ids = [x.id for x in contestant_objs]
+
+        custom_names = ["Joe", "Kamala", "Doug", "Jill"]
+
+        u = User.objects.create_user(username="test", password="test")
+        self.client.force_login(u)
+
+        response = self.client.post("/api/create-game", {"contestants": ids, "houseguests": custom_names})
+
+        print(response.data)
+
+        rec_id = response.data["id"]
+
+        g = Game.objects.get(id=rec_id)
+
+        # Check that created houseguests have the same names as the contestants
+        all_names = [x.name for x in contestant_objs] + custom_names
+
+        self.assertEqual([x.name for x in g.players.all()], all_names)
+
 
     def test_sim_game(self):
 
