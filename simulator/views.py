@@ -203,6 +203,7 @@ def home(request, *args, **kwargs):
                     "players_left": len([player for player in game.players.all() if player.evicted == False]),
                     "total_players": len(game.players.all()),
                     "players": [{"name": player.name, "evicted": player.evicted} for player in game.players.all()],
+                    "full_info": game.serialize()
                 })
 
             data["username"] = request.user.username

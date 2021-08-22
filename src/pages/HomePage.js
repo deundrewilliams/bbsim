@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
 import SiteBanner from '../components/SiteBanner';
+import { Link } from 'react-router-dom';
+
 import '../css/AppButton.css';
+import '../css/HomePage.css';
 
 axios.defaults.xsrfCookieName ='csrftoken';
 axios.defaults.xsrfHeaderName ='X-CSRFToken';
@@ -36,13 +38,77 @@ const AppButton = (props) => {
     )
 }
 
+const mock_players = [
+    {"name": "Mitch", "evicted": false},
+    {"name": "Claire", "evicted": false},
+    {"name": "Cam", "evicted": true},
+    {"name": "Gloria", "evicted": false},
+    {"name": "Jay", "evicted": false},
+    {"name": "Phil", "evicted": true},
+    {"name": "Mitch", "evicted": false},
+    {"name": "Claire", "evicted": false},
+    {"name": "Cam", "evicted": true},
+    {"name": "Gloria", "evicted": false},
+    {"name": "Jay", "evicted": false},
+    {"name": "Phil", "evicted": true},
+]
+
+const PlayerTile = (props) => {
+
+    const { name, evicted } = props;
+
+    const class_name = "player-cell-tile" + (evicted ? " evicted" : "");
+
+    return (
+        <div className={class_name}>
+            <p className="player-tile-name">{name}</p>
+        </div>
+    )
+
+}
+
+const GameTableCell = (props) => {
+
+    const { id, total_players, players_left, players, full_info } = props.game;
+
+    return(
+        <div className="game-table-cell">
+            <div className="remaining">
+                <p className="remaining-label">PLAYERS LEFT:</p>
+                <p className="remaining-value">{players_left}/{total_players}</p>
+            </div>
+            <div className="player-list">
+                {players.map((item, index) => {
+                    return(
+                        <PlayerTile key={index} name={item.name} evicted={item.evicted}/>
+                    )
+                })}
+            </div>
+            <div className="cell-buttons">
+                <button className="continue-btn" onClick={() => props.continue(full_info)}>CONTINUE</button>
+                <button className="delete-btn" onClick={() => props.delete(id)}>DELETE</button>
+            </div>
+        </div>
+    )
+}
+
 const GameTable = ({ games, deleteGame, continueGame }) => {
+
+    if (games.length === 0) {
+
+        return(
+            <div className="empty-game-table">
+                <p>No games found.</p>
+            </div>
+        )
+
+    }
 
     return (
         <div className="game-table">
             {games.map((item, index) => {
                 return(
-                    <div key={index}>Game: {item.id} {item.current_step} </div>
+                    <GameTableCell key={index} game={item} delete={deleteGame} continue={continueGame}/>
                 )
             })}
         </div>
@@ -61,6 +127,7 @@ class HomePage extends React.Component {
         }
 
         this.getHome = this.getHome.bind(this);
+        this.continueGame = this.continueGame.bind(this);
     }
 
     async getHome() {
@@ -80,8 +147,12 @@ class HomePage extends React.Component {
 
     }
 
-    continueGame(game_id) {
-        console.log("Continuing game", game_id);
+    continueGame(game_info) {
+        console.log("Continuing game", game_info.id);
+
+        this.props.history.push('/game',
+            { "game_info": game_info}
+        );
     }
 
     deleteGame(game_id) {
@@ -103,12 +174,10 @@ class HomePage extends React.Component {
                     <h2 id="greeting">Hello, {this.state.username}</h2>
                     <h2 id="in-progress-header">GAMES IN PROGRESS</h2>
                     <GameTable games={this.state.games} deleteGame={this.deleteGame} continueGame={this.continueGame} />
-                    <AppButton text="Create New Game" class_name="app-button newgame-btn" />
+                    <Link to="/create-game" style={{ textDecoration: 'none', color: 'black' }}>
+                        <button id="create-game">Create New Game</button>
+                    </Link>
                 </div>
-                {/* <Link to="/create-game" style={{ textDecoration: 'none', color: 'black' }}>
-                    <AppButton text="New Game" class_name="app-button newgame-btn" />
-                </Link>
-                <AppButton text="Player Bank" class_name="app-button playerbank-btn" /> */}
             </div>
         )
 
